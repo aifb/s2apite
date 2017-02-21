@@ -23,6 +23,7 @@ import org.apache.marmotta.commons.http.MarmottaHttpUtils;
 import org.apache.marmotta.commons.vocabulary.LDP;
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.apache.marmotta.platform.core.api.exporter.ExportService;
+import org.apache.marmotta.platform.core.api.io.MarmottaIOService;
 import org.apache.marmotta.platform.core.api.triplestore.SesameService;
 import org.apache.marmotta.platform.core.events.SesameStartupEvent;
 import org.apache.marmotta.platform.ldp.api.LdpService;
@@ -44,13 +45,17 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
+
+import edu.kit.aifb.ldbwebservice.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -59,12 +64,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import java.awt.image.RescaleOp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -109,6 +117,9 @@ public class LdpWebService {
 
 	@Inject
 	private SesameService sesameService;
+
+	@Inject
+	private MarmottaIOService ioService;
 
 	private final List<ContentType> producedRdfTypes;
 	private final Resource ldpContext = ValueFactoryImpl.getInstance().createURI(LDP.NAMESPACE);
@@ -485,24 +496,18 @@ public class LdpWebService {
 			final Response.ResponseBuilder resp;
 			final String newResource;  // NOTE: newResource == resource for now, this might change in the future
 			if (ldpService.exists(conn, resource) ) {
-				
-				boolean bol = conn.hasStatement(  ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), ValueFactoryImpl.getInstance().createURI("http://step.aifb.kit.edu/StartAPI"), true, ldpContext);
-				RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, ldpContext);
-				// TODO context anpassen, ldp ist falsch
-				List<Statement> stats = statements.asList();
-				
+
+
 				if ( ldpService.isStartAPI(conn, resource) ) {
 					log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", resource);
 
 
-					
-					//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, ldpContext);
-					
-					// TODO
-					
-					
-					resp = createWebServiceResponse(conn, 200, resource);
-					
+					//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
+
+					resp = createWebServiceResponse(conn, 200, resource, postBody);
+
+					log.debug("PUT update for <{}> successful", resource);
+					conn.commit();
 					return resp.build();
 
 				} else {
@@ -832,9 +837,9 @@ public class LdpWebService {
 		return rb;
 	}
 
-	
 
-	
+
+
 	/**
 	 * Add all the default headers specified in LDP to the Response
 	 *
@@ -843,61 +848,115 @@ public class LdpWebService {
 	 * @param resource the iri/uri/url of the resource
 	 * @return the provided ResponseBuilder for chaining
 	 */
-	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.Status status, String resource) throws RepositoryException {
-		return createWebServiceResponse(connection, status.getStatusCode(), resource);
+	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.Status status, String resource, InputStream input_data) throws RepositoryException {
+		return createWebServiceResponse(connection, status.getStatusCode(), resource, input_data);
 	}
 
-	
-	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, int status, String resource) throws RepositoryException {
-		return createWebServiceResponse(connection, Response.status(status), resource);
+
+	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, int status, String resource, InputStream input_data) throws RepositoryException {
+		return createWebServiceResponse(connection, Response.status(status), resource, input_data);
 	}
-	
-	
+
+
 	/**
-	 * Add all the default headers specified in LDP to the Response
+	 * 
 	 *
 	 * @param connection the RepositoryConnection (with active transaction) to read extra data from
 	 * @param rb the ResponseBuilder
 	 * @param resource the uri/url of the resource
 	 * @return the provided ResponseBuilder for chaining
 	 */
-	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.ResponseBuilder rb, String resource) throws RepositoryException {
+	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.ResponseBuilder rb, String resource, InputStream input_data) throws RepositoryException {
 		createWebServiceResponse(rb);
 
 		if (ldpService.exists(connection, resource)) {
-			// Link rel='type' (Sec. 4.2.1.4, 5.2.1.4)
-			List<Statement> statements = ldpService.getLdpTypes(connection, resource);
-			for (Statement stmt : statements) {
-				Value o = stmt.getObject();
-				if (o instanceof URI && o.stringValue().startsWith(LDP.NAMESPACE)) {
-					rb.link(o.stringValue(), LINK_REL_TYPE);
+
+
+			RepositoryResult<Statement> services = connection.getStatements( 
+					ValueFactoryImpl.getInstance().createURI(resource), 
+					STEP.hasWebService, 
+					null, 
+					true, 
+					new Resource[0]);
+
+			if (!services.hasNext()) {
+				log.debug("Could not find any connected service to <{}>", resource);
+				return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
+			}
+			URI service = cleanURI((URI) services.next().getObject() );
+			if (services.hasNext()) {
+				// do nothing yet
+				// TODO: handle multiple services with same startAPI
+			}
+
+			RepositoryResult<Statement> programs = connection.getStatements(service, STEP.hasProgram, null, true, new Resource[0]);
+			if (!programs.hasNext()) {
+				log.debug("Could not find any connected service to <{}>", resource);
+				return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
+			}
+			Value program = programs.next().getObject();
+			if (programs.hasNext()) {
+				// do nothing yet
+				// TODO: handle multiple programs with same WebService
+			}
+
+			final Collection<Statement> output_data = executeWebService(service, program, null, input_data);
+
+			StreamingOutput entity = new StreamingOutput() {
+				@Override
+				public void write(OutputStream output) throws IOException, WebApplicationException {
+
+					RDFFormat serializer = ioService.getSerializer("text/turtle");
+					RDFWriter handler = Rio.createWriter(serializer,output);
+					try {
+						handler.startRDF();
+						for (Statement statement : output_data) {
+							handler.handleStatement(statement);
+						}
+						handler.endRDF();
+					} catch (RDFHandlerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+
 				}
-			}
+			};
 
-			final URI rdfSource = ldpService.getRdfSourceForNonRdfSource(connection, resource);
-			if (rdfSource != null) {
-				// Sec. 5.2.8.1 and 5.2.3.12
-				rb.link(rdfSource.stringValue(), LINK_REL_DESCRIBEDBY);
-				// This is not covered by the Spec, but is very convenient to have
-				rb.link(rdfSource.stringValue(), LINK_REL_META);
-			}
-			final URI nonRdfSource = ldpService.getNonRdfSourceForRdfSource(connection, resource);
-			if (nonRdfSource != null) {
-				// This is not covered by the Spec, but is very convenient to have
-				rb.link(nonRdfSource.stringValue(), LINK_REL_CONTENT);
-			}
+			rb.entity(entity);
 
-			// ETag (Sec. 4.2.1.3)
-			rb.tag(ldpService.generateETag(connection, resource));
-
-			// Last modified date
-			rb.lastModified(ldpService.getLastModified(connection, resource));
 		}
 
 		return rb;
 	}
 
-	
+
+	/**
+	 * returns an URI without an ending slash 
+	 * @param uri
+	 * @return
+	 */
+	private URI cleanURI(URI uri) {
+		String str = uri.toString();
+
+		if (str.endsWith("/")) {
+			String clean_uri = str.substring(0, str.length() - 1);
+			return new URIImpl(clean_uri);
+		} else {
+			return uri;
+		}
+	}
+
+	private Collection<Statement> executeWebService(Resource resource, Value program, String query, InputStream input_data) {
+		ValueFactory factory = ValueFactoryImpl.getInstance();
+		Collection<Statement> result = new HashSet<Statement>();
+
+		Resource this_resource = factory.createBNode("this");
+		result.add(factory.createStatement(this_resource, RDF.TYPE, STEP.Output));
+		result.add(factory.createStatement(this_resource, STEP.hasValue, factory.createLiteral(48)));
+
+		return result;
+	}
 
 	protected Response.ResponseBuilder createWebServiceResponse(Response.ResponseBuilder rb) {
 		// Link rel='http://www.w3.org/ns/ldp#constrainedBy' (Sec. 4.2.1.6)

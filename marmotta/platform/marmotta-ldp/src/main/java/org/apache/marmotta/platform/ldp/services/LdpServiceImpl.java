@@ -48,7 +48,7 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.aifb.ldbwebservice.Vocabulary;
+import edu.kit.aifb.ldbwebservice.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -202,7 +202,7 @@ public class LdpServiceImpl implements LdpService {
 	// extended part:
 	@Override
 	public boolean isStartAPI(RepositoryConnection connection, URI uri) throws RepositoryException {
-		return connection.hasStatement(uri, RDF.TYPE, Vocabulary.StartAPI, true, ldpContext);
+		return connection.hasStatement(uri, RDF.TYPE, STEP.StartAPI, true, new Resource[0]);
 	}
 
 
