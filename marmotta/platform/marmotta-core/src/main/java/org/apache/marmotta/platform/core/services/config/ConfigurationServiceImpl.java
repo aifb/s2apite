@@ -227,6 +227,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                         log.info("reading system configuration from existing configuration file {}", configFile.getAbsolutePath());
                     }
                     saveConfiguration = new PropertiesConfiguration(configFile);
+                    
 
 
                     File metaFile = new File(metaFileName);
@@ -1223,6 +1224,28 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 log.error("Could not write to {}, a backup was created in {}", configPath, tmp);
                 throw iox;
             }
+            
+            
+            
+            // TODO clean up!
+            Iterator<String> keys = saveConfiguration.getKeys();
+            log.info("here!");
+            while (keys.hasNext() ){
+            	String key = keys.next();
+            	log.info(key  + " = " + saveConfiguration.getProperty(key));
+            }
+            saveConfiguration.setProperty("security.configured", "false");
+            saveConfiguration.setProperty("user.admin.pwhash", ":plain::pass123");
+            saveConfiguration.setProperty("user.anonymous.webid", "http://localhost:8080/marmotta/user/anonymous");
+            saveConfiguration.setProperty("user.anonymous.pwhash", ":plain::anonymous");
+            saveConfiguration.setProperty("security.profile", "standard");
+            while (keys.hasNext() ){
+            	String key = keys.next();
+            	log.info(key  + " = " + saveConfiguration.getProperty(key));
+            }
+            
+            
+            
             log.info("configuration successfully saved to {}", configPath);
         } catch (final Throwable t) {
             throw new ConfigurationException("Unable to save the configuration to the file " + fName, t);
