@@ -1,3 +1,10 @@
+Falls er mit der Authentifizierung zickt, sollte einer davon gehen (Basic Authentification):
+http://localhost:8080/marmotta/user/anonymous und anonymous
+anonymous und anonymous
+http://localhost:8080/marmotta/user/admin und pass123
+admin und pass123
+
+
 1. den WebService1 erstellen:
 
 -------------------------------------------------------------------
