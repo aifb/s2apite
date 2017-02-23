@@ -21,6 +21,8 @@ public class STEP {
 	public static final URI hasProgram;
 	public static final URI hasValue;
 
+	public static final URI hasStartAPI;
+
 	
     static {
         ValueFactory factory = ValueFactoryImpl.getInstance();
@@ -41,6 +43,8 @@ public class STEP {
         hasProgram = factory.createURI(STEP.NAMESPACE, "hasProgram");
         
         hasValue = factory.createURI(STEP.NAMESPACE, "hasValue");
+        
+        hasStartAPI = factory.createURI(STEP.NAMESPACE, "hasStartAPI");
     }
 
 }

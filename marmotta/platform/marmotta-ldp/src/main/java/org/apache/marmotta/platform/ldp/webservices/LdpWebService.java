@@ -26,6 +26,7 @@ import org.apache.marmotta.platform.core.api.exporter.ExportService;
 import org.apache.marmotta.platform.core.api.io.MarmottaIOService;
 import org.apache.marmotta.platform.core.api.triplestore.SesameService;
 import org.apache.marmotta.platform.core.events.SesameStartupEvent;
+import org.apache.marmotta.platform.ldp.api.LdpBinaryStoreService;
 import org.apache.marmotta.platform.ldp.api.LdpService;
 import org.apache.marmotta.platform.ldp.api.Preference;
 import org.apache.marmotta.platform.ldp.exceptions.IncompatibleResourceTypeException;
@@ -38,7 +39,7 @@ import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
-
+import org.eclipse.jetty.io.ClientConnectionFactory.Helper;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.openrdf.model.Model;
 import org.openrdf.model.Resource;
@@ -53,8 +54,37 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.*;
+import org.semanticweb.yars.nx.Node;
+import org.semanticweb.yars.nx.Nodes;
 import org.slf4j.Logger;
 
+import edu.kit.aifb.datafu.Binding;
+import edu.kit.aifb.datafu.ConstructQuery;
+import edu.kit.aifb.datafu.Origin;
+import edu.kit.aifb.datafu.Program;
+import edu.kit.aifb.datafu.Query;
+import edu.kit.aifb.datafu.Request.Method;
+import edu.kit.aifb.datafu.SelectQuery;
+import edu.kit.aifb.datafu.consumer.impl.BindingConsumerCollection;
+import edu.kit.aifb.datafu.engine.EvaluateProgram;
+import edu.kit.aifb.datafu.io.mediatypes.Turtle;
+import edu.kit.aifb.datafu.io.origins.FileOrigin;
+import edu.kit.aifb.datafu.io.origins.InputOrigin;
+import edu.kit.aifb.datafu.io.origins.InternalOrigin;
+import edu.kit.aifb.datafu.io.origins.OutputOrigin;
+import edu.kit.aifb.datafu.io.origins.RequestOrigin;
+import edu.kit.aifb.datafu.io.origins.StreamOrigin;
+import edu.kit.aifb.datafu.io.output.EvaluateOutputOrigin;
+import edu.kit.aifb.datafu.io.sinks.BindingConsumerSink;
+import edu.kit.aifb.datafu.parser.ProgramConsumer;
+import edu.kit.aifb.datafu.parser.ProgramConsumerImpl;
+import edu.kit.aifb.datafu.parser.QueryConsumerImpl;
+import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
+import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
+import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
+import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
+import edu.kit.aifb.datafu.web.api.Instance;
+import edu.kit.aifb.datafu.web.api.LDFU;
 import edu.kit.aifb.ldbwebservice.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -65,16 +95,28 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import java.awt.image.RescaleOp;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Linked Data Platform web services.
@@ -104,6 +146,12 @@ public class LdpWebService {
 	public static final String HTTP_HEADER_PREFERENCE_APPLIED = "Preference-Applied";
 	public static final String HTTP_METHOD_PATCH = "PATCH";
 
+
+	public static final String PROGRAM_TRIPLE = "<http://coordinate> <http://x> \"1\" . "
+			+ "<http://coordinate> <http://y> \"2\" . " + "<http://coordinate> <http://z> \"3\" . ";
+	public static final String QUERY_CONSTRUCT_SPO = "CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }";
+
+
 	private Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
 	@Inject
@@ -120,6 +168,9 @@ public class LdpWebService {
 
 	@Inject
 	private MarmottaIOService ioService;
+
+	@Inject
+	private LdpBinaryStoreService binaryStore;
 
 	private final List<ContentType> producedRdfTypes;
 	private final Resource ldpContext = ValueFactoryImpl.getInstance().createURI(LDP.NAMESPACE);
@@ -871,61 +922,72 @@ public class LdpWebService {
 
 		if (ldpService.exists(connection, resource)) {
 
+			try {
 
-			RepositoryResult<Statement> services = connection.getStatements( 
-					ValueFactoryImpl.getInstance().createURI(resource), 
-					STEP.hasWebService, 
-					null, 
-					true, 
-					new Resource[0]);
+				RepositoryResult<Statement> services = connection.getStatements( 
+						null, 
+						STEP.hasStartAPI, 
+						ValueFactoryImpl.getInstance().createURI(resource), 
+						true, 
+						new Resource[0]);
 
-			if (!services.hasNext()) {
-				log.debug("Could not find any connected service to <{}>", resource);
-				return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
-			}
-			URI service = cleanURI((URI) services.next().getObject() );
-			if (services.hasNext()) {
-				// do nothing yet
-				// TODO: handle multiple services with same startAPI
-			}
-
-			RepositoryResult<Statement> programs = connection.getStatements(service, STEP.hasProgram, null, true, new Resource[0]);
-			if (!programs.hasNext()) {
-				log.debug("Could not find any connected service to <{}>", resource);
-				return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
-			}
-			Value program = programs.next().getObject();
-			if (programs.hasNext()) {
-				// do nothing yet
-				// TODO: handle multiple programs with same WebService
-			}
-
-			final Collection<Statement> output_data = executeWebService(service, program, null, input_data);
-
-			StreamingOutput entity = new StreamingOutput() {
-				@Override
-				public void write(OutputStream output) throws IOException, WebApplicationException {
-
-					RDFFormat serializer = ioService.getSerializer("text/turtle");
-					RDFWriter handler = Rio.createWriter(serializer,output);
-					try {
-						handler.startRDF();
-						for (Statement statement : output_data) {
-							handler.handleStatement(statement);
-						}
-						handler.endRDF();
-					} catch (RDFHandlerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-
+				if (!services.hasNext()) {
+					log.debug("Could not find any connected service to <{}>", resource);
+					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
 				}
-			};
+				URI service = cleanURI((URI) services.next().getSubject() );
+				if (services.hasNext()) {
+					// do nothing yet
+					// TODO: handle multiple services with same startAPI
+				}
 
-			rb.entity(entity);
+				RepositoryResult<Statement> programs = connection.getStatements(service, STEP.hasProgram, null, true, new Resource[0]);
+				if (!programs.hasNext()) {
+					log.debug("Could not find any connected service to <{}>", resource);
+					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
+				}
+				// TODO get Program as file
+				//OutputStream program_data = new ByteArrayOutputStream();
+				URI program = new URIImpl(programs.next().getObject().stringValue());
+				InputStream program_data = binaryStore.read(program);
+				//ldpService.exportBinaryResource(connection, program, program_data);
+				if (programs.hasNext()) {
+					// do nothing yet
+					// TODO: handle multiple programs with same WebService
+				}
+
+				final Collection<Statement> output_data = executeWebService(service, program_data, null, input_data);
+
+				StreamingOutput entity = new StreamingOutput() {
+					@Override
+					public void write(OutputStream output) throws IOException, WebApplicationException {
+
+						RDFFormat serializer = ioService.getSerializer("text/turtle");
+						RDFWriter handler = Rio.createWriter(serializer,output);
+						try {
+							handler.startRDF();
+							for (Statement statement : output_data) {
+								handler.handleStatement(statement);
+							}
+							handler.endRDF();
+						} catch (RDFHandlerException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+
+					}
+				};
+
+				rb.entity(entity);
+
+			} catch (RepositoryException | IOException e) {
+				return rb.status(Response.Status.EXPECTATION_FAILED).entity("Necessary preconditions (N3-Program, Query) missing.");
+			}
 
 		}
+
+
 
 		return rb;
 	}
@@ -947,7 +1009,33 @@ public class LdpWebService {
 		}
 	}
 
-	private Collection<Statement> executeWebService(Resource resource, Value program, String query, InputStream input_data) {
+	private Collection<Statement> executeWebService(Resource resource, InputStream program_data, String query, InputStream input_data)  {
+
+		Collection<Statement> results = new ArrayList<Statement>();
+
+		/*
+		 * Write HTTP request body input to request output
+		 *
+		BufferedReader br = new BufferedReader(new InputStreamReader(input_data) );
+		RDFFormat serializer = ioService.getSerializer("text/turtle");
+		try {
+			Model model = Rio.parse(input_data, resource.stringValue(), RDFFormat.TURTLE, new Resource[0]);
+			Collection<Statement> result = new HashSet<Statement>();
+			Iterator<Statement> iter = model.iterator();
+			while (iter.hasNext()) {
+				result.add(iter.next());
+			}
+			return result;
+		} catch (RDFParseException | UnsupportedRDFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 */
+
+
+		/*
+		 * Write "_:this a step:Output . _:this step:hasValue "48" ."
+		 * 
 		ValueFactory factory = ValueFactoryImpl.getInstance();
 		Collection<Statement> result = new HashSet<Statement>();
 
@@ -956,6 +1044,165 @@ public class LdpWebService {
 		result.add(factory.createStatement(this_resource, STEP.hasValue, factory.createLiteral(48)));
 
 		return result;
+		 */
+
+		/*
+		 * Linked Data-Fu execution
+		 */
+
+		try {
+			
+
+			//Generate a Program Object
+			//program_data = new ByteArrayInputStream(" <http://this> <http://is> <http://sparta> . ".getBytes());
+			//String pro = getStringFromInputStream(program_data);
+			
+			
+			Origin program_origin = new InternalOrigin("programOriginTriple");
+			ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(program_origin);
+			//Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(pro.getBytes()));
+			Notation3Parser notation3Parser = new Notation3Parser(program_data);
+			notation3Parser.parse(programConsumer, program_origin);
+			Program program = programConsumer.getProgram(program_origin);
+			//program = programConsumer.getProgram(program_origin);
+	/*
+	 *  Register a Query		
+	 */
+			QueryConsumerImpl qc = new QueryConsumerImpl(new InternalOrigin("query_consumer_1"));
+			String s = new String("CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }");
+			SparqlParser sp = new SparqlParser(new StringReader(s));
+			//ParserConsumer pc = new QueryConsumerImpl(pbase);
+			sp.parse(qc, new InternalOrigin("SparqlConstructDummy"));
+			//sp.parse(qc, new InternalOrigin("SparqlSelectTest"));
+			ConstructQuery sq = qc.getConstructQueries().iterator().next();
+
+			
+			BindingConsumerCollection bc = new BindingConsumerCollection(); //Error: BindingConsumerSet cannot resolved to a type
+			BindingConsumerSink sink = new BindingConsumerSink(bc);
+			
+			program.registerConstructQuery(sq, sink); //Error: die Methode addSelectQuery is not defined.
+	/*
+	 * 	Create an EvaluateProgram Object
+	 */
+			EvaluateProgramConfig config = new EvaluateProgramConfig();
+			EvaluateProgramGenerator ep = new EvaluateProgramGenerator(program, config);
+			EvaluateProgram epg = ep.getEvaluateProgram();
+		
+	/*
+	 * 	Evaluate the Program
+	 */
+			epg.start();
+			System.out.println("Consumed");
+			
+			
+			epg.awaitIdleAndFinish();
+			
+			System.out.println(epg.getEvaluateOutputOrigin().toString());
+			epg.shutdown();
+			
+			ValueFactory factory = ValueFactoryImpl.getInstance();
+			for (Binding binding : bc.getCollection() ) {
+				
+				Nodes nodes = binding.getNodes();
+				Node[] node = nodes.getNodeArray();
+				
+				String subj_string = node[0].toString().replace("<", "").replace(">", "").replace("\"", "");
+				Resource subject;
+				if (subj_string.startsWith("_")) {
+					// is BlankNode
+					subject = factory.createBNode( subj_string.replace("_:", "") );
+				} else {
+					subject = factory.createURI( subj_string ); 
+				}
+				
+				String predicate_string = node[1].toString().replace("<", "").replace(">", "").replace("\"", "");
+				URI predicate = factory.createURI( predicate_string ); 
+				
+				
+				String object_string = node[1].toString().replace("<", "").replace(">", "").replace("\"", "");
+				try {
+					Value object = factory.createURI( object_string ); 
+					results.add( factory.createStatement(subject, predicate, object) );
+				} catch (IllegalArgumentException e) {
+					Value object = factory.createLiteral( object_string ); 
+					results.add( factory.createStatement(subject, predicate, object) );
+				}
+				
+			}
+			
+			
+			
+			
+			
+			
+			//************************************************************************************************//
+
+
+
+
+			// Parse programs
+//			Origin program_origin = new InternalOrigin("programOriginTriple");
+//			ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(program_origin);
+//			Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(pro.getBytes()));
+//			//			Notation3Parser notation3Parser = new Notation3Parser(program_data);
+//			notation3Parser.parse(programConsumer, program_origin);
+//			//Program program = programConsumer.getProgram(program_origin);
+//			program = programConsumer.getProgram(program_origin);
+
+			// Parse query
+/*			Origin origin  = new InternalOrigin("queryOrigin");
+	
+			QueryConsumerImpl queryConsumer = new QueryConsumerImpl(origin);
+			SparqlParser parser = new SparqlParser(new ByteArrayInputStream(QUERY_CONSTRUCT_SPO.getBytes()));
+			parser.parse(queryConsumer, origin);
+			Set<Query> queries = new HashSet<Query>();
+			Set<ConstructQuery> constructQueries = queryConsumer.getConstructQueries();
+			queries.addAll(constructQueries);
+			Set<SelectQuery> selectQueries = queryConsumer.getSelectQueries();
+			queries.addAll(selectQueries);
+
+			// Create instance
+			Instance instance = new Instance();
+			instance.setDelay(1000);
+
+			// Add program to instance
+			instance.putProgram("programTest", program);
+			instance.putConstructQueries("constructQueries", constructQueries);
+
+			// BindingConsumerCollection bindingConsumerCollection =
+			// instance.evaluateQueries(queries);
+			BindingConsumerCollection bindingConsumerCollection = instance
+					.getConstructQueryConsumer("constructQueries");
+			
+			for (Binding binding : bindingConsumerCollection.getCollection() ) {
+				
+				Nodes nodes = binding.getNodes();
+				Node[] node = nodes.getNodeArray();
+				
+				URI subject = ValueFactoryImpl.getInstance().createURI( node[0].toString() ); 
+				URI predicate = ValueFactoryImpl.getInstance().createURI( node[1].toString() ); 
+				try {
+					Value object = ValueFactoryImpl.getInstance().createURI( node[2].toString() ); 
+					results.add( ValueFactoryImpl.getInstance().createStatement(subject, predicate, object) );
+				} catch (IllegalArgumentException e) {
+					Value object = ValueFactoryImpl.getInstance().createLiteral( node[2].toString() ); 
+					results.add( ValueFactoryImpl.getInstance().createStatement(subject, predicate, object) );
+				}
+				
+			}
+*/
+
+		} catch (edu.kit.aifb.datafu.parser.sparql.ParseException e) {
+			// TODO: handle exception
+		} catch (edu.kit.aifb.datafu.parser.notation3.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return results;
 	}
 
 	protected Response.ResponseBuilder createWebServiceResponse(Response.ResponseBuilder rb) {
@@ -963,5 +1210,25 @@ public class LdpWebService {
 		rb.link(LDP_SERVER_CONSTRAINTS, LINK_REL_CONSTRAINEDBY);
 
 		return rb;
+	}
+
+	public String getStringFromInputStream(InputStream stream) {
+		String pro = "";
+		Scanner scanner = new Scanner(stream,"UTF-8");
+		while (scanner.hasNextLine()) {
+			pro += scanner.nextLine() + "\n";
+		}
+		scanner.close();
+		return pro;
+	} 
+
+
+
+	public static Program getProgramTriple() throws ParseException, edu.kit.aifb.datafu.parser.notation3.ParseException {
+		Origin origin = new InternalOrigin("programOriginTriple");
+		ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(origin);
+		Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(PROGRAM_TRIPLE.getBytes()));
+		notation3Parser.parse(programConsumer, origin);
+		return programConsumer.getProgram(origin);
 	}
 }
