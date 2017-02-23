@@ -39,9 +39,7 @@ import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
-import org.eclipse.jetty.io.ClientConnectionFactory.Helper;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
-import org.openrdf.model.Model;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -49,7 +47,6 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -62,29 +59,16 @@ import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
 import edu.kit.aifb.datafu.Origin;
 import edu.kit.aifb.datafu.Program;
-import edu.kit.aifb.datafu.Query;
-import edu.kit.aifb.datafu.Request.Method;
-import edu.kit.aifb.datafu.SelectQuery;
 import edu.kit.aifb.datafu.consumer.impl.BindingConsumerCollection;
 import edu.kit.aifb.datafu.engine.EvaluateProgram;
-import edu.kit.aifb.datafu.io.mediatypes.Turtle;
-import edu.kit.aifb.datafu.io.origins.FileOrigin;
-import edu.kit.aifb.datafu.io.origins.InputOrigin;
 import edu.kit.aifb.datafu.io.origins.InternalOrigin;
-import edu.kit.aifb.datafu.io.origins.OutputOrigin;
-import edu.kit.aifb.datafu.io.origins.RequestOrigin;
-import edu.kit.aifb.datafu.io.origins.StreamOrigin;
-import edu.kit.aifb.datafu.io.output.EvaluateOutputOrigin;
 import edu.kit.aifb.datafu.io.sinks.BindingConsumerSink;
-import edu.kit.aifb.datafu.parser.ProgramConsumer;
 import edu.kit.aifb.datafu.parser.ProgramConsumerImpl;
 import edu.kit.aifb.datafu.parser.QueryConsumerImpl;
 import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
-import edu.kit.aifb.datafu.web.api.Instance;
-import edu.kit.aifb.datafu.web.api.LDFU;
 import edu.kit.aifb.ldbwebservice.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -92,31 +76,18 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import java.awt.image.RescaleOp;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.Set;
 
 /**
  * Linked Data Platform web services.
@@ -449,6 +420,24 @@ public class LdpWebService {
 				conn.rollback();
 				return resp.build();
 			}
+			
+			
+
+			if ( ldpService.isStartAPI(conn, container) ) {
+				log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", container);
+
+
+				//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
+
+				final Response.ResponseBuilder resp = createWebServiceResponse(conn, 200, container, postBody);
+
+				log.debug("PUT update for <{}> successful", container);
+				conn.commit();
+				return resp.build();
+
+			}
+			
+			
 
 			// Check that the target container supports the LDPC Interaction Model
 			final LdpService.InteractionModel containerModel = ldpService.getInteractionModel(conn, container);
@@ -549,19 +538,6 @@ public class LdpWebService {
 			if (ldpService.exists(conn, resource) ) {
 
 
-				if ( ldpService.isStartAPI(conn, resource) ) {
-					log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", resource);
-
-
-					//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
-
-					resp = createWebServiceResponse(conn, 200, resource, postBody);
-
-					log.debug("PUT update for <{}> successful", resource);
-					conn.commit();
-					return resp.build();
-
-				} else {
 					log.debug("<{}> exists and is a DataResource, so this is an UPDATE", resource);
 
 					if (eTag == null) {
@@ -588,7 +564,6 @@ public class LdpWebService {
 					conn.commit();
 					return resp.build();
 
-				}
 
 
 			} else if (ldpService.isReusedURI(conn, resource)) {
@@ -1119,7 +1094,7 @@ public class LdpWebService {
 				URI predicate = factory.createURI( predicate_string ); 
 				
 				
-				String object_string = node[1].toString().replace("<", "").replace(">", "").replace("\"", "");
+				String object_string = node[2].toString().replace("<", "").replace(">", "").replace("\"", "");
 				try {
 					Value object = factory.createURI( object_string ); 
 					results.add( factory.createStatement(subject, predicate, object) );

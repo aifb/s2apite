@@ -284,7 +284,24 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Linked Data-Fu -->
+		<!-- nxparser (not all required?) -->
+		<dependency>
+			<groupId>org.semanticweb.yars</groupId>
+			<artifactId>nxparser-parsers</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.semanticweb.yars</groupId>
+			<artifactId>nxparser-model</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.semanticweb.yars</groupId>
+			<artifactId>nxparser-jax-rs</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+
+		<!-- Linked Data-Fu from local Maven Repo -->
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-common</artifactId>
