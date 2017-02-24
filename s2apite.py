@@ -17,13 +17,16 @@ def init_services(num):
     #print(random.sample(["plus", "minus", "multiply", "divide"], 1))
 
     #TODO: FOR loop over the different hosts
-    for i in range(1, 2):
+    for i in range(0, 1):
         print("init marmotta" + str(i))
-        host = "marmotta" + str(i)
-        #host = "192.168.56.105"
+        resource = "marmotta" + str(i)
+        host = "localhost"
+        port=str(9000 + i)
+	#host = "192.168.56.105"
+        baseUri = "http://" + host + ':' + port
 
         while True:
-            url = 'http://' + host + ':8080/marmotta/ldp/'
+            url = baseUri + '/marmotta/ldp/'
             try:
                 status = requests.head(url, timeout=3).status_code
                 if status == 200:
@@ -37,9 +40,9 @@ def init_services(num):
                             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
                             "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
                             "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                            "@prefix parent: <http://" + host + ":8080/marmotta/ldp/> ."
-                            "@prefix child: <http://" + host + ":8080/marmotta/ldp/WebService1/> ."
-                            "@prefix this: <http://" + host + ":8080/marmotta/ldp/WebService1#> ."
+                            "@prefix parent: <http://" + resource +  ":8080/marmotta/ldp/> ."
+                            "@prefix child: <http://" + resource + ":8080/marmotta/ldp/WebService1/> ."
+                            "@prefix this: <http://" + resource + ":8080/marmotta/ldp/WebService1#> ."
                             ""
                             "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
                             "     rdfs:label \"This is WebService #1. It can do everything you like.\" ;"
@@ -50,7 +53,7 @@ def init_services(num):
                     if resp.status_code == 201:
                         #post program
                         print("pushing programm to marmotta service")
-                        url = "http://" + host + ":8080/marmotta/ldp/WebService1"
+                        url = baseUri + "/marmotta/ldp/WebService1"
                         headers = {'Accept': 'text/turtle',
                                 'Slug': 'Program1',
                                 'Content-Type':'text/notation3',
@@ -92,7 +95,7 @@ def create_dockercompose(num):
 
     for i in range(num):
         print("  marmotta" + str(i)+":", file=dcfile)
-        print("    image: registry.gitlab.com/usu-research-step/relayservice", file=dcfile)
+        print("    image: registry.gitlab.com/usu-research-step/s2apite", file=dcfile)
         print("    container_name: marmotta" + str(i), file=dcfile)
         print("    ports:", file=dcfile)
         print("    - \"" + str(9000 + i) + ":8080\"", file=dcfile)
@@ -130,10 +133,12 @@ print("Running s2apite: Creating " + str(ARGS.num)
 random.seed(ARGS.seed)
 
 #create docker-compose
-#create_dockercompose(ARGS.num)
+create_dockercompose(ARGS.num)
 
 #run docker-compose up
-#run_dockercompose()
+run_dockercompose()
+
+time.sleep(10)
 
 #run service initialization script
 init_services(ARGS.num)
