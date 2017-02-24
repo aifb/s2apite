@@ -1234,10 +1234,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             	String key = keys.next();
             	log.info(key  + " = " + saveConfiguration.getProperty(key));
             }
-            
+
             String host = System.getenv("MARMOTTAHOST");
-            saveConfiguration.setProperty("kiwi.context", host);
-            saveConfiguration.setProperty("kiwi.host", host);
+            String port = System.getenv("MARMOTTAPORT");
+            String host_name = "http://" + host + ":" + port + "/marmotta/";
+            saveConfiguration.setProperty("kiwi.context", host_name);
+            saveConfiguration.setProperty("kiwi.host", host_name);
             saveConfiguration.setProperty("kiwi.setup.host", "true");
             
             saveConfiguration.setProperty("security.configured", "false");
