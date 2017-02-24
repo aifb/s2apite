@@ -1,0 +1,16 @@
+version: '2'
+services:
+  marmotta0:
+    image: registry.gitlab.com/usu-research-step/relayservice
+    container_name: marmotta0
+    ports:
+    - "9000:8080"
+    environment:
+      MARMOTTAHOST: marmotta0
+  marmotta1:
+    image: registry.gitlab.com/usu-research-step/relayservice
+    container_name: marmotta1
+    ports:
+    - "9001:8080"
+    environment:
+      MARMOTTAHOST: marmotta1
