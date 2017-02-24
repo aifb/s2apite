@@ -17,8 +17,10 @@ def init_services(num):
     #print(random.sample(["plus", "minus", "multiply", "divide"], 1))
 
     #TODO: FOR loop over the different hosts
-    for i in range(1, 1):
+    for i in range(1, 2):
+        print("init marmotta" + str(i))
         host = "marmotta" + str(i)
+        #host = "192.168.56.105"
 
         while True:
             url = 'http://' + host + ':8080/marmotta/ldp/'
@@ -78,7 +80,7 @@ def init_services(num):
                         print("initialization of WebService1 successfull!")
                         break
             except requests.exceptions.Timeout:
-                print("waiting...")
+                print("waiting for " + host + " to start up...")
                 time.sleep(5)
             
 
@@ -128,10 +130,10 @@ print("Running s2apite: Creating " + str(ARGS.num)
 random.seed(ARGS.seed)
 
 #create docker-compose
-create_dockercompose(ARGS.num)
+#create_dockercompose(ARGS.num)
 
 #run docker-compose up
-run_dockercompose()
+#run_dockercompose()
 
 #run service initialization script
 init_services(ARGS.num)
