@@ -1,0 +1,9 @@
+version: '2'
+services:
+  marmotta0:
+    image: registry.gitlab.com/usu-research-step/s2apite
+    container_name: marmotta0
+    ports:
+    - "9000:8080"
+    environment:
+      MARMOTTAHOST: marmotta0

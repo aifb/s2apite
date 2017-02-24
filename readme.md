@@ -14,7 +14,16 @@ $docker-compose down
 ```
 
 
+# Other commands:
+1. Run uninitialized container for Testing purpuse.
+```
+docker run -d -p 8080:8080 registry.gitlab.com/usu-research-step/s2apite
+```
+
+
 # Requirements
 - docker
 - docker-compose
 - python 3.x
+
+
