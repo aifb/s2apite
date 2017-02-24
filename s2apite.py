@@ -9,7 +9,7 @@ import random
 import time
 
 #functions
-def init_services(num):
+def init_services(num, dhost):
     "Initializes the services"
     
     #for i in range(10):
@@ -17,13 +17,12 @@ def init_services(num):
     #print(random.sample(["plus", "minus", "multiply", "divide"], 1))
 
     #TODO: FOR loop over the different hosts
-    for i in range(0, 1):
-        print("init marmotta" + str(i))
-        resource = "marmotta" + str(i)
-        host = "localhost"
-        port=str(9000 + i)
-	#host = "192.168.56.105"
-        baseUri = "http://" + host + ':' + port
+    for i in range(num):
+        port = str(9000 + i)
+        name = "marmotta" + str(i)
+	    #dhost = "192.168.56.105"
+        baseUri = "http://" + dhost + ':' + port
+        print("init " + name + " on " + baseUri)
 
         while True:
             url = baseUri + '/marmotta/ldp/'
@@ -40,12 +39,12 @@ def init_services(num):
                             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
                             "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
                             "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                            "@prefix parent: <http://" + resource +  ":8080/marmotta/ldp/> ."
-                            "@prefix child: <http://" + resource + ":8080/marmotta/ldp/WebService1/> ."
-                            "@prefix this: <http://" + resource + ":8080/marmotta/ldp/WebService1#> ."
+                            "@prefix parent: <" + baseUri +  "/marmotta/ldp/> ."
+                            "@prefix child: <" + baseUri + "/marmotta/ldp/" + name + "/> ."
+                            "@prefix this: <" + baseUri + "/marmotta/ldp/" + name + "#> ."
                             ""
                             "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
-                            "     rdfs:label \"This is WebService #1. It can do everything you like.\" ;"
+                            "     rdfs:label \"This is Service " + name + ". It can do everything you like.\" ;"
                             "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
                             "	<http://step.aifb.kit.edu/hasProgram> child:Program1.bin ;"
                             "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
@@ -53,7 +52,7 @@ def init_services(num):
                     if resp.status_code == 201:
                         #post program
                         print("pushing programm to marmotta service")
-                        url = baseUri + "/marmotta/ldp/WebService1"
+                        url = baseUri + "/marmotta/ldp/" + name 
                         headers = {'Accept': 'text/turtle',
                                 'Slug': 'Program1',
                                 'Content-Type':'text/notation3',
@@ -80,10 +79,10 @@ def init_services(num):
                                 "  ex:result ex:value ?sqrt ."
                                 "} .")
                         resp = requests.post(url, headers=headers, data=payload)
-                        print("initialization of WebService1 successfull!")
+                        print("initialization of " + name + " successfull!")
                         break
             except requests.exceptions.Timeout:
-                print("waiting for " + host + " to start up...")
+                print("waiting for " + baseUri + " to start up...")
                 time.sleep(5)
             
 
@@ -124,6 +123,8 @@ PARSER.add_argument('--seed', '-s', metavar='s', type=int, required=True,
                     help='seed for random service initializer')
 PARSER.add_argument('--num', '-n', metavar='n', type=int, required=True,
                     help='number of services to spawn')
+PARSER.add_argument('--dhost', '-dh', metavar='dh',  required=True,
+                    help='hostname or ip of docker host')
 
 ARGS = PARSER.parse_args()
 print("Running s2apite: Creating " + str(ARGS.num)
@@ -138,9 +139,9 @@ create_dockercompose(ARGS.num)
 #run docker-compose up
 run_dockercompose()
 
-time.sleep(10)
+time.sleep(5)
 
 #run service initialization script
-init_services(ARGS.num)
+init_services(ARGS.num, ARGS.dhost)
 
 
