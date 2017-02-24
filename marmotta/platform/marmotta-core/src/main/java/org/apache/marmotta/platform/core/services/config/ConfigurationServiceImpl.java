@@ -1235,16 +1235,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             	log.info(key  + " = " + saveConfiguration.getProperty(key));
             }
 
-            String host = System.getenv("MARMOTTAHOST");
-            String port = System.getenv("MARMOTTAPORT");
-            String host_name = "http://" + host + ":" + port + "/marmotta/";
-            saveConfiguration.setProperty("kiwi.context", host_name);
-            saveConfiguration.setProperty("kiwi.host", host_name);
-            saveConfiguration.setProperty("kiwi.setup.host", "true");
+//            String host = System.getenv("MARMOTTAHOST");
+//            String port = System.getenv("MARMOTTAPORT");
+//            String host_name = "http://" + host + ":" + port + "/marmotta/";
+//            saveConfiguration.setProperty("kiwi.context", host_name);
+//            saveConfiguration.setProperty("kiwi.host", host_name);
+//            saveConfiguration.setProperty("kiwi.setup.host", "true");
             
             saveConfiguration.setProperty("security.configured", "false");
             saveConfiguration.setProperty("user.admin.pwhash", ":plain::pass123");
-            saveConfiguration.setProperty("user.anonymous.webid", "http://" + host + ":8080/marmotta/user/anonymous");
+//            saveConfiguration.setProperty("user.anonymous.webid", "http://" + host + ":8080/marmotta/user/anonymous");
             saveConfiguration.setProperty("user.anonymous.pwhash", ":plain::anonymous");
             saveConfiguration.setProperty("security.profile", "standard");
             while (keys.hasNext() ){
