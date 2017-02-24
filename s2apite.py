@@ -27,34 +27,34 @@ def init_services(num, dhost):
         while True:
             url = baseUri + '/marmotta/ldp/'
             try:
-                status = requests.head(url, timeout=3).status_code
+                status = requests.head(url, timeout=5).status_code
                 if status == 200:
                     #init service
                     print("init service at marmotta")
                     headers = {'Accept': 'text/turtle',
-                            'Slug': 'WebService1',
-                            'Content-Type':'text/turtle',
-                            'Authorization':'Basic YWRtaW46cGFzczEyMw=='}
+                               'Slug': name,
+                               'Content-Type':'text/turtle',
+                               'Authorization':'Basic YWRtaW46cGFzczEyMw=='}
                     payload = ("@prefix ldp: <http://www.w3.org/ns/ldp#> ."
-                            "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
-                            "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
-                            "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                            "@prefix parent: <" + baseUri +  "/marmotta/ldp/> ."
-                            "@prefix child: <" + baseUri + "/marmotta/ldp/" + name + "/> ."
-                            "@prefix this: <" + baseUri + "/marmotta/ldp/" + name + "#> ."
-                            ""
-                            "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
-                            "     rdfs:label \"This is Service " + name + ". It can do everything you like.\" ;"
-                            "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
-                            "	<http://step.aifb.kit.edu/hasProgram> child:Program1.bin ;"
-                            "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
+                               "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
+                               "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
+                               "@prefix dcterms: <http://purl.org/dc/terms/> ."
+                               "@prefix parent: <" + baseUri +  "/marmotta/ldp/> ."
+                               "@prefix child: <" + baseUri + "/marmotta/ldp/" + name + "/> ."
+                               "@prefix this: <" + baseUri + "/marmotta/ldp/" + name + "#> ."
+                               ""
+                               "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
+                               "     rdfs:label \"This is Service " + name + ". It can do everything you like.\" ;"
+                               "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
+                               "	<http://step.aifb.kit.edu/hasProgram> child:Program1.bin ;"
+                               "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
                     if resp.status_code == 201:
                         #post program
                         print("pushing programm to marmotta service")
                         url = baseUri + "/marmotta/ldp/" + name 
                         headers = {'Accept': 'text/turtle',
-                                'Slug': 'Program1',
+                                'Slug': name + "app",
                                 'Content-Type':'text/notation3',
                                 'Authorization':'Basic YWRtaW46cGFzczEyMw=='}
                         payload = ("@prefix ex: <http://example.org/> ."
