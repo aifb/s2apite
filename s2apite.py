@@ -34,8 +34,7 @@ def init_services(num, dhost):
         if operator == "negate":
             operator_verb = "substract"
         print("init " + name + " on " + base_uri + "/marmotta/ldp/")
-
-        #print("operator: " + operator + "   operator_verb: " + operator_verb)
+        print(name + "is a service that : " + operator_verb + "s operands.")
 
         while True:
             url = base_uri + '/marmotta/ldp/'
