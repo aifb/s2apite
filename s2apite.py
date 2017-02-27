@@ -27,6 +27,7 @@ def init_services(num, dhost):
         base_uri = "http://" + dhost + ':' + port
         operator = random.sample(["sum", "quotient", "product"], 1).pop()
         operator_verb = "add"
+        num_operands = random.randrange(2, 10)
         if operator == "quotient":
             operator_verb = "divide"
         if operator == "product":
@@ -34,7 +35,7 @@ def init_services(num, dhost):
         if operator == "negate":
             operator_verb = "substract"
         print("init " + name + " on " + base_uri + "/marmotta/ldp/")
-        print(name + "is a service that : " + operator_verb + "s operands.")
+        print(name + "is a service that " + operator_verb + "s " +  num_operands + " operands.")
 
         while True:
             url = base_uri + '/marmotta/ldp/'
