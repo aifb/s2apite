@@ -25,7 +25,7 @@ def init_services(num, dhost):
         name = "marmotta" + str(i)
         #dhost = "192.168.56.105"
         base_uri = "http://" + dhost + ':' + port
-        operator = random.sample(["sum", "quotient", "product", "negation"], 1).pop()
+        operator = random.sample(["sum", "quotient", "product"], 1).pop()
         operator_verb = "add"
         if operator == "quotient":
             operator_verb = "divide"
@@ -60,7 +60,7 @@ def init_services(num, dhost):
                                "     rdfs:label \"This is Service " + name +
                                ". It can "+ operator_verb + " numbers.\" ;"
                                "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
-                               "	<http://step.aifb.kit.edu/hasProgram> child:Program1.bin ;"
+                               "	<http://step.aifb.kit.edu/hasProgram> child:" + name + "app.bin ;"
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
                     if resp.status_code != 201:
