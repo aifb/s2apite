@@ -25,7 +25,15 @@ def init_services(num, dhost):
         name = "marmotta" + str(i)
         #dhost = "192.168.56.105"
         base_uri = "http://" + dhost + ':' + port
-        print("init " + name + " on " + base_uri)
+        operator = random.sample(["sum", "quotient", "product", "negation"], 1)
+        operator_verb = "add"
+        if operator == "quotient":
+            operator_verb = "divide"
+        if operator == "product":
+            operator_verb = "multiply"
+        if operator == "negate":
+            operator_verb = "substract"
+        print("init " + name + " on " + base_uri + "/marmotta/ldp/")
 
         while True:
             url = base_uri + '/marmotta/ldp/'
@@ -48,7 +56,7 @@ def init_services(num, dhost):
                                ""
                                "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
                                "     rdfs:label \"This is Service " + name +
-                               ". It can do everything you like.\" ;"
+                               ". It can "+ operator_verb + " numbers.\" ;"
                                "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
                                "	<http://step.aifb.kit.edu/hasProgram> child:Program1.bin ;"
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
@@ -72,19 +80,15 @@ def init_services(num, dhost):
                                    "@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
                                    "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
                                    "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
-                                   ""
-                                   "[] ex:x \"2\" ; ex:y \"3\" ; ex:z \"4\" ."
-                                   ""
+                                   "[] ex:x \"2\" ; ex:y \"3\" ."
                                    "{"
-                                   "?point ex:x ?x ; ex:y ?y ; ex:z ?z ."
-                                   "  (?x \"2\") math:exponentiation ?ex ."
-                                   "  (?y \"2\") math:exponentiation ?ey ."
-                                   "  (?z \"2\") math:exponentiation ?ez ."
-                                   "  (?ex ?ey ?ez) math:sum ?sum ."
-                                   "  ?sum math:sqrt ?sqrt ."
+                                   "  ?factors ex:x ?x ; ex:y ?y ."
+                                   "  (?x ?y) math:" + operator + " ?result ."
                                    "} => {"
-                                   "  ex:result ex:value ?sqrt ."
+                                   "  ex:result ex:value ?result ."
                                    "} .")
+
+                        #sum, quotient, product, negation
                         resp = requests.post(
                             url, headers=headers, data=payload)
                         if resp.status_code != 201:
@@ -111,7 +115,7 @@ def init_services(num, dhost):
                                        "@prefix parent: <http://localhost:8080/marmotta/ldp/> ."
                                        "<> a ldp:Resource ; a step:StartAPI ;"
                                        "     step:hasWebService parent:" + name + " ;"
-                                       "     rdfs:label \"This starts the " + name + "\" .")
+                                       "     rdfs:label \"This starts the " + name + "app\" .")
                         resp = requests.post(
                             url, headers=headers, data=payload)
                         if resp.status_code != 201:
@@ -178,9 +182,9 @@ create_dockercompose(ARGS.num)
 
 
 # run docker-compose up
-# run_dockercompose()
+run_dockercompose()
 
-# time.sleep(5)
+time.sleep(5)
 
 # run service initialization script
-#init_services(ARGS.num, ARGS.dhost)
+init_services(ARGS.num, ARGS.dhost)
