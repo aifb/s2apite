@@ -25,7 +25,7 @@ def init_services(num, dhost):
         name = "marmotta" + str(i)
         #dhost = "192.168.56.105"
         base_uri = "http://" + dhost + ':' + port
-        operator = random.sample(["sum", "quotient", "product"], 1).pop()
+        operator = random.sample(["sum", "quotient", "product", "difference"], 1).pop()
         operator_verb = "add"
         num_operands = random.randrange(2, 10)
         if operator == "quotient":
