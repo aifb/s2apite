@@ -131,6 +131,9 @@ def init_services(num, dhost):
                 print("waiting for " + base_uri + " to start up...")
                 time.sleep(5)
 
+def getlatestimage()
+     "get latest version of docker image"
+    subprocess.call("docker pull aifb/s2apite", shell=True)   
 
 def create_dockercompose(num):
     "create and populate docker-compose.yml file"
@@ -140,7 +143,7 @@ def create_dockercompose(num):
 
     for i in range(num):
         print("  marmotta" + str(i) + ":", file=dcfile)
-        print("    image: registry.gitlab.com/usu-research-step/s2apite", file=dcfile)
+        print("    image: aifb/s2apite:latest", file=dcfile)
         print("    container_name: marmotta" + str(i), file=dcfile)
         print("    ports:", file=dcfile)
         print("    - \"" + str(9000 + i) + ":8080\"", file=dcfile)
