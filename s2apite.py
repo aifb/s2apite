@@ -171,12 +171,11 @@ def create_dockercompose(num):
 def run_dockercompose(swarmmode):
     "run docker-compose command"
     if swarmmode:
-        print("run swarm")
-    #subprocess.call("docker stack deploy -c docker-compose.yml s2apite", shell=True)
+        print("run in docker swarm")
+        subprocess.call("docker stack deploy -c docker-compose.yml s2apite", shell=True)
     else:
-        print("run normal")
-    #subprocess.call("docker-compose up -d", shell=True)
-
+        print("run in local docker engine")
+        subprocess.call("docker-compose up -d", shell=True)
 
 ##########################################################################
 ##########################################################################
@@ -212,12 +211,12 @@ random.seed(ARGS.seed)
 create_dockercompose(ARGS.num)
 
 # update local image 
-#getlatestimage()
+getlatestimage()
 
 # run docker-compose up
 run_dockercompose(ARGS.swarm)
 
-#time.sleep(5)
+time.sleep(5)
 
 # run service initialization script
-#init_services(ARGS.num, ARGS.dhost)
+init_services(ARGS.num, ARGS.dhost)
