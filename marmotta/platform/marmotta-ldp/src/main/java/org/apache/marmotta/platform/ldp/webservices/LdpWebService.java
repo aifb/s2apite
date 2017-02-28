@@ -50,9 +50,17 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.rio.*;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.RDFWriterRegistry;
+import org.openrdf.rio.Rio;
+import org.openrdf.rio.UnsupportedRDFormatException;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.Nodes;
+import org.semanticweb.yars.turtle.TurtleParseException;
+import org.semanticweb.yars.turtle.TurtleParser;
 import org.slf4j.Logger;
 
 import edu.kit.aifb.datafu.Binding;
@@ -79,9 +87,11 @@ import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -389,12 +399,14 @@ public class LdpWebService {
 		return resp;
 	}
 
-	/**
+
+
+	/**********************************************************************************************************************
 	 * LDP Post Request.
 	 *
 	 * @see <a href="https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp.html#ldpr-HTTP_POST">5.4 LDP-R POST</a>
 	 * @see <a href="https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp.html#ldpc-HTTP_POST">6.4 LDP-C POST</a>
-	 */
+	 **********************************************************************************************************************/
 	@POST
 	public Response POST(@Context UriInfo uriInfo, @HeaderParam(HTTP_HEADER_SLUG) String slug,
 			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
@@ -420,8 +432,8 @@ public class LdpWebService {
 				conn.rollback();
 				return resp.build();
 			}
-			
-			
+
+
 
 			if ( ldpService.isStartAPI(conn, container) ) {
 				log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", container);
@@ -436,8 +448,8 @@ public class LdpWebService {
 				return resp.build();
 
 			}
-			
-			
+
+
 
 			// Check that the target container supports the LDPC Interaction Model
 			final LdpService.InteractionModel containerModel = ldpService.getInteractionModel(conn, container);
@@ -475,6 +487,11 @@ public class LdpWebService {
 			return buildPostResponse(conn, container, newResource, ldpInteractionModel, postBody, type);
 		} catch (InvalidInteractionModelException e) {
 			log.debug("POST with invalid interaction model <{}> to <{}>", e.getHref(), container);
+			final Response.ResponseBuilder response = createResponse(conn, Response.Status.BAD_REQUEST, container);
+			conn.commit();
+			return response.entity(e.getMessage()).build();
+		} catch (IllegalArgumentException e) {
+			log.debug("POST with invalid body content: {}", container);
 			final Response.ResponseBuilder response = createResponse(conn, Response.Status.BAD_REQUEST, container);
 			conn.commit();
 			return response.entity(e.getMessage()).build();
@@ -538,31 +555,31 @@ public class LdpWebService {
 			if (ldpService.exists(conn, resource) ) {
 
 
-					log.debug("<{}> exists and is a DataResource, so this is an UPDATE", resource);
+				log.debug("<{}> exists and is a DataResource, so this is an UPDATE", resource);
 
-					if (eTag == null) {
-						// check for If-Match header (ETag) -> 428 Precondition Required (Sec. 4.2.4.5)
-						log.trace("No If-Match header, but that's a MUST");
-						resp = createResponse(conn, 428, resource);
+				if (eTag == null) {
+					// check for If-Match header (ETag) -> 428 Precondition Required (Sec. 4.2.4.5)
+					log.trace("No If-Match header, but that's a MUST");
+					resp = createResponse(conn, 428, resource);
+					conn.rollback();
+					return resp.build();
+				} else {
+					// check ETag -> 412 Precondition Failed (Sec. 4.2.4.5)
+					log.trace("Checking If-Match: {}", eTag);
+					EntityTag hasTag = ldpService.generateETag(conn, resource);
+					if (!eTag.equals(hasTag)) {
+						log.trace("If-Match header did not match, expected {}", hasTag);
+						resp = createResponse(conn, Response.Status.PRECONDITION_FAILED, resource);
 						conn.rollback();
 						return resp.build();
-					} else {
-						// check ETag -> 412 Precondition Failed (Sec. 4.2.4.5)
-						log.trace("Checking If-Match: {}", eTag);
-						EntityTag hasTag = ldpService.generateETag(conn, resource);
-						if (!eTag.equals(hasTag)) {
-							log.trace("If-Match header did not match, expected {}", hasTag);
-							resp = createResponse(conn, Response.Status.PRECONDITION_FAILED, resource);
-							conn.rollback();
-							return resp.build();
-						}
 					}
+				}
 
-					newResource = ldpService.updateResource(conn, resource, postBody, mimeType);
-					log.debug("PUT update for <{}> successful", newResource);
-					resp = createResponse(conn, Response.Status.OK, resource);
-					conn.commit();
-					return resp.build();
+				newResource = ldpService.updateResource(conn, resource, postBody, mimeType);
+				log.debug("PUT update for <{}> successful", newResource);
+				resp = createResponse(conn, Response.Status.OK, resource);
+				conn.commit();
+				return resp.build();
 
 
 
@@ -879,8 +896,8 @@ public class LdpWebService {
 	}
 
 
-	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, int status, String resource, InputStream input_data) throws RepositoryException {
-		return createWebServiceResponse(connection, Response.status(status), resource, input_data);
+	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, int status, String resource, InputStream body) throws RepositoryException {
+		return createWebServiceResponse(connection, Response.status(status), resource, body);
 	}
 
 
@@ -892,7 +909,7 @@ public class LdpWebService {
 	 * @param resource the uri/url of the resource
 	 * @return the provided ResponseBuilder for chaining
 	 */
-	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.ResponseBuilder rb, String resource, InputStream input_data) throws RepositoryException {
+	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.ResponseBuilder rb, String resource, InputStream body) throws RepositoryException, IllegalArgumentException {
 		createWebServiceResponse(rb);
 
 		if (ldpService.exists(connection, resource)) {
@@ -931,7 +948,7 @@ public class LdpWebService {
 					// TODO: handle multiple programs with same WebService
 				}
 
-				final Collection<Statement> output_data = executeWebService(service, program_data, null, input_data);
+				final Collection<Statement> output_data = executeWebService(service, program_data, null, body);
 
 				StreamingOutput entity = new StreamingOutput() {
 					@Override
@@ -984,9 +1001,12 @@ public class LdpWebService {
 		}
 	}
 
-	private Collection<Statement> executeWebService(Resource resource, InputStream program_data, String query, InputStream input_data)  {
+	private Collection<Statement> executeWebService(Resource resource, InputStream program_data, String query, InputStream body) throws IllegalArgumentException {
 
 		Collection<Statement> results = new ArrayList<Statement>();
+		
+
+		ValueFactory factory = ValueFactoryImpl.getInstance();
 
 		/*
 		 * Write HTTP request body input to request output
@@ -1026,107 +1046,146 @@ public class LdpWebService {
 		 */
 
 		try {
-			
 
-			//Generate a Program Object
-			//program_data = new ByteArrayInputStream(" <http://this> <http://is> <http://sparta> . ".getBytes());
-			//String pro = getStringFromInputStream(program_data);
-			
-			
+			/*
+			 * Generate a Program Object
+			 */
 			Origin program_origin = new InternalOrigin("programOriginTriple");
 			ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(program_origin);
-			//Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(pro.getBytes()));
+			
 			Notation3Parser notation3Parser = new Notation3Parser(program_data);
 			notation3Parser.parse(programConsumer, program_origin);
 			Program program = programConsumer.getProgram(program_origin);
-			//program = programConsumer.getProgram(program_origin);
-	/*
-	 *  Register a Query		
-	 */
+			
+
+			
+			/*
+			 * Generate a Graph Object
+			 */
+			try {
+			TurtleParser turtleParser = new TurtleParser();
+			turtleParser.parse(body, Charset.defaultCharset(), new java.net.URI( resource.stringValue() ) );
+			
+			
+			while(turtleParser.hasNext()) {
+				Node[] node = turtleParser.next();
+				Nodes nodes = new Nodes(node);
+				program.addTriple(nodes);
+			}
+			
+
+			
+			} catch (TurtleParseException | org.semanticweb.yars.turtle.ParseException e) {
+				throw new IllegalArgumentException();
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException();
+			}
+
+			
+			/*
+			 *  Register a Query		
+			 */
 			QueryConsumerImpl qc = new QueryConsumerImpl(new InternalOrigin("query_consumer_1"));
 			String s = new String("CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }");
 			SparqlParser sp = new SparqlParser(new StringReader(s));
-			//ParserConsumer pc = new QueryConsumerImpl(pbase);
+
 			sp.parse(qc, new InternalOrigin("SparqlConstructDummy"));
-			//sp.parse(qc, new InternalOrigin("SparqlSelectTest"));
 			ConstructQuery sq = qc.getConstructQueries().iterator().next();
 
-			
-			BindingConsumerCollection bc = new BindingConsumerCollection(); //Error: BindingConsumerSet cannot resolved to a type
+
+			BindingConsumerCollection bc = new BindingConsumerCollection(); 
 			BindingConsumerSink sink = new BindingConsumerSink(bc);
+
+			program.registerConstructQuery(sq, sink);
 			
-			program.registerConstructQuery(sq, sink); //Error: die Methode addSelectQuery is not defined.
-	/*
-	 * 	Create an EvaluateProgram Object
-	 */
+			
+			
+			/*
+			 * 	Create an EvaluateProgram Object
+			 */
 			EvaluateProgramConfig config = new EvaluateProgramConfig();
 			EvaluateProgramGenerator ep = new EvaluateProgramGenerator(program, config);
 			EvaluateProgram epg = ep.getEvaluateProgram();
-		
-	/*
-	 * 	Evaluate the Program
-	 */
-			epg.start();
-			System.out.println("Consumed");
+
 			
+			
+			/*
+			 * 	Evaluate the Program
+			 */
+			epg.start();
 			
 			epg.awaitIdleAndFinish();
-			
-			System.out.println(epg.getEvaluateOutputOrigin().toString());
+
 			epg.shutdown();
 			
-			ValueFactory factory = ValueFactoryImpl.getInstance();
+			
 			for (Binding binding : bc.getCollection() ) {
-				
+
 				Nodes nodes = binding.getNodes();
 				Node[] node = nodes.getNodeArray();
-				
+
 				String subj_string = node[0].toString().replace("<", "").replace(">", "").replace("\"", "");
 				Resource subject;
+				
+				
 				if (subj_string.startsWith("_")) {
+					
 					// is BlankNode
 					subject = factory.createBNode( subj_string.replace("_:", "") );
+					
 				} else {
+					
 					subject = factory.createURI( subj_string ); 
+					
 				}
+
 				
 				String predicate_string = node[1].toString().replace("<", "").replace(">", "").replace("\"", "");
 				URI predicate = factory.createURI( predicate_string ); 
-				
-				
+
+
 				String object_string = node[2].toString().replace("<", "").replace(">", "").replace("\"", "");
 				try {
+					
+					
 					Value object = factory.createURI( object_string ); 
 					results.add( factory.createStatement(subject, predicate, object) );
+					
+					
 				} catch (IllegalArgumentException e) {
+					
 					Value object = factory.createLiteral( object_string ); 
 					results.add( factory.createStatement(subject, predicate, object) );
+					
 				}
+
+				
+				
 				
 			}
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
 			//************************************************************************************************//
 
 
 
 
 			// Parse programs
-//			Origin program_origin = new InternalOrigin("programOriginTriple");
-//			ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(program_origin);
-//			Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(pro.getBytes()));
-//			//			Notation3Parser notation3Parser = new Notation3Parser(program_data);
-//			notation3Parser.parse(programConsumer, program_origin);
-//			//Program program = programConsumer.getProgram(program_origin);
-//			program = programConsumer.getProgram(program_origin);
+			//			Origin program_origin = new InternalOrigin("programOriginTriple");
+			//			ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(program_origin);
+			//			Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(pro.getBytes()));
+			//			//			Notation3Parser notation3Parser = new Notation3Parser(program_data);
+			//			notation3Parser.parse(programConsumer, program_origin);
+			//			//Program program = programConsumer.getProgram(program_origin);
+			//			program = programConsumer.getProgram(program_origin);
 
 			// Parse query
-/*			Origin origin  = new InternalOrigin("queryOrigin");
-	
+			/*			Origin origin  = new InternalOrigin("queryOrigin");
+
 			QueryConsumerImpl queryConsumer = new QueryConsumerImpl(origin);
 			SparqlParser parser = new SparqlParser(new ByteArrayInputStream(QUERY_CONSTRUCT_SPO.getBytes()));
 			parser.parse(queryConsumer, origin);
@@ -1148,12 +1207,12 @@ public class LdpWebService {
 			// instance.evaluateQueries(queries);
 			BindingConsumerCollection bindingConsumerCollection = instance
 					.getConstructQueryConsumer("constructQueries");
-			
+
 			for (Binding binding : bindingConsumerCollection.getCollection() ) {
-				
+
 				Nodes nodes = binding.getNodes();
 				Node[] node = nodes.getNodeArray();
-				
+
 				URI subject = ValueFactoryImpl.getInstance().createURI( node[0].toString() ); 
 				URI predicate = ValueFactoryImpl.getInstance().createURI( node[1].toString() ); 
 				try {
@@ -1163,9 +1222,9 @@ public class LdpWebService {
 					Value object = ValueFactoryImpl.getInstance().createLiteral( node[2].toString() ); 
 					results.add( ValueFactoryImpl.getInstance().createStatement(subject, predicate, object) );
 				}
-				
+
 			}
-*/
+			 */
 
 		} catch (edu.kit.aifb.datafu.parser.sparql.ParseException e) {
 			// TODO: handle exception
