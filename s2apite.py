@@ -138,7 +138,7 @@ def getlatestimage()
 def create_dockercompose(num):
     "create and populate docker-compose.yml file"
     dcfile = open('docker-compose.yml', 'w')
-    print("version: '2'", file=dcfile)
+    print("version: '3'", file=dcfile)
     print("services:", file=dcfile)
 
     for i in range(num):
