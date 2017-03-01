@@ -21,7 +21,7 @@ def init_services(num, dhost):
     #print(random.sample(["plus", "minus", "multiply", "divide"], 1))
 
     for i in range(num):
-        port = str(9000 + i)
+        port = str(20000 + i)
         name = "marmotta" + str(i)
         #dhost = "192.168.56.105"
         base_uri = "http://" + dhost + ':' + port
@@ -131,8 +131,8 @@ def init_services(num, dhost):
                 print("waiting for " + base_uri + " to start up...")
                 time.sleep(5)
 
-def getlatestimage()
-     "get latest version of docker image"
+def getlatestimage():
+    "get latest version of docker image"
     subprocess.call("docker pull aifb/s2apite", shell=True)   
 
 def create_dockercompose(num):
@@ -144,9 +144,9 @@ def create_dockercompose(num):
     for i in range(num):
         print("  marmotta" + str(i) + ":", file=dcfile)
         print("    image: aifb/s2apite:latest", file=dcfile)
-        print("    container_name: marmotta" + str(i), file=dcfile)
+        #print("    container_name: marmotta" + str(i), file=dcfile)
         print("    ports:", file=dcfile)
-        print("    - \"" + str(9000 + i) + ":8080\"", file=dcfile)
+        print("    - \"" + str(20000 + i) + ":8080\"", file=dcfile)
         print("    environment:", file=dcfile)
         print("      MARMOTTAHOST: marmotta" + str(i), file=dcfile)
     dcfile.close()
@@ -186,10 +186,12 @@ random.seed(ARGS.seed)
 create_dockercompose(ARGS.num)
 
 
-# run docker-compose up
-run_dockercompose()
+# docker stack deploy -c docker-compose.yml s2apite
 
-time.sleep(5)
+# run docker-compose up
+#run_dockercompose()
+
+#time.sleep(5)
 
 # run service initialization script
-init_services(ARGS.num, ARGS.dhost)
+#init_services(ARGS.num, ARGS.dhost)
