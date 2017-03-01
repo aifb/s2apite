@@ -102,6 +102,7 @@ def init_services(num, dhost):
                                ". It can "+ OPERATION_VERB[operator] + " numbers.\" ;"
                                "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
                                "	<http://step.aifb.kit.edu/hasProgram> child:" + name + "app.bin ;"
+                               "    <http://step.aifb.kit.edu/hasInputPattern> child:" + name + "InputPattern ;"
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
                     if resp.status_code != 201:
