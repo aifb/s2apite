@@ -51,7 +51,7 @@ def init_services(num, dhost):
                 status = requests.head(url, timeout=5).status_code
                 if status == 200:
                     if(i == 1): 
-                        print("First container started after:" + str(time.time() - START))
+                        print("First container started after: " + str(time.time() - START) + " seconds")
                     # init service
                     print("init service at " + name)
                     headers = {'Accept': 'text/turtle',
@@ -131,6 +131,8 @@ def init_services(num, dhost):
                         resp = requests.post(
                             url, headers=headers, data=payload)
                         if resp.status_code != 201:
+                            if(i == 1): 
+                                print("First container complete initialized after: " + str(time.time() - START) + " seconds")
                             print("initialization of " + name +
                                   " StartAPI failed!")
                         else:
@@ -138,11 +140,13 @@ def init_services(num, dhost):
                                   " StartAPI successfull!")
                         countwait = 0
                         break
-            except requests.exceptions.Timeout:
+            except (requests.exceptions.Timeout, requests.packages.urllib3.exceptions.NewConnectionError):
+                # timeout is 5 sec - print every 10 sec
                 countwait = countwait + 1
-                if countwait % 100 == 0:
+                if countwait % 2 == 0:
                     print("waiting for " + base_uri + " to start up...")
-                time.sleep(.01)
+        
+        print("All services started and initialized after: "  + str(time.time() - START) + "seconds")
 
 
 def getlatestimage():
@@ -215,8 +219,6 @@ getlatestimage()
 
 # run docker-compose up
 run_dockercompose(ARGS.swarm)
-
-time.sleep(5)
 
 # run service initialization script
 init_services(ARGS.num, ARGS.dhost)
