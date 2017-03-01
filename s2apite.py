@@ -70,9 +70,7 @@ def init_services(num, dhost):
         name = "marmotta" + str(i)
         base_uri = "http://" + dhost + ':' + port
         operator = random.sample(["sum", "quotient", "product", "difference"], 1).pop()
-        num_operands = random.randrange(2, 10)
-
-        abc = list("abcdefghijklmnopqrstuvwxyz")
+        num_operands = random.randrange(2, 26)
 
         print("init " + name + " on " + base_uri + "/marmotta/ldp/")
         print(name + " is a service that " + OPERATION_VERB[operator] + "s " +  str(num_operands) + " operands.")
