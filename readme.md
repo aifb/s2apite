@@ -22,7 +22,7 @@ docker run -d -p 8080:8080 registry.gitlab.com/usu-research-step/s2apite
 
 
 # Requirements
-- docker
+- docker (1.13.0+)
 - docker-compose
 - python 3.x
 
