@@ -147,9 +147,10 @@ def init_services(num, dhost):
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
                     # post input_pattern
+                    url = base_uri + "/marmotta/ldp/" + name
                     headers = {'Accept': 'text/turtle',
                                'Slug': name + "InputPattern",
-                               'Content-Type': 'text/n3',
+                               'Content-Type': 'text/notation3',
                                'Authorization': 'Basic ' + AUTH}
                     payload = generate_input_pattern(operator, num_operands)
                     resp = requests.post(url, headers=headers, data=payload)
@@ -191,19 +192,19 @@ def init_services(num, dhost):
                                        "@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
                                        "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
                                        "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
-                                       "@prefix parent: <http://localhost:8080/marmotta/ldp/> ."
+                                       "@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
                                        "<> a ldp:Resource ; a step:StartAPI ;"
                                        "     step:hasWebService parent:" + name + " ;"
                                        "     rdfs:label \"This starts the " + name + "app\" .")
                         resp = requests.post(
                             url, headers=headers, data=payload)
                         if resp.status_code != 201:
-                            if(i == 1):
-                                print("First container complete initialized after: " +
-                                      str(time.time() - START) + " seconds")
                             print("initialization of " + name +
                                   " StartAPI failed!")
                         else:
+                            if(i == 1):
+                                print("First container complete initialized after: " +
+                                      str(time.time() - START) + " seconds")
                             print("initialization of " + name +
                                   " StartAPI successfull!")
                         countwait = 0
