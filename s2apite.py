@@ -159,22 +159,25 @@ def init_services(num, dhost):
                                   " StartAPI successfull!")
                         countwait = 0
                         break
-            except (requests.exceptions.Timeout, requests.packages.urllib3.exceptions.NewConnectionError):
+            except requests.exceptions.BaseHTTPError:
+                #this happens when the server refuses any connection yet
+                print(base_uri + "not responding yet. waiting for start up...")
+                time.sleep(5)
+            except requests.exceptions.Timeout:
                 # timeout is 5 sec - print every 10 sec
                 countwait = countwait + 1
                 if countwait % 2 == 0:
                     print("waiting for " + base_uri + " to start up...")
-        
         print("All services started and initialized after: "  + str(time.time() - START) + "seconds")
 
 
 def getlatestimage():
     "get latest version of docker image"
-    subprocess.call("docker pull " + IMAGE, shell=True)   
+    subprocess.call("docker pull " + IMAGE, shell=True)
 
 def create_dockercompose(num):
-    start_create_compose = time.time()
     "create and populate docker-compose.yml file"
+    start_create_compose = time.time()
     dcfile = open('docker-compose.yml', 'w')
     print("version: '3'", file=dcfile)
     print("services:", file=dcfile)
@@ -234,12 +237,15 @@ random.seed(ARGS.seed)
 # create docker-compose
 create_dockercompose(ARGS.num)
 
-# update local image 
-if(ARGS.update):
+# update local image
+if ARGS.update:
     getlatestimage()
 
 # run docker-compose up
 run_dockercompose(ARGS.swarm)
+
+#wait (2 seconds for each container for initial startup)
+time.sleep(2*ARGS.num)
 
 # run service initialization script
 init_services(ARGS.num, ARGS.dhost)
