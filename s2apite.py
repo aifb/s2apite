@@ -8,20 +8,27 @@ import argparse
 import subprocess
 import requests
 
+# constants
+
+# docker image for containers
+IMAGE = "aifb/s2apite:latest"
+# first port to be used
+PORT = 9000
+# marmotta credentials / all services use the same
+AUTH = base64.b64encode(b'admin:pass123').decode('ascii')
+# start time for logging timers
+START = time.time()
 
 # functions
 def init_services(num, dhost):
     "Initializes the services"
-
-    # marmotta credentials / all services use the same
-    auth_base64 = base64.b64encode(b'admin:pass123').decode('ascii')
 
     # for i in range(10):
     #print(random.randrange(0, 5))
     #print(random.sample(["plus", "minus", "multiply", "divide"], 1))
 
     for i in range(num):
-        port = str(20000 + i)
+        port = str(PORT + i)
         name = "marmotta" + str(i)
         #dhost = "192.168.56.105"
         base_uri = "http://" + dhost + ':' + port
@@ -36,18 +43,21 @@ def init_services(num, dhost):
             operator_verb = "substract"
         print("init " + name + " on " + base_uri + "/marmotta/ldp/")
         print(name + "is a service that " + operator_verb + "s " +  str(num_operands) + " operands.")
-
+        
+        countwait = 0
         while True:
             url = base_uri + '/marmotta/ldp/'
             try:
                 status = requests.head(url, timeout=5).status_code
                 if status == 200:
+                    if(i == 1): 
+                        print("First container started after:" + str(time.time() - START))
                     # init service
-                    print("init service at marmotta")
+                    print("init service at " + name)
                     headers = {'Accept': 'text/turtle',
                                'Slug': name,
                                'Content-Type': 'text/turtle',
-                               'Authorization': 'Basic ' + auth_base64}
+                               'Authorization': 'Basic ' + AUTH}
                     payload = ("@prefix ldp: <http://www.w3.org/ns/ldp#> ."
                                "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
                                "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
@@ -73,7 +83,7 @@ def init_services(num, dhost):
                         headers = {'Accept': 'text/turtle',
                                    'Slug': name + "app",
                                    'Content-Type': 'text/notation3',
-                                   'Authorization': 'Basic ' + auth_base64}
+                                   'Authorization': 'Basic ' + AUTH}
                         payload = ("@prefix ex: <http://example.org/> ."
                                    "@prefix ldp: <http://www.w3.org/ns/ldp#> ."
                                    "@prefix step: <http://step.aifb.kit.edu/> ."
@@ -105,7 +115,7 @@ def init_services(num, dhost):
                             headers = {'Accept': 'text/turtle',
                                        'Slug': "start",
                                        'Content-Type': 'text/turtle',
-                                       'Authorization': 'Basic ' + auth_base64}
+                                       'Authorization': 'Basic ' + AUTH}
                             payload = ("@prefix ex: <http://example.org/> ."
                                        "@prefix ldp: <http://www.w3.org/ns/ldp#> ."
                                        "@prefix step: <http://step.aifb.kit.edu/> ."
@@ -126,14 +136,18 @@ def init_services(num, dhost):
                         else:
                             print("initialization of " + name +
                                   " StartAPI successfull!")
+                        countwait = 0
                         break
             except requests.exceptions.Timeout:
-                print("waiting for " + base_uri + " to start up...")
-                time.sleep(5)
+                countwait = countwait + 1
+                if countwait % 100 == 0:
+                    print("waiting for " + base_uri + " to start up...")
+                time.sleep(.01)
+
 
 def getlatestimage():
     "get latest version of docker image"
-    subprocess.call("docker pull aifb/s2apite", shell=True)   
+    subprocess.call("docker pull " + IMAGE, shell=True)   
 
 def create_dockercompose(num):
     "create and populate docker-compose.yml file"
@@ -143,19 +157,25 @@ def create_dockercompose(num):
 
     for i in range(num):
         print("  marmotta" + str(i) + ":", file=dcfile)
-        print("    image: aifb/s2apite:latest", file=dcfile)
+        print("    image: " + IMAGE, file=dcfile)
+        # container name not supported in swarm deployment / v3
         #print("    container_name: marmotta" + str(i), file=dcfile)
         print("    ports:", file=dcfile)
-        print("    - \"" + str(20000 + i) + ":8080\"", file=dcfile)
+        print("    - \"" + str(PORT + i) + ":8080\"", file=dcfile)
         print("    environment:", file=dcfile)
         print("      MARMOTTAHOST: marmotta" + str(i), file=dcfile)
     dcfile.close()
     print("docker compose file created")
 
 
-def run_dockercompose():
+def run_dockercompose(swarmmode):
     "run docker-compose command"
-    subprocess.call("docker-compose up -d", shell=True)
+    if swarmmode:
+        print("run swarm")
+    #subprocess.call("docker stack deploy -c docker-compose.yml s2apite", shell=True)
+    else:
+        print("run normal")
+    #subprocess.call("docker-compose up -d", shell=True)
 
 
 ##########################################################################
@@ -167,17 +187,23 @@ def run_dockercompose():
 # define CLI interface
 PARSER = argparse.ArgumentParser(
     description='s2apite configures and launches a network of semantic services in docker')
-PARSER.add_argument('--seed', '-s', metavar='s', type=int, required=True,
+PARSER.add_argument('-s', '--seed', type=int, metavar='', required=True,
                     help='seed for random service initializer')
-PARSER.add_argument('--num', '-n', metavar='n', type=int, required=True,
+PARSER.add_argument('-n', '--num', type=int, metavar='', required=True,
                     help='number of services to spawn')
-PARSER.add_argument('--dhost', '-dh', metavar='dh', required=True,
+PARSER.add_argument('-dh', '--dhost', metavar='', required=True,
                     help='hostname or ip of docker host')
+PARSER.add_argument('-p', '--port', metavar='', type=int, default=PORT,
+                    help='first port number of port range, default: ' +str(PORT))
+PARSER.add_argument('-sw', '--swarm', metavar='', type=bool, default=False,
+                    help='swarm mode [True/False] - default False')
 
 ARGS = PARSER.parse_args()
+
 print("Running s2apite: Creating " + str(ARGS.num)
       + " semantic services with seed " + str(ARGS.seed) + ".")
 
+PORT = ARGS.port
 
 # init random with seed
 random.seed(ARGS.seed)
@@ -185,11 +211,11 @@ random.seed(ARGS.seed)
 # create docker-compose
 create_dockercompose(ARGS.num)
 
-
-# docker stack deploy -c docker-compose.yml s2apite
+# update local image 
+#getlatestimage()
 
 # run docker-compose up
-#run_dockercompose()
+run_dockercompose(ARGS.swarm)
 
 #time.sleep(5)
 
