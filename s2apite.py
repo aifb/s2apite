@@ -8,41 +8,74 @@ import argparse
 import subprocess
 import requests
 
-# constants
+##########################################################################
+# CONSTANTS
+##########################################################################
 
 # docker image for containers
 IMAGE = "aifb/s2apite:latest"
-# first port to be used
-PORT = 9000
 # marmotta credentials / all services use the same
 AUTH = base64.b64encode(b'admin:pass123').decode('ascii')
 # start time for logging timers
 START = time.time()
 
-# functions
+# constants for program generator
+ABC = list("abcdefghijklmnopqrstuvwxyz")
+OP1NAME = {"sum" : "summand", "difference":"minuend", "product":"multiplicant", "quotient": "dividend"}
+OP2NAME = {"sum" : "summand", "difference":"subtrahend", "product":"multiplicant", "quotient": "divisor"}
+RESULTNAME =  {"sum" : "sum", "difference":"diff", "product":"prod", "quotient": "quot"}
+OPERATION_VERB = {"sum" : "add", "difference":"substract", "product":"multiply", "quotient": "divide"}
+
+
+##########################################################################
+# FUNCTIONS
+##########################################################################
+
+def generate_program(operator, num_operands):
+    ''' generates programm '''
+    operands = "?factors "
+    operations = "(?a ?b) math:" + operator + " ?" + RESULTNAME[operator]+ ("1" if num_operands > 2 else "") +" .\n"
+    result = ""
+
+    operands += "   ex:"+ OP1NAME[operator] + " ?a ;\n"
+    for j in range(1, num_operands):
+        operands += "   ex:" + OP2NAME[operator] + str(j) + " ?" + ABC[j]
+        operands += ";\n" if j != num_operands-1 else ".\n"
+        if j < num_operands-2:
+            operations += "(?" + RESULTNAME[operator] + str(j) + " ?"+ ABC[j+1] +")    math:" +operator + " ?" + RESULTNAME[operator] + str(j+1) +" . \n"
+    if(num_operands > 2):
+        operations += "(?" + RESULTNAME[operator] + str(1 if num_operands==2 else num_operands-2) + " ?"+ ABC[num_operands-1] +")    math:" +operator + " ?" + RESULTNAME[operator] +" . \n"
+    result = "   ex:result ex:value ?" + RESULTNAME[operator] +  " .\n" 
+
+    program = ("@prefix ex: <http://example.org/> .\n"
+            "@prefix ldp: <http://www.w3.org/ns/ldp#> .\n"
+            "@prefix step: <http://step.aifb.kit.edu/> ."
+            "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .\n"
+            "@prefix dcterms: <http://purl.org/dc/terms/> .\n"
+            "@prefix foaf:    <http://xmlns.com/foaf/0.1/> .\n"
+            "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
+            "@prefix math: <http://www.w3.org/2000/10/swap/math#> .\n"
+            "{\n" + operands + "\n"
+            "" + operations + "\n"
+            "} => {\n"
+            "" + result + ""
+            "} .\n")
+    return program
+
 def init_services(num, dhost):
     "Initializes the services"
-
-    # for i in range(10):
-    #print(random.randrange(0, 5))
-    #print(random.sample(["plus", "minus", "multiply", "divide"], 1))
 
     for i in range(num):
         port = str(PORT + i)
         name = "marmotta" + str(i)
-        #dhost = "192.168.56.105"
         base_uri = "http://" + dhost + ':' + port
         operator = random.sample(["sum", "quotient", "product", "difference"], 1).pop()
-        operator_verb = "add"
         num_operands = random.randrange(2, 10)
-        if operator == "quotient":
-            operator_verb = "divide"
-        if operator == "product":
-            operator_verb = "multiply"
-        if operator == "negate":
-            operator_verb = "substract"
+
+        abc = list("abcdefghijklmnopqrstuvwxyz")
+
         print("init " + name + " on " + base_uri + "/marmotta/ldp/")
-        print(name + "is a service that " + operator_verb + "s " +  str(num_operands) + " operands.")
+        print(name + " is a service that " + OPERATION_VERB[operator] + "s " +  str(num_operands) + " operands.")
         
         countwait = 0
         while True:
@@ -68,7 +101,7 @@ def init_services(num, dhost):
                                ""
                                "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
                                "     rdfs:label \"This is Service " + name +
-                               ". It can "+ operator_verb + " numbers.\" ;"
+                               ". It can "+ OPERATION_VERB[operator] + " numbers.\" ;"
                                "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
                                "	<http://step.aifb.kit.edu/hasProgram> child:" + name + "app.bin ;"
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
@@ -84,21 +117,7 @@ def init_services(num, dhost):
                                    'Slug': name + "app",
                                    'Content-Type': 'text/notation3',
                                    'Authorization': 'Basic ' + AUTH}
-                        payload = ("@prefix ex: <http://example.org/> ."
-                                   "@prefix ldp: <http://www.w3.org/ns/ldp#> ."
-                                   "@prefix step: <http://step.aifb.kit.edu/> ."
-                                   "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> ."
-                                   "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                                   "@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
-                                   "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
-                                   "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
-                                   "[] ex:x \"2\" ; ex:y \"3\" ."
-                                   "{"
-                                   "  ?factors ex:x ?x ; ex:y ?y ."
-                                   "  (?x ?y) math:" + operator + " ?result ."
-                                   "} => {"
-                                   "  ex:result ex:value ?result ."
-                                   "} .")
+                        payload = generate_program(operator, num_operands)
 
                         #sum, quotient, product, negation
                         resp = requests.post(
@@ -154,6 +173,7 @@ def getlatestimage():
     subprocess.call("docker pull " + IMAGE, shell=True)   
 
 def create_dockercompose(num):
+    start_create_compose = time.time()
     "create and populate docker-compose.yml file"
     dcfile = open('docker-compose.yml', 'w')
     print("version: '3'", file=dcfile)
@@ -169,7 +189,7 @@ def create_dockercompose(num):
         print("    environment:", file=dcfile)
         print("      MARMOTTAHOST: marmotta" + str(i), file=dcfile)
     dcfile.close()
-    print("docker compose file created")
+    print("docker compose file created in " + str(time.time() - start_create_compose) + " seconds")
 
 
 def run_dockercompose(swarmmode):
@@ -182,9 +202,7 @@ def run_dockercompose(swarmmode):
         subprocess.call("docker-compose up -d", shell=True)
 
 ##########################################################################
-##########################################################################
-###############################MAIN PROGRAMM##############################
-##########################################################################
+# MAIN PROGRAMM
 ##########################################################################
 
 # define CLI interface
@@ -196,16 +214,18 @@ PARSER.add_argument('-n', '--num', type=int, metavar='', required=True,
                     help='number of services to spawn')
 PARSER.add_argument('-dh', '--dhost', metavar='', required=True,
                     help='hostname or ip of docker host')
-PARSER.add_argument('-p', '--port', metavar='', type=int, default=PORT,
-                    help='first port number of port range, default: ' +str(PORT))
+PARSER.add_argument('-u', '--update', metavar='', type=bool, default=False,
+                    help='update docker image [True/False] - default False')
+PARSER.add_argument('-p', '--port', metavar='', type=int, default=9000,
+                    help='first port number of port range, default: 9000')
 PARSER.add_argument('-sw', '--swarm', metavar='', type=bool, default=False,
                     help='swarm mode [True/False] - default False')
-
 ARGS = PARSER.parse_args()
 
 print("Running s2apite: Creating " + str(ARGS.num)
       + " semantic services with seed " + str(ARGS.seed) + ".")
 
+#UPDATE PORT
 PORT = ARGS.port
 
 # init random with seed
@@ -215,7 +235,8 @@ random.seed(ARGS.seed)
 create_dockercompose(ARGS.num)
 
 # update local image 
-getlatestimage()
+if(ARGS.update):
+    getlatestimage()
 
 # run docker-compose up
 run_dockercompose(ARGS.swarm)
