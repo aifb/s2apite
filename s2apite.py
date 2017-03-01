@@ -21,10 +21,14 @@ START = time.time()
 
 # constants for program generator
 ABC = list("abcdefghijklmnopqrstuvwxyz")
-OP1NAME = {"sum" : "summand", "difference":"minuend", "product":"multiplicant", "quotient": "dividend"}
-OP2NAME = {"sum" : "summand", "difference":"subtrahend", "product":"multiplicant", "quotient": "divisor"}
-RESULTNAME =  {"sum" : "sum", "difference":"diff", "product":"prod", "quotient": "quot"}
-OPERATION_VERB = {"sum" : "add", "difference":"substract", "product":"multiply", "quotient": "divide"}
+OP1NAME = {"sum": "summand", "difference": "minuend",
+           "product": "multiplicant", "quotient": "dividend"}
+OP2NAME = {"sum": "summand", "difference": "subtrahend",
+           "product": "multiplicant", "quotient": "divisor"}
+RESULTNAME = {"sum": "sum", "difference": "diff",
+              "product": "prod", "quotient": "quot"}
+OPERATION_VERB = {"sum": "add", "difference": "substract",
+                  "product": "multiply", "quotient": "divide"}
 
 
 ##########################################################################
@@ -32,35 +36,68 @@ OPERATION_VERB = {"sum" : "add", "difference":"substract", "product":"multiply",
 ##########################################################################
 
 def generate_program(operator, num_operands):
-    ''' generates programm '''
+    "generates programm"
     operands = "?factors "
-    operations = "(?a ?b) math:" + operator + " ?" + RESULTNAME[operator]+ ("1" if num_operands > 2 else "") +" .\n"
+    operations = "(?a ?b) math:" + operator + " ?" + \
+        RESULTNAME[operator] + ("1" if num_operands > 2 else "") + " .\n"
     result = ""
 
-    operands += "   ex:"+ OP1NAME[operator] + " ?a ;\n"
+    operands += "   ex:" + OP1NAME[operator] + " ?a ;\n"
     for j in range(1, num_operands):
         operands += "   ex:" + OP2NAME[operator] + str(j) + " ?" + ABC[j]
-        operands += ";\n" if j != num_operands-1 else ".\n"
-        if j < num_operands-2:
-            operations += "(?" + RESULTNAME[operator] + str(j) + " ?"+ ABC[j+1] +")    math:" +operator + " ?" + RESULTNAME[operator] + str(j+1) +" . \n"
+        operands += ";\n" if j != num_operands - 1 else ".\n"
+        if j < num_operands - 2:
+            operations += "(?" + RESULTNAME[operator] + str(j) + " ?" + ABC[
+                j + 1] + ")    math:" + operator + " ?" + RESULTNAME[operator] + str(j + 1) + " . \n"
     if(num_operands > 2):
-        operations += "(?" + RESULTNAME[operator] + str(1 if num_operands==2 else num_operands-2) + " ?"+ ABC[num_operands-1] +")    math:" +operator + " ?" + RESULTNAME[operator] +" . \n"
-    result = "   ex:result ex:value ?" + RESULTNAME[operator] +  " .\n" 
+        operations += "(?" + RESULTNAME[operator] + str(1 if num_operands == 2 else num_operands - 2) + " ?" + ABC[
+            num_operands - 1] + ")    math:" + operator + " ?" + RESULTNAME[operator] + " . \n"
+    result = "   ex:result ex:value ?" + RESULTNAME[operator] + " .\n"
 
     program = ("@prefix ex: <http://example.org/> .\n"
-            "@prefix ldp: <http://www.w3.org/ns/ldp#> .\n"
-            "@prefix step: <http://step.aifb.kit.edu/> ."
-            "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .\n"
-            "@prefix dcterms: <http://purl.org/dc/terms/> .\n"
-            "@prefix foaf:    <http://xmlns.com/foaf/0.1/> .\n"
-            "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
-            "@prefix math: <http://www.w3.org/2000/10/swap/math#> .\n"
-            "{\n" + operands + "\n"
-            "" + operations + "\n"
-            "} => {\n"
-            "" + result + ""
-            "} .\n")
+               "@prefix ldp: <http://www.w3.org/ns/ldp#> .\n"
+               "@prefix step: <http://step.aifb.kit.edu/> ."
+               "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .\n"
+               "@prefix dcterms: <http://purl.org/dc/terms/> .\n"
+               "@prefix foaf:    <http://xmlns.com/foaf/0.1/> .\n"
+               "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
+               "@prefix math: <http://www.w3.org/2000/10/swap/math#> .\n"
+               "{\n" + operands + "\n"
+               "" + operations + "\n"
+               "} => {\n"
+               "" + result + ""
+               "} .\n")
     return program
+
+
+def generate_input_pattern(operator, num_operands):
+    "generates input pattern"
+    operands = "[]	"
+    typedefs = ""
+
+    equalnames = OP1NAME[operator] == OP2NAME[operator]
+    operands += "ex:" + OP1NAME[operator] + \
+        ("1" if equalnames == True else "") + "	?a ;\n"
+    for j in range(1, num_operands):
+        operands += "ex:" + OP2NAME[operator] + (str(j + 1) if equalnames == True else str(
+            j)) + " ?" + ABC[j] + (" ;\n" if j != num_operands - 1 else " .\n")
+    for k in range(0, num_operands):
+        typedefs += "?" + ABC[k] + " a math:Value .\n"
+
+    input_pattern = ("@prefix ex: <http://example.org/> .\n"
+                     "@prefix ldp: <http://www.w3.org/ns/ldp#> .\n"
+                     "@prefix step: <http://step.aifb.kit.edu/> .\n"
+                     "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .\n"
+                     "@prefix dcterms: <http://purl.org/dc/terms/> .\n"
+                     "@prefix foaf:    <http://xmlns.com/foaf/0.1/> .\n"
+                     "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
+                     "@prefix math: <http://www.w3.org/2000/10/swap/math#> .\n"
+                     "\n"
+                     "" + operands + ""
+                     "\n"
+                     "" + typedefs + "")
+    return input_pattern
+
 
 def init_services(num, dhost):
     "Initializes the services"
@@ -69,20 +106,23 @@ def init_services(num, dhost):
         port = str(PORT + i)
         name = "marmotta" + str(i)
         base_uri = "http://" + dhost + ':' + port
-        operator = random.sample(["sum", "quotient", "product", "difference"], 1).pop()
+        operator = random.sample(
+            ["sum", "quotient", "product", "difference"], 1).pop()
         num_operands = random.randrange(2, 26)
 
         print("init " + name + " on " + base_uri + "/marmotta/ldp/")
-        print(name + " is a service that " + OPERATION_VERB[operator] + "s " +  str(num_operands) + " operands.")
-        
+        print(name + " is a service that " +
+              OPERATION_VERB[operator] + "s " + str(num_operands) + " operands.")
+
         countwait = 0
         while True:
             url = base_uri + '/marmotta/ldp/'
             try:
                 status = requests.head(url, timeout=5).status_code
                 if status == 200:
-                    if(i == 1): 
-                        print("First container started after: " + str(time.time() - START) + " seconds")
+                    if(i == 1):
+                        print("First container started after: " +
+                              str(time.time() - START) + " seconds")
                     # init service
                     print("init service at " + name)
                     headers = {'Accept': 'text/turtle',
@@ -99,12 +139,21 @@ def init_services(num, dhost):
                                ""
                                "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
                                "     rdfs:label \"This is Service " + name +
-                               ". It can "+ OPERATION_VERB[operator] + " numbers.\" ;"
+                               ". It can " +
+                               OPERATION_VERB[operator] + " numbers.\" ;"
                                "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
                                "	<http://step.aifb.kit.edu/hasProgram> child:" + name + "app.bin ;"
                                "    <http://step.aifb.kit.edu/hasInputPattern> child:" + name + "InputPattern ;"
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
+                    # post input_pattern
+                    headers = {'Accept': 'text/turtle',
+                               'Slug': name + "InputPattern",
+                               'Content-Type': 'text/n3',
+                               'Authorization': 'Basic ' + AUTH}
+                    payload = generate_input_pattern(operator, num_operands)
+                    resp = requests.post(url, headers=headers, data=payload)
+
                     if resp.status_code != 201:
                         print("setup of " + name + " failed!")
                     else:
@@ -149,8 +198,9 @@ def init_services(num, dhost):
                         resp = requests.post(
                             url, headers=headers, data=payload)
                         if resp.status_code != 201:
-                            if(i == 1): 
-                                print("First container complete initialized after: " + str(time.time() - START) + " seconds")
+                            if(i == 1):
+                                print("First container complete initialized after: " +
+                                      str(time.time() - START) + " seconds")
                             print("initialization of " + name +
                                   " StartAPI failed!")
                         else:
@@ -159,7 +209,7 @@ def init_services(num, dhost):
                         countwait = 0
                         break
             except requests.exceptions.BaseHTTPError:
-                #this happens when the server refuses any connection yet
+                # this happens when the server refuses any connection yet
                 print(base_uri + "not responding yet. waiting for start up...")
                 time.sleep(5)
             except requests.exceptions.Timeout:
@@ -167,12 +217,14 @@ def init_services(num, dhost):
                 countwait = countwait + 1
                 if countwait % 2 == 0:
                     print("waiting for " + base_uri + " to start up...")
-        print("All services started and initialized after: "  + str(time.time() - START) + "seconds")
+        print("All services started and initialized after: " +
+              str(time.time() - START) + "seconds")
 
 
 def getlatestimage():
     "get latest version of docker image"
     subprocess.call("docker pull " + IMAGE, shell=True)
+
 
 def create_dockercompose(num):
     "create and populate docker-compose.yml file"
@@ -191,14 +243,16 @@ def create_dockercompose(num):
         print("    environment:", file=dcfile)
         print("      MARMOTTAHOST: marmotta" + str(i), file=dcfile)
     dcfile.close()
-    print("docker compose file created in " + str(time.time() - start_create_compose) + " seconds")
+    print("docker compose file created in " +
+          str(time.time() - start_create_compose) + " seconds")
 
 
 def run_dockercompose(swarmmode):
     "run docker-compose command"
     if swarmmode:
         print("run in docker swarm")
-        subprocess.call("docker stack deploy -c docker-compose.yml s2apite", shell=True)
+        subprocess.call(
+            "docker stack deploy -c docker-compose.yml s2apite", shell=True)
     else:
         print("run in local docker engine")
         subprocess.call("docker-compose up -d", shell=True)
@@ -227,7 +281,7 @@ ARGS = PARSER.parse_args()
 print("Running s2apite: Creating " + str(ARGS.num)
       + " semantic services with seed " + str(ARGS.seed) + ".")
 
-#UPDATE PORT
+# UPDATE PORT
 PORT = ARGS.port
 
 # init random with seed
@@ -243,8 +297,8 @@ if ARGS.update:
 # run docker-compose up
 run_dockercompose(ARGS.swarm)
 
-#wait (2 seconds for each container for initial startup)
-time.sleep(2*ARGS.num)
+# wait (2 seconds for each container for initial startup)
+time.sleep(2 * ARGS.num)
 
 # run service initialization script
 init_services(ARGS.num, ARGS.dhost)
