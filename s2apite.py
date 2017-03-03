@@ -211,8 +211,8 @@ def init_services(num, dhost):
                     resp.raise_for_status()
                     pushed_successfull["startapi"] = True
                     print("completed")
-                    if i == 1:
-                        print("First container complete initialized after: " +
+                    if i == 0:
+                        print("First container completely initialized after: " +
                               str(time.time() - START) + " seconds")
                     print("initialization of " + name +
                           " StartAPI successfull")
