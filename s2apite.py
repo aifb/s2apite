@@ -49,7 +49,7 @@ def generate_program(operator, num_operands):
         if j < num_operands - 2:
             operations += "(?" + RESULTNAME[operator] + str(j) + " ?" + ABC[
                 j + 1] + ")    math:" + operator + " ?" + RESULTNAME[operator] + str(j + 1) + " . \n"
-    if(num_operands > 2):
+    if num_operands > 2:
         operations += "(?" + RESULTNAME[operator] + str(1 if num_operands == 2 else num_operands - 2) + " ?" + ABC[
             num_operands - 1] + ")    math:" + operator + " ?" + RESULTNAME[operator] + " . \n"
     result = "   ex:result ex:value ?" + RESULTNAME[operator] + " .\n"
@@ -114,17 +114,24 @@ def init_services(num, dhost):
         print(name + " is a service that " +
               OPERATION_VERB[operator] + "s " + str(num_operands) + " operands.")
 
+        pushed_successfull = {"service_container": False,
+                              "input_pattern": False,
+                              "program": False,
+                              "startapi": False}
+        num_retry = 0
         countwait = 0
         while True:
             url = base_uri + '/marmotta/ldp/'
             try:
-                status = requests.head(url, timeout=5).status_code
-                if status == 200:
-                    if(i == 1):
-                        print("First container started after: " +
-                              str(time.time() - START) + " seconds")
-                    # init service
-                    print("init service at " + name)
+                resp = requests.head(url, timeout=5)
+                # raise HttpError on failure
+                resp.raise_for_status()
+                if i == 0:
+                    print("First container started after: " +
+                          str(time.time() - START) + " seconds")
+                # init service
+                if not pushed_successfull["service_container"]:
+                    print("posting service container to " + name)
                     headers = {'Accept': 'text/turtle',
                                'Slug': name,
                                'Content-Type': 'text/turtle',
@@ -140,13 +147,20 @@ def init_services(num, dhost):
                                "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
                                "     rdfs:label \"This is Service " + name +
                                ". It can " +
-                               OPERATION_VERB[operator] + " numbers.\" ;"
+                               OPERATION_VERB[operator] + " " +
+                               str(num_operands) + " numbers.\" ;"
                                "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
                                "	<http://step.aifb.kit.edu/hasProgram> child:" + name + "app.bin ;"
-                               "    <http://step.aifb.kit.edu/hasInputPattern> child:" + name + "InputPattern ;"
+                               "    <http://step.aifb.kit.edu/hasInputPattern> child:" +
+                               name + "InputPattern ;"
                                "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
-                    # post input_pattern
+                    pushed_successfull["service_container"] = True
+                    print("completed")
+
+                # post input_pattern
+                if not pushed_successfull["input_pattern"]:
+                    print("posting input_pattern to " + name)
                     url = base_uri + "/marmotta/ldp/" + name
                     headers = {'Accept': 'text/turtle',
                                'Slug': name + "InputPattern",
@@ -154,72 +168,77 @@ def init_services(num, dhost):
                                'Authorization': 'Basic ' + AUTH}
                     payload = generate_input_pattern(operator, num_operands)
                     resp = requests.post(url, headers=headers, data=payload)
+                    resp.raise_for_status()
+                    pushed_successfull["input_pattern"] = True
+                    print("completed")
 
-                    if resp.status_code != 201:
-                        print("setup of " + name + " failed!")
-                    else:
-                        print("setup of " + name + " successfull!")
-                        # post program
-                        print("pushing programm to marmotta service")
-                        url = base_uri + "/marmotta/ldp/" + name
-                        headers = {'Accept': 'text/turtle',
-                                   'Slug': name + "app",
-                                   'Content-Type': 'text/notation3',
-                                   'Authorization': 'Basic ' + AUTH}
-                        payload = generate_program(operator, num_operands)
+                # post program
+                if not pushed_successfull["program"]:
+                    print("posting program to " + name)
+                    url = base_uri + "/marmotta/ldp/" + name
+                    headers = {'Accept': 'text/turtle',
+                               'Slug': name + "app",
+                               'Content-Type': 'text/notation3',
+                               'Authorization': 'Basic ' + AUTH}
+                    payload = generate_program(operator, num_operands)
+                    resp = requests.post(
+                        url, headers=headers, data=payload)
+                    resp.raise_for_status()
+                    pushed_successfull["program"] = True
+                    print("completed")
 
-                        #sum, quotient, product, negation
-                        resp = requests.post(
-                            url, headers=headers, data=payload)
-                        if resp.status_code != 201:
-                            print("intallation of programm at " +
-                                  name + " failed!")
-                        else:
-                            print("intallation of programm at " +
-                                  name + " successfull!")
-                            # post program
-                            print("pushing startAPI to " + name)
-                            url = base_uri + "/marmotta/ldp/" + name
-                            headers = {'Accept': 'text/turtle',
-                                       'Slug': "start",
-                                       'Content-Type': 'text/turtle',
-                                       'Authorization': 'Basic ' + AUTH}
-                            payload = ("@prefix ex: <http://example.org/> ."
-                                       "@prefix ldp: <http://www.w3.org/ns/ldp#> ."
-                                       "@prefix step: <http://step.aifb.kit.edu/> ."
-                                       "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> ."
-                                       "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                                       "@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
-                                       "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
-                                       "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
-                                       "@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
-                                       "<> a ldp:Resource ; a step:StartAPI ;"
-                                       "     step:hasWebService parent:" + name + " ;"
-                                       "     rdfs:label \"This starts the " + name + "app\" .")
-                        resp = requests.post(
-                            url, headers=headers, data=payload)
-                        if resp.status_code != 201:
-                            print("initialization of " + name +
-                                  " StartAPI failed!")
-                        else:
-                            if(i == 1):
-                                print("First container complete initialized after: " +
-                                      str(time.time() - START) + " seconds")
-                            print("initialization of " + name +
-                                  " StartAPI successfull!")
-                        countwait = 0
-                        break
-            except requests.exceptions.BaseHTTPError:
+                # post startAPI
+                if not pushed_successfull["startapi"]:
+                    print("posting startAPI to " + name)
+                    url = base_uri + "/marmotta/ldp/" + name
+                    headers = {'Accept': 'text/turtle',
+                               'Slug': "start",
+                               'Content-Type': 'text/turtle',
+                               'Authorization': 'Basic ' + AUTH}
+                    payload = ("@prefix ex: <http://example.org/> ."
+                               "@prefix ldp: <http://www.w3.org/ns/ldp#> ."
+                               "@prefix step: <http://step.aifb.kit.edu/> ."
+                               "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> ."
+                               "@prefix dcterms: <http://purl.org/dc/terms/> ."
+                               "@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
+                               "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
+                               "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
+                               "@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
+                               "<> a ldp:Resource ; a step:StartAPI ;"
+                               "     step:hasWebService parent:" + name + " ;"
+                               "     rdfs:label \"This starts the " + name + "app\" .")
+                    resp = requests.post(url, headers=headers, data=payload)
+                    resp.raise_for_status()
+                    pushed_successfull["startapi"] = True
+                    print("completed")
+                    if i == 1:
+                        print("First container complete initialized after: " +
+                              str(time.time() - START) + " seconds")
+                    print("initialization of " + name +
+                          " StartAPI successfull")
+                    break
+            except requests.exceptions.HTTPError as ex:
+                if num_retry <= 3:
+                    num_retry += 1
+                    print("request " + ex.request.method + " " + ex.request.url + "failed ... retry")
+                    # exponential backoff
+                    time.sleep(num_retry * num_retry)
+                else:
+                    print("setup of " + name +
+                          " unexpectedly failed! Skipping this container.")
+                    print("Error " + str(ex.response.status_code) + ": " + ex.response.reason +
+                          "\non request " + ex.request.method + " " + ex.request.url)
+                    break
+            except requests.exceptions.ConnectionError:
                 # this happens when the server refuses any connection yet
-                print(base_uri + "not responding yet. waiting for start up...")
+                print(base_uri + " not responding yet. waiting for start up...")
                 time.sleep(5)
             except requests.exceptions.Timeout:
-                # timeout is 5 sec - print every 10 sec
                 countwait = countwait + 1
                 if countwait % 2 == 0:
                     print("waiting for " + base_uri + " to start up...")
-        print("All services started and initialized after: " +
-              str(time.time() - START) + "seconds")
+    print("All services started and initialized after: " +
+          str(time.time() - START) + "seconds")
 
 
 def getlatestimage():
@@ -241,6 +260,9 @@ def create_dockercompose(num):
         #print("    container_name: marmotta" + str(i), file=dcfile)
         print("    ports:", file=dcfile)
         print("    - \"" + str(PORT + i) + ":8080\"", file=dcfile)
+        if i > 0:
+            print("    depends_on:", file=dcfile)
+            print("      - marmotta" + str(i - 1), file=dcfile)
         print("    environment:", file=dcfile)
         print("      MARMOTTAHOST: marmotta" + str(i), file=dcfile)
     dcfile.close()
@@ -299,7 +321,7 @@ if ARGS.update:
 run_dockercompose(ARGS.swarm)
 
 # wait (2 seconds for each container for initial startup)
-time.sleep(2 * ARGS.num)
+#time.sleep(2 * ARGS.num)
 
 # run service initialization script
 init_services(ARGS.num, ARGS.dhost)
