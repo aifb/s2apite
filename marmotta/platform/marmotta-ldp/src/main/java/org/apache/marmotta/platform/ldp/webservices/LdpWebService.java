@@ -39,6 +39,7 @@ import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
+import org.h2.bnf.RuleElement;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -449,6 +450,21 @@ public class LdpWebService {
 
 			}
 
+
+
+			if ( ldpService.isBayesscheResource(conn, container) ) {
+				log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", container);
+
+
+				//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
+
+				final Response.ResponseBuilder resp = createBayesschesModelResponse(conn, 200, container, postBody);
+
+				log.debug("PUT update for <{}> successful", container);
+				conn.commit();
+				return resp.build();
+
+			}
 
 
 			// Check that the target container supports the LDPC Interaction Model
@@ -1056,8 +1072,7 @@ public class LdpWebService {
 			Notation3Parser notation3Parser = new Notation3Parser(program_data);
 			notation3Parser.parse(programConsumer, program_origin);
 			Program program = programConsumer.getProgram(program_origin);
-			
-
+	
 			
 			/*
 			 * Generate a Graph Object
@@ -1169,62 +1184,7 @@ public class LdpWebService {
 
 
 
-			//************************************************************************************************//
-
-
-
-
-			// Parse programs
-			//			Origin program_origin = new InternalOrigin("programOriginTriple");
-			//			ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(program_origin);
-			//			Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(pro.getBytes()));
-			//			//			Notation3Parser notation3Parser = new Notation3Parser(program_data);
-			//			notation3Parser.parse(programConsumer, program_origin);
-			//			//Program program = programConsumer.getProgram(program_origin);
-			//			program = programConsumer.getProgram(program_origin);
-
-			// Parse query
-			/*			Origin origin  = new InternalOrigin("queryOrigin");
-
-			QueryConsumerImpl queryConsumer = new QueryConsumerImpl(origin);
-			SparqlParser parser = new SparqlParser(new ByteArrayInputStream(QUERY_CONSTRUCT_SPO.getBytes()));
-			parser.parse(queryConsumer, origin);
-			Set<Query> queries = new HashSet<Query>();
-			Set<ConstructQuery> constructQueries = queryConsumer.getConstructQueries();
-			queries.addAll(constructQueries);
-			Set<SelectQuery> selectQueries = queryConsumer.getSelectQueries();
-			queries.addAll(selectQueries);
-
-			// Create instance
-			Instance instance = new Instance();
-			instance.setDelay(1000);
-
-			// Add program to instance
-			instance.putProgram("programTest", program);
-			instance.putConstructQueries("constructQueries", constructQueries);
-
-			// BindingConsumerCollection bindingConsumerCollection =
-			// instance.evaluateQueries(queries);
-			BindingConsumerCollection bindingConsumerCollection = instance
-					.getConstructQueryConsumer("constructQueries");
-
-			for (Binding binding : bindingConsumerCollection.getCollection() ) {
-
-				Nodes nodes = binding.getNodes();
-				Node[] node = nodes.getNodeArray();
-
-				URI subject = ValueFactoryImpl.getInstance().createURI( node[0].toString() ); 
-				URI predicate = ValueFactoryImpl.getInstance().createURI( node[1].toString() ); 
-				try {
-					Value object = ValueFactoryImpl.getInstance().createURI( node[2].toString() ); 
-					results.add( ValueFactoryImpl.getInstance().createStatement(subject, predicate, object) );
-				} catch (IllegalArgumentException e) {
-					Value object = ValueFactoryImpl.getInstance().createLiteral( node[2].toString() ); 
-					results.add( ValueFactoryImpl.getInstance().createStatement(subject, predicate, object) );
-				}
-
-			}
-			 */
+		
 
 		} catch (edu.kit.aifb.datafu.parser.sparql.ParseException e) {
 			// TODO: handle exception
