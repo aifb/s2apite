@@ -1,0 +1,420 @@
+sebastian@aifb-ls3-maia:~$ sudo python3.4 s2apite.py -n 5 -s 5 -dh localhost
+Running s2apite: Creating 5 semantic services with seed 5.
+docker compose file created in 0.0011184215545654297 seconds
+run in local docker engine
+Creating network "sebastian_default" with the default driver
+Creating sebastian_marmotta0_1
+Creating sebastian_marmotta1_1
+Creating sebastian_marmotta2_1
+Creating sebastian_marmotta3_1
+Creating sebastian_marmotta4_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/
+request HEAD http://localhost:9000/marmotta/ldp/failed ... retry
+First container started after: 801.0127537250519 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 805.222095489502 seconds
+initialization of marmotta0 StartAPI successfull
+init marmotta1 on http://localhost:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+waiting for http://localhost:9001 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9001): Read timed out. (read timeout=5)
+HTTPError: 500 Server Error: Internal Server Error for url: http://localhost:9001/marmotta/ldp/
+request HEAD http://localhost:9001/marmotta/ldp/failed ... retry
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9001/marmotta/ldp/
+request HEAD http://localhost:9001/marmotta/ldp/failed ... retry
+posting service container to marmotta1
+completed
+posting input_pattern to marmotta1
+completed
+posting program to marmotta1
+completed
+posting startAPI to marmotta1
+completed
+initialization of marmotta1 StartAPI successfull
+init marmotta2 on http://localhost:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+posting service container to marmotta2
+completed
+posting input_pattern to marmotta2
+completed
+posting program to marmotta2
+completed
+posting startAPI to marmotta2
+completed
+initialization of marmotta2 StartAPI successfull
+init marmotta3 on http://localhost:9003/marmotta/ldp/
+marmotta3 is a service that divides 22 operands.
+posting service container to marmotta3
+completed
+posting input_pattern to marmotta3
+completed
+posting program to marmotta3
+completed
+posting startAPI to marmotta3
+completed
+initialization of marmotta3 StartAPI successfull
+init marmotta4 on http://localhost:9004/marmotta/ldp/
+marmotta4 is a service that adds 7 operands.
+posting service container to marmotta4
+completed
+posting input_pattern to marmotta4
+completed
+posting program to marmotta4
+completed
+posting startAPI to marmotta4
+completed
+initialization of marmotta4 StartAPI successfull
+All services started and initialized after: 1216.418951034546seconds

@@ -1,0 +1,415 @@
+sudo python3 s2apite.py -s 5 -dh localhost -n 8
+Running s2apite: Creating 8 semantic services with seed 5.
+docker compose file created in 0.00038814544677734375 seconds
+run in local docker engine
+Creating network "s2apite_default" with the default driver
+Creating s2apite_marmotta0_1
+Creating s2apite_marmotta1_1
+Creating s2apite_marmotta2_1
+Creating s2apite_marmotta3_1
+Creating s2apite_marmotta4_1
+Creating s2apite_marmotta5_1
+Creating s2apite_marmotta6_1
+Creating s2apite_marmotta7_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+First container started after: 71.82170557975769 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 73.94337558746338 seconds
+initialization of marmotta0 StartAPI successfull
+init marmotta1 on http://localhost:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+posting service container to marmotta1
+completed
+posting input_pattern to marmotta1
+completed
+posting program to marmotta1
+completed
+posting startAPI to marmotta1
+completed
+initialization of marmotta1 StartAPI successfull
+init marmotta2 on http://localhost:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+posting service container to marmotta2
+completed
+posting input_pattern to marmotta2
+completed
+posting program to marmotta2
+completed
+posting startAPI to marmotta2
+completed
+initialization of marmotta2 StartAPI successfull
+init marmotta3 on http://localhost:9003/marmotta/ldp/
+marmotta3 is a service that divides 22 operands.
+posting service container to marmotta3
+completed
+posting input_pattern to marmotta3
+completed
+posting program to marmotta3
+completed
+posting startAPI to marmotta3
+completed
+initialization of marmotta3 StartAPI successfull
+init marmotta4 on http://localhost:9004/marmotta/ldp/
+marmotta4 is a service that adds 7 operands.
+posting service container to marmotta4
+completed
+posting input_pattern to marmotta4
+completed
+posting program to marmotta4
+completed
+posting startAPI to marmotta4
+completed
+initialization of marmotta4 StartAPI successfull
+init marmotta5 on http://localhost:9005/marmotta/ldp/
+marmotta5 is a service that adds 13 operands.
+posting service container to marmotta5
+completed
+posting input_pattern to marmotta5
+completed
+posting program to marmotta5
+completed
+posting startAPI to marmotta5
+completed
+initialization of marmotta5 StartAPI successfull
+init marmotta6 on http://localhost:9006/marmotta/ldp/
+marmotta6 is a service that substracts 9 operands.
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+waiting for http://localhost:9006 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9006): Read timed out. (read timeout=5)
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9006/marmotta/ldp/
+request HEAD http://localhost:9006/marmotta/ldp/failed ... retry
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9006/marmotta/ldp/
+request HEAD http://localhost:9006/marmotta/ldp/failed ... retry
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9006/marmotta/ldp/
+request HEAD http://localhost:9006/marmotta/ldp/failed ... retry
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9006/marmotta/ldp/
+request HEAD http://localhost:9006/marmotta/ldp/failed ... retry
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9006/marmotta/ldp/
+setup of marmotta6 unexpectedly failed! Skipping this container.
+Error 404: Not Found
+on request HEAD http://localhost:9006/marmotta/ldp/
+init marmotta7 on http://localhost:9007/marmotta/ldp/
+marmotta7 is a service that substracts 19 operands.
+posting service container to marmotta7
+completed
+posting input_pattern to marmotta7
+completed
+posting program to marmotta7
+completed
+posting startAPI to marmotta7
+completed
+initialization of marmotta7 StartAPI successfull
+All services started and initialized after: 1114.958163022995seconds

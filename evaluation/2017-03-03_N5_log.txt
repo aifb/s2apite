@@ -1,0 +1,55 @@
+Running s2apite: Creating 5 semantic services with seed 5.
+docker compose file created in 0.0002791881561279297 seconds
+run in local docker engine
+init marmotta0 on http://sba-Thinkpad:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+waiting for http://sba-Thinkpad:9000 to start up...
+waiting for http://sba-Thinkpad:9000 to start up...
+waiting for http://sba-Thinkpad:9000 to start up...
+init service at marmotta0
+setup of marmotta0 failed!
+init service at marmotta0
+setup of marmotta0 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta0 successfull!
+pushing startAPI to marmotta0
+initialization of marmotta0 StartAPI successfull!
+All services started and initialized after: 47.44540023803711seconds
+init marmotta1 on http://sba-Thinkpad:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+First container started after: 50.560909032821655 seconds
+init service at marmotta1
+setup of marmotta1 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta1 successfull!
+pushing startAPI to marmotta1
+First container complete initialized after: 53.54582667350769 seconds
+initialization of marmotta1 StartAPI successfull!
+All services started and initialized after: 53.54584884643555seconds
+init marmotta2 on http://sba-Thinkpad:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+init service at marmotta2
+setup of marmotta2 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta2 successfull!
+pushing startAPI to marmotta2
+initialization of marmotta2 StartAPI successfull!
+All services started and initialized after: 59.82902717590332seconds
+init marmotta3 on http://sba-Thinkpad:9003/marmotta/ldp/
+marmotta3 is a service that divides 22 operands.
+init service at marmotta3
+setup of marmotta3 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta3 successfull!
+pushing startAPI to marmotta3
+initialization of marmotta3 StartAPI successfull!
+All services started and initialized after: 65.86154103279114seconds
+init marmotta4 on http://sba-Thinkpad:9004/marmotta/ldp/
+marmotta4 is a service that adds 7 operands.
+init service at marmotta4
+setup of marmotta4 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta4 successfull!
+pushing startAPI to marmotta4
+initialization of marmotta4 StartAPI successfull!
+All services started and initialized after: 71.52952933311462seconds

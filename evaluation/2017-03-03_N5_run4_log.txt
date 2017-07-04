@@ -1,0 +1,94 @@
+sudo python3 s2apite.py -s 5 -dh localhost -n 5
+[sudo] password for sba: 
+Running s2apite: Creating 5 semantic services with seed 5.
+docker compose file created in 0.0003528594970703125 seconds
+run in local docker engine
+Creating network "s2apite_default" with the default driver
+Creating s2apite_marmotta0_1
+Creating s2apite_marmotta1_1
+Creating s2apite_marmotta2_1
+Creating s2apite_marmotta3_1
+Creating s2apite_marmotta4_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+First container started after: 45.93915677070618 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/marmotta0
+request POST http://localhost:9000/marmotta/ldp/marmotta0failed ... retry
+First container started after: 49.23369574546814 seconds
+posting input_pattern to marmotta0
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/marmotta0
+request POST http://localhost:9000/marmotta/ldp/marmotta0failed ... retry
+First container started after: 53.8553102016449 seconds
+posting input_pattern to marmotta0
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/marmotta0
+request POST http://localhost:9000/marmotta/ldp/marmotta0failed ... retry
+First container started after: 63.490381479263306 seconds
+posting input_pattern to marmotta0
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/marmotta0
+request POST http://localhost:9000/marmotta/ldp/marmotta0failed ... retry
+First container started after: 80.13568162918091 seconds
+posting input_pattern to marmotta0
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/marmotta0
+setup of marmotta0 unexpectedly failed! Skipping this container.
+Error 404: Not Found
+on request POST http://localhost:9000/marmotta/ldp/marmotta0
+init marmotta1 on http://localhost:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+posting service container to marmotta1
+completed
+posting input_pattern to marmotta1
+completed
+posting program to marmotta1
+completed
+posting startAPI to marmotta1
+completed
+initialization of marmotta1 StartAPI successfull
+init marmotta2 on http://localhost:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+posting service container to marmotta2
+completed
+posting input_pattern to marmotta2
+completed
+posting program to marmotta2
+completed
+posting startAPI to marmotta2
+completed
+initialization of marmotta2 StartAPI successfull
+init marmotta3 on http://localhost:9003/marmotta/ldp/
+marmotta3 is a service that divides 22 operands.
+posting service container to marmotta3
+completed
+posting input_pattern to marmotta3
+completed
+posting program to marmotta3
+completed
+posting startAPI to marmotta3
+completed
+initialization of marmotta3 StartAPI successfull
+init marmotta4 on http://localhost:9004/marmotta/ldp/
+marmotta4 is a service that adds 7 operands.
+posting service container to marmotta4
+completed
+posting input_pattern to marmotta4
+completed
+posting program to marmotta4
+completed
+posting startAPI to marmotta4
+completed
+initialization of marmotta4 StartAPI successfull
+All services started and initialized after: 101.37535357475281seconds

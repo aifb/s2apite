@@ -1,0 +1,22 @@
+sudo python3 s2apite.py -s 5 -dh localhost -n 1
+Running s2apite: Creating 1 semantic services with seed 5.
+docker compose file created in 0.0003502368927001953 seconds
+run in local docker engine
+Creating network "s2apite_default" with the default driver
+Creating s2apite_marmotta0_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+ConnectionError: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+http://localhost:9000 not responding yet. waiting for start up...
+First container started after: 10.156033039093018 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 12.915072202682495 seconds
+initialization of marmotta0 StartAPI successfull
+All services started and initialized after: 12.915100812911987seconds

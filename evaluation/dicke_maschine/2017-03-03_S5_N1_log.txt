@@ -1,0 +1,22 @@
+sudo python3.4 s2apite.py -n 1 -s 5 -dh aifb-ls3-maia.aifb.kit.edu -p 9000
+[sudo] password for sebastian: 
+Running s2apite: Creating 1 semantic services with seed 5.
+docker compose file created in 0.0002357959747314453 seconds
+run in local docker engine
+WARNING: Found orphan containers (sebastian_marmotta4_1, sebastian_marmotta8_1, sebastian_marmotta5_1, sebastian_marmotta9_1, sebastian_marmotta6_1, sebastian_marmotta7_1, sebastian_marmotta3_1, sebastian_marmotta2_1, sebastian_marmotta1_1) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+sebastian_marmotta0_1 is up-to-date
+init marmotta0 on http://aifb-ls3-maia.aifb.kit.edu:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+First container started after: 1.6283230781555176 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 5.847962379455566 seconds
+initialization of marmotta0 StartAPI successfull
+All services started and initialized after: 5.847989797592163seconds
+

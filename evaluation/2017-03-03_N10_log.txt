@@ -1,0 +1,130 @@
+sudo python3 s2apite.py -s 5 -dh localhost -n 10 
+Running s2apite: Creating 10 semantic services with seed 5.
+docker compose file created in 0.000392913818359375 seconds
+run in local docker engine
+Creating network "s2apite_default" with the default driver
+Starting s2apite_marmotta7_1
+Starting s2apite_marmotta8_1
+Starting s2apite_marmotta9_1
+Starting s2apite_marmotta6_1
+Starting s2apite_marmotta5_1
+Creating s2apite_marmotta3_1
+Creating s2apite_marmotta0_1
+Creating s2apite_marmotta4_1
+Creating s2apite_marmotta2_1
+Creating s2apite_marmotta1_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+init service at marmotta0
+setup of marmotta0 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta0 successfull!
+pushing startAPI to marmotta0
+initialization of marmotta0 StartAPI successfull!
+All services started and initialized after: 89.09394645690918seconds
+init marmotta1 on http://localhost:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+First container started after: 253.80454969406128 seconds
+init service at marmotta1
+setup of marmotta1 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta1 successfull!
+pushing startAPI to marmotta1
+First container complete initialized after: 255.7457458972931 seconds
+initialization of marmotta1 StartAPI successfull!
+All services started and initialized after: 255.74578952789307seconds
+init marmotta2 on http://localhost:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+init service at marmotta2
+setup of marmotta2 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta2 successfull!
+pushing startAPI to marmotta2
+initialization of marmotta2 StartAPI successfull!
+All services started and initialized after: 262.67109990119934seconds
+init marmotta3 on http://localhost:9003/marmotta/ldp/
+marmotta3 is a service that divides 22 operands.
+init service at marmotta3
+setup of marmotta3 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta3 successfull!
+pushing startAPI to marmotta3
+initialization of marmotta3 StartAPI successfull!
+All services started and initialized after: 270.27581214904785seconds
+init marmotta4 on http://localhost:9004/marmotta/ldp/
+marmotta4 is a service that adds 7 operands.
+init service at marmotta4
+setup of marmotta4 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta4 successfull!
+pushing startAPI to marmotta4
+initialization of marmotta4 StartAPI successfull!
+All services started and initialized after: 278.8157551288605seconds
+init marmotta5 on http://localhost:9005/marmotta/ldp/
+marmotta5 is a service that adds 13 operands.
+init service at marmotta5
+setup of marmotta5 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta5 successfull!
+pushing startAPI to marmotta5
+initialization of marmotta5 StartAPI successfull!
+All services started and initialized after: 286.1316945552826seconds
+init marmotta6 on http://localhost:9006/marmotta/ldp/
+marmotta6 is a service that substracts 9 operands.
+init service at marmotta6
+setup of marmotta6 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta6 successfull!
+pushing startAPI to marmotta6
+initialization of marmotta6 StartAPI successfull!
+All services started and initialized after: 294.61071586608887seconds
+init marmotta7 on http://localhost:9007/marmotta/ldp/
+marmotta7 is a service that substracts 19 operands.
+init service at marmotta7
+setup of marmotta7 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta7 successfull!
+pushing startAPI to marmotta7
+initialization of marmotta7 StartAPI successfull!
+All services started and initialized after: 303.08634066581726seconds
+init marmotta8 on http://localhost:9008/marmotta/ldp/
+marmotta8 is a service that adds 20 operands.
+init service at marmotta8
+setup of marmotta8 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta8 successfull!
+pushing startAPI to marmotta8
+initialization of marmotta8 StartAPI successfull!
+All services started and initialized after: 313.30324244499207seconds
+init marmotta9 on http://localhost:9009/marmotta/ldp/
+marmotta9 is a service that divides 2 operands.
+init service at marmotta9
+setup of marmotta9 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta9 successfull!
+pushing startAPI to marmotta9
+initialization of marmotta9 StartAPI successfull!
+All services started and initialized after: 322.8741624355316seconds
+

@@ -1,0 +1,25 @@
+                         MOTD FOR aifb-ls3-maia
+
+ aifb-ls3-maia's main purpose is: Michael's and Lei's common playground
+
+ Please only use machines for computationally intensive jobs which list
+ this as their purpose. See also 
+ https://km.aifb.uni-karlsruhe.de/projects/LIOWiki/index.php/Rechenjobs 
+ for more information.
+
+ CPU: 8 Cores at 2.0Ghz
+ SYSTEM: Debian Jessie
+ MEMORY: 40GB
+
+ aifb-ls3-maia is a virtual machine.
+
+ Mounted partitions are:
+
+ The following directories are backed up regularly:
+
+ Admins of this machine are: ath, sto, lzh, mfa
+
+ Should you encounter any problems, feel free to contact
+ ls3systems@aifb.uni-karlsruhe.de
+   
+

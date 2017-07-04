@@ -1,0 +1,248 @@
+sudo python3 s2apite.py -s 5 -dh localhost -n 15
+Running s2apite: Creating 15 semantic services with seed 5.
+docker compose file created in 0.00045371055603027344 seconds
+run in local docker engine
+Creating network "s2apite_default" with the default driver
+Creating s2apite_marmotta0_1
+Creating s2apite_marmotta1_1
+Creating s2apite_marmotta2_1
+Creating s2apite_marmotta3_1
+Creating s2apite_marmotta4_1
+Creating s2apite_marmotta5_1
+Creating s2apite_marmotta6_1
+Creating s2apite_marmotta7_1
+Creating s2apite_marmotta8_1
+Creating s2apite_marmotta9_1
+Creating s2apite_marmotta10_1
+Creating s2apite_marmotta11_1
+Creating s2apite_marmotta12_1
+Creating s2apite_marmotta13_1
+Creating s2apite_marmotta14_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+waiting for http://localhost:9000 to start up...
+request HEAD http://localhost:9000/marmotta/ldp/failed ... retry
+First container started after: 118.47517156600952 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 120.25681400299072 seconds
+initialization of marmotta0 StartAPI successfull
+init marmotta1 on http://localhost:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+waiting for http://localhost:9001 to start up...
+request HEAD http://localhost:9001/marmotta/ldp/failed ... retry
+posting service container to marmotta1
+completed
+posting input_pattern to marmotta1
+completed
+posting program to marmotta1
+completed
+posting startAPI to marmotta1
+completed
+initialization of marmotta1 StartAPI successfull
+init marmotta2 on http://localhost:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+waiting for http://localhost:9002 to start up...
+posting service container to marmotta2
+completed
+posting input_pattern to marmotta2
+completed
+posting program to marmotta2
+completed
+posting startAPI to marmotta2
+completed
+initialization of marmotta2 StartAPI successfull
+init marmotta3 on http://localhost:9003/marmotta/ldp/
+marmotta3 is a service that divides 22 operands.
+posting service container to marmotta3
+completed
+posting input_pattern to marmotta3
+completed
+posting program to marmotta3
+completed
+posting startAPI to marmotta3
+completed
+initialization of marmotta3 StartAPI successfull
+init marmotta4 on http://localhost:9004/marmotta/ldp/
+marmotta4 is a service that adds 7 operands.
+posting service container to marmotta4
+completed
+posting input_pattern to marmotta4
+completed
+posting program to marmotta4
+completed
+posting startAPI to marmotta4
+completed
+initialization of marmotta4 StartAPI successfull
+init marmotta5 on http://localhost:9005/marmotta/ldp/
+marmotta5 is a service that adds 13 operands.
+posting service container to marmotta5
+completed
+posting input_pattern to marmotta5
+completed
+posting program to marmotta5
+completed
+posting startAPI to marmotta5
+completed
+initialization of marmotta5 StartAPI successfull
+init marmotta6 on http://localhost:9006/marmotta/ldp/
+marmotta6 is a service that substracts 9 operands.
+posting service container to marmotta6
+completed
+posting input_pattern to marmotta6
+completed
+posting program to marmotta6
+completed
+posting startAPI to marmotta6
+completed
+initialization of marmotta6 StartAPI successfull
+init marmotta7 on http://localhost:9007/marmotta/ldp/
+marmotta7 is a service that substracts 19 operands.
+posting service container to marmotta7
+completed
+posting input_pattern to marmotta7
+completed
+posting program to marmotta7
+completed
+posting startAPI to marmotta7
+completed
+initialization of marmotta7 StartAPI successfull
+init marmotta8 on http://localhost:9008/marmotta/ldp/
+marmotta8 is a service that adds 20 operands.
+posting service container to marmotta8
+completed
+posting input_pattern to marmotta8
+completed
+posting program to marmotta8
+completed
+posting startAPI to marmotta8
+completed
+initialization of marmotta8 StartAPI successfull
+init marmotta9 on http://localhost:9009/marmotta/ldp/
+marmotta9 is a service that divides 2 operands.
+posting service container to marmotta9
+completed
+posting input_pattern to marmotta9
+completed
+posting program to marmotta9
+completed
+posting startAPI to marmotta9
+completed
+initialization of marmotta9 StartAPI successfull
+init marmotta10 on http://localhost:9010/marmotta/ldp/
+marmotta10 is a service that divides 15 operands.
+request HEAD http://localhost:9010/marmotta/ldp/failed ... retry
+posting service container to marmotta10
+completed
+posting input_pattern to marmotta10
+completed
+posting program to marmotta10
+completed
+posting startAPI to marmotta10
+completed
+initialization of marmotta10 StartAPI successfull
+init marmotta11 on http://localhost:9011/marmotta/ldp/
+marmotta11 is a service that multiplys 7 operands.
+posting service container to marmotta11
+completed
+posting input_pattern to marmotta11
+completed
+posting program to marmotta11
+completed
+posting startAPI to marmotta11
+completed
+initialization of marmotta11 StartAPI successfull
+init marmotta12 on http://localhost:9012/marmotta/ldp/
+marmotta12 is a service that substracts 7 operands.
+posting service container to marmotta12
+completed
+posting input_pattern to marmotta12
+request POST http://localhost:9012/marmotta/ldp/marmotta12failed ... retry
+posting input_pattern to marmotta12
+request POST http://localhost:9012/marmotta/ldp/marmotta12failed ... retry
+posting input_pattern to marmotta12
+request POST http://localhost:9012/marmotta/ldp/marmotta12failed ... retry
+posting input_pattern to marmotta12
+request POST http://localhost:9012/marmotta/ldp/marmotta12failed ... retry
+posting input_pattern to marmotta12
+setup of marmotta12 unexpectedly failed! Skipping this container.
+Error 404: Not Found
+on request POST http://localhost:9012/marmotta/ldp/marmotta12
+init marmotta13 on http://localhost:9013/marmotta/ldp/
+marmotta13 is a service that adds 6 operands.
+request HEAD http://localhost:9013/marmotta/ldp/failed ... retry
+posting service container to marmotta13
+completed
+posting input_pattern to marmotta13
+completed
+posting program to marmotta13
+completed
+posting startAPI to marmotta13
+completed
+initialization of marmotta13 StartAPI successfull
+init marmotta14 on http://localhost:9014/marmotta/ldp/
+marmotta14 is a service that substracts 6 operands.
+posting service container to marmotta14
+completed
+posting input_pattern to marmotta14
+completed
+posting program to marmotta14
+completed
+posting startAPI to marmotta14
+completed
+initialization of marmotta14 StartAPI successfull
+All services started and initialized after: 688.9271504878998seconds
+

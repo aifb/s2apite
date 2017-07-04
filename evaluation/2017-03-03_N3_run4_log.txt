@@ -1,0 +1,52 @@
+sudo python3 s2apite.py -s 5 -dh localhost -n 3
+Running s2apite: Creating 3 semantic services with seed 5.
+docker compose file created in 0.0006241798400878906 seconds
+run in local docker engine
+Creating network "s2apite_default" with the default driver
+Creating s2apite_marmotta0_1
+Creating s2apite_marmotta1_1
+Creating s2apite_marmotta2_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+ConnectionError: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+http://localhost:9000 not responding yet. waiting for start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+HTTPError: 404 Client Error: Not Found for url: http://localhost:9000/marmotta/ldp/
+request HEAD http://localhost:9000/marmotta/ldp/failed ... retry
+First container started after: 28.642372131347656 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 31.89828658103943 seconds
+initialization of marmotta0 StartAPI successfull
+init marmotta1 on http://localhost:9001/marmotta/ldp/
+marmotta1 is a service that multiplys 24 operands.
+posting service container to marmotta1
+completed
+posting input_pattern to marmotta1
+completed
+posting program to marmotta1
+completed
+posting startAPI to marmotta1
+completed
+initialization of marmotta1 StartAPI successfull
+init marmotta2 on http://localhost:9002/marmotta/ldp/
+marmotta2 is a service that adds 16 operands.
+posting service container to marmotta2
+completed
+posting input_pattern to marmotta2
+completed
+posting program to marmotta2
+completed
+posting startAPI to marmotta2
+completed
+initialization of marmotta2 StartAPI successfull
+All services started and initialized after: 45.217140197753906seconds

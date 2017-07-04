@@ -1,0 +1,13 @@
+Running s2apite: Creating 1 semantic services with seed 5.
+docker compose file created in 0.0001354217529296875 seconds
+run in local docker engine
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+waiting for http://localhost:9000 to start up...
+init service at marmotta0
+setup of marmotta0 successfull!
+pushing programm to marmotta service
+intallation of programm at marmotta0 successfull!
+pushing startAPI to marmotta0
+initialization of marmotta0 StartAPI successfull!
+All services started and initialized after: 13.232315063476562seconds

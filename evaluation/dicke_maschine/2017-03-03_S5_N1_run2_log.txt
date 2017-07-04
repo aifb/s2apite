@@ -1,0 +1,54 @@
+sudo python3.4 s2apite.py -n 1 -s 5 -dh localhost
+[sudo] password for sebastian: 
+Running s2apite: Creating 1 semantic services with seed 5.
+docker compose file created in 0.0002541542053222656 seconds
+run in local docker engine
+Creating network "sebastian_default" with the default driver
+Creating sebastian_marmotta0_1
+init marmotta0 on http://localhost:9000/marmotta/ldp/
+marmotta0 is a service that multiplys 25 operands.
+ConnectionError: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+http://localhost:9000 not responding yet. waiting for start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+Timeout: HTTPConnectionPool(host='localhost', port=9000): Read timed out. (read timeout=5)
+waiting for http://localhost:9000 to start up...
+First container started after: 98.03766202926636 seconds
+posting service container to marmotta0
+completed
+posting input_pattern to marmotta0
+completed
+posting program to marmotta0
+completed
+posting startAPI to marmotta0
+completed
+First container completely initialized after: 102.34955310821533 seconds
+initialization of marmotta0 StartAPI successfull
+All services started and initialized after: 102.34958910942078seconds
+sebastian@aifb-ls3-maia:~$ sudo docker-compose down
+Stopping sebastian_marmotta0_1 ... done
+Removing sebastian_marmotta0_1 ... done
+Removing network sebastian_default
