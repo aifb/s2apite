@@ -1041,7 +1041,10 @@ public class LdpWebService {
 		Network original = new Network();
 		
 		try {
-	        FileInputStream fileIn = new FileInputStream("model.bin");
+			RepositoryResult<Statement> models = resource.getStatements(service, hasModel, null, true, new Resource[0]);
+			URI model = new URIImpl(models.next().getObject().stringValue());
+			
+			FileInputStream fileIn = new FileInputStream("model.bin");
 	        ObjectInputStream in = new ObjectInputStream(fileIn);
 	        original = (Network) in.readObject();
 	        in.close();
@@ -1176,6 +1179,8 @@ public class LdpWebService {
 			BindingConsumerSink sink = new BindingConsumerSink(bc);
 
 			program.registerConstructQuery(sq, sink);
+			
+			
 			
 			
 			
