@@ -17,6 +17,8 @@
  */
 package org.apache.marmotta.platform.ldp.webservices;
 
+import org.eclipse.recommenders.jayes.BayesNet;
+import org.eclipse.recommenders.jayes.BayesNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.marmotta.commons.http.ContentType;
 import org.apache.marmotta.commons.http.MarmottaHttpUtils;
@@ -39,6 +41,8 @@ import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
+import org.eclipse.recommenders.jayes.BayesNet;
+import org.eclipse.recommenders.jayes.BayesNode;
 import org.h2.bnf.RuleElement;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.openrdf.model.Resource;
@@ -64,6 +68,7 @@ import org.semanticweb.yars.turtle.TurtleParseException;
 import org.semanticweb.yars.turtle.TurtleParser;
 import org.slf4j.Logger;
 
+import aifb.edu.manuelBayes.manuelBayes.Network;
 import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
 import edu.kit.aifb.datafu.Origin;
@@ -86,9 +91,11 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -443,7 +450,7 @@ public class LdpWebService {
 				//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
 
 				final Response.ResponseBuilder resp = createWebServiceResponse(conn, 200, container, postBody);
-
+				// in createWebServiceResponse gehen und abfragen ob Bayssche SErvice
 				log.debug("PUT update for <{}> successful", container);
 				conn.commit();
 				return resp.build();
@@ -926,6 +933,7 @@ public class LdpWebService {
 	 * @return the provided ResponseBuilder for chaining
 	 */
 	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.ResponseBuilder rb, String resource, InputStream body) throws RepositoryException, IllegalArgumentException {
+		
 		createWebServiceResponse(rb);
 
 		if (ldpService.exists(connection, resource)) {
@@ -1000,6 +1008,7 @@ public class LdpWebService {
 		return rb;
 	}
 
+	
 
 	/**
 	 * returns an URI without an ending slash 
@@ -1017,6 +1026,61 @@ public class LdpWebService {
 		}
 	}
 
+	private Collection<Statement> executeBayesschesModel(Resource resource, InputStream program_data, String query, InputStream body) throws IllegalArgumentException {
+		/* resource is BaysscherService 
+		 * program_data ist InputSteam from the program
+		 * 
+		 */
+		
+		Collection<Statement> results = new ArrayList<Statement>();
+		
+
+		ValueFactory factory = ValueFactoryImpl.getInstance();
+		
+		
+		Network original = new Network();
+		
+		try {
+	        FileInputStream fileIn = new FileInputStream("model.bin");
+	        ObjectInputStream in = new ObjectInputStream(fileIn);
+	        original = (Network) in.readObject();
+	        in.close();
+	        fileIn.close();
+	     }catch(IOException i) {
+	        i.printStackTrace();
+	        return null;
+	     }catch(ClassNotFoundException c) {
+	        System.out.println("Model not found");
+	        c.printStackTrace();
+	        return null;
+	     }
+		
+		BayesNet net = new BayesNet();
+		for(Node node: original.Nodes){
+			BayesNode transfer = net.createNode(node.name);
+			transfer.addOutcomes(node.getOutcomes());
+		}
+		for(Node node: original.Nodes){
+			List<BayesNode> eltern = new ArrayList<BayesNode>();
+			BayesNode transfer = net.getNode(node.name);
+			
+			if(node.parents != null){
+				for(Node parent: node.parents){
+					eltern.add(net.getNode(parent.name));
+				}
+			}
+			
+			transfer.setParents(eltern);
+			transfer.setProbabilities(node.getProbabilities());
+		}	
+		
+		return results;
+	}
+	
+	
+	
+	
+	
 	private Collection<Statement> executeWebService(Resource resource, InputStream program_data, String query, InputStream body) throws IllegalArgumentException {
 
 		Collection<Statement> results = new ArrayList<Statement>();
