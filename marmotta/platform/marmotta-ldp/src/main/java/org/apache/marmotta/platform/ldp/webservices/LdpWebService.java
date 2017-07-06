@@ -444,7 +444,7 @@ public class LdpWebService {
 
 				final Response.ResponseBuilder resp = createWebServiceResponse(conn, 200, container, postBody);
 
-				log.debug("PUT update for <{}> successful", container);
+				log.debug("POST update for <{}> successful", container);
 				conn.commit();
 				return resp.build();
 
@@ -460,7 +460,7 @@ public class LdpWebService {
 
 				final Response.ResponseBuilder resp = createBayesschesModelResponse(conn, 200, container, postBody);
 
-				log.debug("PUT update for <{}> successful", container);
+				log.debug("POST update for <{}> successful", container);
 				conn.commit();
 				return resp.build();
 
@@ -932,6 +932,7 @@ public class LdpWebService {
 
 			try {
 
+				
 				RepositoryResult<Statement> services = connection.getStatements( 
 						null, 
 						STEP.hasStartAPI, 
@@ -939,21 +940,28 @@ public class LdpWebService {
 						true, 
 						new Resource[0]);
 
+				
 				if (!services.hasNext()) {
 					log.debug("Could not find any connected service to <{}>", resource);
 					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
 				}
+				
+				
+				
 				URI service = cleanURI((URI) services.next().getSubject() );
 				if (services.hasNext()) {
 					// do nothing yet
 					// TODO: handle multiple services with same startAPI
 				}
 
+				
 				RepositoryResult<Statement> programs = connection.getStatements(service, STEP.hasProgram, null, true, new Resource[0]);
 				if (!programs.hasNext()) {
 					log.debug("Could not find any connected service to <{}>", resource);
 					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
 				}
+				
+				
 				// TODO get Program as file
 				//OutputStream program_data = new ByteArrayOutputStream();
 				URI program = new URIImpl(programs.next().getObject().stringValue());
