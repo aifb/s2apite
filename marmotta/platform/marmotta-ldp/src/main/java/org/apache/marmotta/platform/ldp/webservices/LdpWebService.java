@@ -39,7 +39,7 @@ import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
-import org.h2.bnf.RuleElement;
+
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -63,6 +63,8 @@ import org.semanticweb.yars.nx.Nodes;
 import org.semanticweb.yars.turtle.TurtleParseException;
 import org.semanticweb.yars.turtle.TurtleParser;
 import org.slf4j.Logger;
+
+import com.hp.hpl.jena.vocabulary.RDF;
 
 import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
@@ -450,21 +452,6 @@ public class LdpWebService {
 
 			}
 
-
-
-			if ( ldpService.isBayesscheResource(conn, container) ) {
-				log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", container);
-
-
-				//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
-
-				final Response.ResponseBuilder resp = createBayesschesModelResponse(conn, 200, container, postBody);
-
-				log.debug("POST update for <{}> successful", container);
-				conn.commit();
-				return resp.build();
-
-			}
 
 
 			// Check that the target container supports the LDPC Interaction Model

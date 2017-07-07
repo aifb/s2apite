@@ -5,6 +5,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.semanticweb.yars.nx.Resource;
 
 public class STEP {
 	
@@ -22,6 +23,7 @@ public class STEP {
 	public static final URI hasValue;
 
 	public static final URI hasStartAPI;
+	//public static final Resource hasStartAPI;
 
 	
     static {
@@ -45,6 +47,7 @@ public class STEP {
         hasValue = factory.createURI(STEP.NAMESPACE, "hasValue");
         
         hasStartAPI = factory.createURI(STEP.NAMESPACE, "hasStartAPI");
+        //hasStartAPI = new Resource(STEP.NAMESPACE + "hasStartAPI");
     }
 
 }
