@@ -17,8 +17,11 @@
  */
 package org.apache.marmotta.platform.ldp.webservices;
 
+//import java.util.logging.*;
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
+import org.eclipse.recommenders.jayes.inference.IBayesInferrer;
+import org.eclipse.recommenders.jayes.inference.jtree.JunctionTreeAlgorithm;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.marmotta.commons.http.ContentType;
 import org.apache.marmotta.commons.http.MarmottaHttpUtils;
@@ -41,9 +44,6 @@ import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
-import org.eclipse.recommenders.jayes.BayesNet;
-import org.eclipse.recommenders.jayes.BayesNode;
-import org.h2.bnf.RuleElement;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -62,13 +62,13 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.UnsupportedRDFormatException;
+import org.semanticweb.yars.nx.Literal;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.Nodes;
+import org.semanticweb.yars.nx.namespace.XSD;
 import org.semanticweb.yars.turtle.TurtleParseException;
 import org.semanticweb.yars.turtle.TurtleParser;
 import org.slf4j.Logger;
-
-import aifb.edu.manuelBayes.manuelBayes.Network;
 import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
 import edu.kit.aifb.datafu.Origin;
@@ -88,14 +88,17 @@ import edu.kit.aifb.ldbwebservice.STEP;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.swing.plaf.synth.SynthTextPaneUI;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -103,8 +106,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -450,28 +455,13 @@ public class LdpWebService {
 				//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
 
 				final Response.ResponseBuilder resp = createWebServiceResponse(conn, 200, container, postBody);
-				// in createWebServiceResponse gehen und abfragen ob Bayssche SErvice
-				log.debug("PUT update for <{}> successful", container);
-				conn.commit();
-				return resp.build();
-
-			}
-
-
-
-			if ( ldpService.isBayesscheResource(conn, container) ) {
-				log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", container);
-
-
-				//RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
-
-				final Response.ResponseBuilder resp = createBayesschesModelResponse(conn, 200, container, postBody);
 
 				log.debug("PUT update for <{}> successful", container);
 				conn.commit();
 				return resp.build();
 
 			}
+
 
 
 			// Check that the target container supports the LDPC Interaction Model
@@ -940,39 +930,42 @@ public class LdpWebService {
 
 			try {
 
+				
 				RepositoryResult<Statement> services = connection.getStatements( 
 						null, 
 						STEP.hasStartAPI, 
 						ValueFactoryImpl.getInstance().createURI(resource), 
 						true, 
 						new Resource[0]);
+				
+				RepositoryResult<Statement> models = connection.getStatements(
+						null, 
+						STEP.hasModel, 
+						null, 
+						true, 
+						new Resource[0]);
 
+				
 				if (!services.hasNext()) {
 					log.debug("Could not find any connected service to <{}>", resource);
 					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
 				}
+				
+				
+				
 				URI service = cleanURI((URI) services.next().getSubject() );
 				if (services.hasNext()) {
 					// do nothing yet
 					// TODO: handle multiple services with same startAPI
 				}
 
-				RepositoryResult<Statement> programs = connection.getStatements(service, STEP.hasProgram, null, true, new Resource[0]);
-				if (!programs.hasNext()) {
-					log.debug("Could not find any connected service to <{}>", resource);
-					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
-				}
-				// TODO get Program as file
-				//OutputStream program_data = new ByteArrayOutputStream();
-				URI program = new URIImpl(programs.next().getObject().stringValue());
-				InputStream program_data = binaryStore.read(program);
-				//ldpService.exportBinaryResource(connection, program, program_data);
-				if (programs.hasNext()) {
-					// do nothing yet
-					// TODO: handle multiple programs with same WebService
-				}
+				
+				
+				
+				
+				
 
-				final Collection<Statement> output_data = executeWebService(service, program_data, null, body);
+				final Collection<Statement> output_data = executeBayesschesModel(service, body, models);
 
 				StreamingOutput entity = new StreamingOutput() {
 					@Override
@@ -997,7 +990,7 @@ public class LdpWebService {
 
 				rb.entity(entity);
 
-			} catch (RepositoryException | IOException e) {
+			} catch (RepositoryException  e) {
 				return rb.status(Response.Status.EXPECTATION_FAILED).entity("Necessary preconditions (N3-Program, Query) missing.");
 			}
 
@@ -1026,11 +1019,13 @@ public class LdpWebService {
 		}
 	}
 
-	private Collection<Statement> executeBayesschesModel(Resource resource, InputStream program_data, String query, InputStream body) throws IllegalArgumentException {
+	private Collection<Statement> executeBayesschesModel(Resource resource, InputStream body, RepositoryResult<Statement> models) throws IllegalArgumentException {
 		/* resource is BaysscherService 
 		 * program_data ist InputSteam from the program
 		 * 
 		 */
+		
+		//Logger bayesNetLogger = Logger.getGlobal();
 		
 		Collection<Statement> results = new ArrayList<Statement>();
 		
@@ -1040,35 +1035,39 @@ public class LdpWebService {
 		
 		Network original = new Network();
 		
+		double[] beliefs = null;
+		
 		try {
-			RepositoryResult<Statement> models = resource.getStatements(service, hasModel, null, true, new Resource[0]);
+
 			URI model = new URIImpl(models.next().getObject().stringValue());
-			
-			FileInputStream fileIn = new FileInputStream("model.bin");
-	        ObjectInputStream in = new ObjectInputStream(fileIn);
-	        original = (Network) in.readObject();
-	        in.close();
-	        fileIn.close();
-	     }catch(IOException i) {
+			InputStream model_data = binaryStore.read(model);
+			ObjectInputStream in = new ObjectInputStream(model_data);
+			original = (Network) in.readObject();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(IOException i) {
 	        i.printStackTrace();
 	        return null;
-	     }catch(ClassNotFoundException c) {
-	        System.out.println("Model not found");
-	        c.printStackTrace();
-	        return null;
-	     }
+	     } catch(ClassNotFoundException c) {
+	         System.out.println("Model not found");
+	         c.printStackTrace();
+	         return null;
+	      }
+		
+			
 		
 		BayesNet net = new BayesNet();
-		for(Node node: original.Nodes){
+		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes){
 			BayesNode transfer = net.createNode(node.name);
 			transfer.addOutcomes(node.getOutcomes());
 		}
-		for(Node node: original.Nodes){
+		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes){
 			List<BayesNode> eltern = new ArrayList<BayesNode>();
 			BayesNode transfer = net.getNode(node.name);
 			
 			if(node.parents != null){
-				for(Node parent: node.parents){
+				for(org.apache.marmotta.platform.ldp.webservices.Node parent: node.parents){
 					eltern.add(net.getNode(parent.name));
 				}
 			}
@@ -1076,6 +1075,55 @@ public class LdpWebService {
 			transfer.setParents(eltern);
 			transfer.setProbabilities(node.getProbabilities());
 		}	
+		
+		IBayesInferrer inferer = new JunctionTreeAlgorithm();
+		inferer.setNetwork(net);
+
+		Map<BayesNode,String> evidence = new HashMap<BayesNode,String>();
+		
+		try {
+			TurtleParser turtleParser = new TurtleParser();
+			turtleParser.parse(body, Charset.defaultCharset(), new java.net.URI( resource.stringValue() ) );
+			
+			Collection<Node[]> model = new ArrayList<Node[]>();
+			
+			while(turtleParser.hasNext()) {
+				Node[] node = turtleParser.next();
+				model.add(node);
+			}
+			
+			
+			String name = null;
+			for(org.semanticweb.yars.nx.Node[] nodes: model){
+				//bayesNetLogger.log(Level.SEVERE, nodes.toString());
+				if(nodes[2].equals(STEP.BayesNode)){
+					name = nodes[0].toString();					
+				}
+				if(nodes[1].equals(STEP.hasOutput)){
+					evidence.put(net.getNode(name), nodes[2].toString());
+				}
+				if(nodes[2].equals(STEP.Target)){
+					inferer.setEvidence(evidence);
+					beliefs = inferer.getBeliefs(net.getNode(nodes[0].toString()));
+					
+					for(double ergebniss : beliefs){
+						String str = String.valueOf(ergebniss);
+						URI subject = factory.createURI( nodes[0].toString() ); 
+						Value object = factory.createURI( str );
+						results.add( factory.createStatement(subject, STEP.hasResult, object ) );
+					}
+				}
+				//bayesNetLogger.log(Level.SEVERE, beliefs.toString());
+									
+			}
+			
+
+			
+			} catch (TurtleParseException | org.semanticweb.yars.turtle.ParseException e) {
+				throw new IllegalArgumentException();
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException();
+			}
 		
 		return results;
 	}
@@ -1148,11 +1196,11 @@ public class LdpWebService {
 			TurtleParser turtleParser = new TurtleParser();
 			turtleParser.parse(body, Charset.defaultCharset(), new java.net.URI( resource.stringValue() ) );
 			
+			Collection<Node[]> model = new ArrayList<Node[]>();
 			
 			while(turtleParser.hasNext()) {
 				Node[] node = turtleParser.next();
-				Nodes nodes = new Nodes(node);
-				program.addTriple(nodes);
+				model.add(node);
 			}
 			
 
@@ -1234,6 +1282,7 @@ public class LdpWebService {
 					
 					Value object = factory.createURI( object_string ); 
 					results.add( factory.createStatement(subject, predicate, object) );
+					
 					
 					
 				} catch (IllegalArgumentException e) {

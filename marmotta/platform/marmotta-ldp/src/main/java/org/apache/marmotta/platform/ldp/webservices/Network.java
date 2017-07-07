@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import aifb.edu.manuelBayes.manuelBayes.Node;
 
 public class Network implements Serializable{
 
