@@ -94,8 +94,10 @@ import javax.swing.plaf.synth.SynthTextPaneUI;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1040,6 +1042,8 @@ public class LdpWebService {
 		 * program_data ist InputSteam from the program
 		 * 
 		 */
+		log.warn("Start BayesNet Service");
+		
 
 		Collection<Statement> results = new ArrayList<Statement>();
 
@@ -1053,20 +1057,26 @@ public class LdpWebService {
 
 		try {
 			URI model = new URIImpl(models.next().getObject().stringValue()+".bin");
-			log.info(model.stringValue());
+			log.warn(model.stringValue());
 			InputStream model_data = binaryStore.read(model);
 
-			log.info(new BufferedReader(new InputStreamReader(model_data)).lines()
+			log.warn("model_data: " + new BufferedReader(new InputStreamReader(model_data)).lines()
 					.parallel().collect(Collectors.joining("\n")) );
-			ObjectInputStream in = new ObjectInputStream(model_data);
+
+	        InputStream bufferIn = new BufferedInputStream(model_data);
+			ObjectInputStream in = new ObjectInputStream(bufferIn);
 			original = (Network) in.readObject();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
+		} catch (EOFException e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
+			
 		} catch(IOException i) {
 			i.printStackTrace();
-			throw i;
+			log.error(i.getMessage());
 		} catch(ClassNotFoundException c) {
 			c.printStackTrace();
 			throw c;
@@ -1075,11 +1085,18 @@ public class LdpWebService {
 
 
 
+		log.warn("Continuing BayesNet Service with " + original.toString());
+
 		BayesNet net = new BayesNet();
-		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes){
+		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes) {
+			log.warn("node: " + node.name);
 			BayesNode transfer = net.createNode(node.name);
+			log.warn("node outcome: " + node.getOutcomes());
 			transfer.addOutcomes(node.getOutcomes());
 		}
+		
+		
+		
 		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes){
 			List<BayesNode> eltern = new ArrayList<BayesNode>();
 			BayesNode transfer = net.getNode(node.name);
@@ -1090,10 +1107,14 @@ public class LdpWebService {
 				}
 			}
 
+			log.warn("Set Parents for node " + node.name);
+			for (BayesNode p : eltern) log.warn("Parents: " + p.getName());
 			transfer.setParents(eltern);
+			log.warn("Set Propabilities " + node.getProbabilities());
 			transfer.setProbabilities(node.getProbabilities());
 		}	
 
+		log.warn("Network " + net );
 		IBayesInferrer inferer = new JunctionTreeAlgorithm();
 		inferer.setNetwork(net);
 
@@ -1103,16 +1124,17 @@ public class LdpWebService {
 			TurtleParser turtleParser = new TurtleParser();
 			turtleParser.parse(body, Charset.defaultCharset(), new java.net.URI( resource.stringValue() ) );
 
-			Collection<Node[]> model = new ArrayList<Node[]>();
+			Collection<Node[]> input_nodes = new ArrayList<Node[]>();
 
 			while(turtleParser.hasNext()) {
 				Node[] node = turtleParser.next();
-				model.add(node);
+				log.warn("Input Nodes: " + node[0] + " " + node[1] + " " + node[2] );
+				input_nodes.add(node);
 			}
 
 
 			String name = null;
-			for(org.semanticweb.yars.nx.Node[] nodes: model){
+			for(org.semanticweb.yars.nx.Node[] nodes: input_nodes){
 				if(nodes[2].equals(STEP.BayesNode)){
 					name = nodes[0].toString();					
 				}
@@ -1123,8 +1145,8 @@ public class LdpWebService {
 					inferer.setEvidence(evidence);
 					beliefs = inferer.getBeliefs(net.getNode(nodes[0].toString()));
 
-					for(double ergebniss : beliefs){
-						String str = String.valueOf(ergebniss);
+					for(double ergebnis : beliefs){
+						String str = String.valueOf(ergebnis);
 						URI subject = factory.createURI( nodes[0].toString() ); 
 						Value object = factory.createURI( str );
 						results.add( factory.createStatement(subject, STEP.hasResult, object ) );
