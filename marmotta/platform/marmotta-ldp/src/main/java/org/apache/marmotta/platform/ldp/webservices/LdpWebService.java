@@ -69,6 +69,7 @@ import org.semanticweb.yars.nx.namespace.XSD;
 import org.semanticweb.yars.turtle.TurtleParseException;
 import org.semanticweb.yars.turtle.TurtleParser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
 import edu.kit.aifb.datafu.Origin;
@@ -84,7 +85,6 @@ import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
 import edu.kit.aifb.ldbwebservice.STEP;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -101,8 +101,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -146,7 +148,8 @@ public class LdpWebService {
 	public static final String QUERY_CONSTRUCT_SPO = "CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }";
 
 
-	private Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(LdpWebService.class);
+
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -944,13 +947,13 @@ public class LdpWebService {
 						null, 
 						true, 
 						new Resource[0]);
+				log.debug("models enthaelt folgenden Inhalt", models);
 
 				
 				if (!services.hasNext()) {
 					log.debug("Could not find any connected service to <{}>", resource);
 					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
 				}
-				
 				
 				
 				URI service = cleanURI((URI) services.next().getSubject() );
@@ -1025,8 +1028,6 @@ public class LdpWebService {
 		 * 
 		 */
 		
-		//Logger bayesNetLogger = Logger.getGlobal();
-		
 		Collection<Statement> results = new ArrayList<Statement>();
 		
 
@@ -1038,9 +1039,11 @@ public class LdpWebService {
 		double[] beliefs = null;
 		
 		try {
-
-			URI model = new URIImpl(models.next().getObject().stringValue());
+			URI model = new URIImpl(models.next().getObject().stringValue()+".bin");
+			log.info(model);
 			InputStream model_data = binaryStore.read(model);
+			
+			log.info(IOUtils.toString(model_data, StandardCharsets.UTF_8));
 			ObjectInputStream in = new ObjectInputStream(model_data);
 			original = (Network) in.readObject();
 		} catch (RepositoryException e) {
@@ -1050,9 +1053,9 @@ public class LdpWebService {
 	        i.printStackTrace();
 	        return null;
 	     } catch(ClassNotFoundException c) {
-	         System.out.println("Model not found");
 	         c.printStackTrace();
-	         return null;
+	         throw c;
+	         
 	      }
 		
 			
@@ -1095,7 +1098,6 @@ public class LdpWebService {
 			
 			String name = null;
 			for(org.semanticweb.yars.nx.Node[] nodes: model){
-				//bayesNetLogger.log(Level.SEVERE, nodes.toString());
 				if(nodes[2].equals(STEP.BayesNode)){
 					name = nodes[0].toString();					
 				}
@@ -1112,9 +1114,7 @@ public class LdpWebService {
 						Value object = factory.createURI( str );
 						results.add( factory.createStatement(subject, STEP.hasResult, object ) );
 					}
-				}
-				//bayesNetLogger.log(Level.SEVERE, beliefs.toString());
-									
+				}									
 			}
 			
 
