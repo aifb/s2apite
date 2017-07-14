@@ -112,6 +112,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1054,18 +1055,22 @@ public class LdpWebService {
 		Network original = new Network();
 
 		double[] beliefs = null;
+		
+		/*try {
+		URI model = new URIImpl(models.next().getObject().stringValue()+".bin");
+		log.warn(model.stringValue());
+		InputStream model_data = binaryStore.read(model);
 
-		try {
-			URI model = new URIImpl(models.next().getObject().stringValue()+".bin");
-			log.warn(model.stringValue());
-			InputStream model_data = binaryStore.read(model);
-
-			log.warn("model_data: " + new BufferedReader(new InputStreamReader(model_data)).lines()
-					.parallel().collect(Collectors.joining("\n")) );
-
-	        InputStream bufferIn = new BufferedInputStream(model_data);
-			ObjectInputStream in = new ObjectInputStream(bufferIn);
-			original = (Network) in.readObject();
+		log.warn("model_data: " + new BufferedReader(new InputStreamReader(model_data)).lines()
+				.parallel().collect(Collectors.joining("\n")) );
+		
+        InputStream bufferIn = new BufferedInputStream(model_data);
+        log.warn("model_data: " + bufferIn.toString() );
+		ObjectInputStream in = new ObjectInputStream(bufferIn);
+		original = (Network) in.readObject();
+		
+		in.close();
+		bufferIn.close();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1073,15 +1078,42 @@ public class LdpWebService {
 		} catch (EOFException e) {
 			e.printStackTrace();
 			log.error(e.getMessage());
-			
+		
 		} catch(IOException i) {
 			i.printStackTrace();
 			log.error(i.getMessage());
 		} catch(ClassNotFoundException c) {
 			c.printStackTrace();
-			throw c;
+			throw c;	
+		}*/
+		
+		org.apache.marmotta.platform.ldp.webservices.Node a = original.addNode("<http://step.aifb.kit.edu/a>");
+        a.setOutcomes("true", "false");
+        a.setProbabilities(0.2, 0.8);
 
-		}
+        org.apache.marmotta.platform.ldp.webservices.Node b = original.addNode("<http://step.aifb.kit.edu/b>");
+        b.setOutcomes("one", "two", "three");
+        b.setParents(Arrays.asList(a));
+        
+        log.warn("Start BayesNet Servicetester");
+        b.setProbabilities(
+          0.1, 0.4, 0.5, // a == true
+          0.3, 0.4, 0.3 // a == false
+        );
+
+        org.apache.marmotta.platform.ldp.webservices.Node c = original.addNode("<http://step.aifb.kit.edu/c>");
+        c.setOutcomes("true", "false");
+        c.setParents(Arrays.asList(a, b));
+        c.setProbabilities(
+          // a == true
+          0.1, 0.9, // b == one
+          0.0, 1.0, // b == two
+          0.5, 0.5, // b == three
+          // a == false
+          0.2, 0.8, // b == one
+          0.0, 1.0, // b == two
+          0.7, 0.3 // b == three
+        );
 
 
 
@@ -1121,6 +1153,8 @@ public class LdpWebService {
 		Map<BayesNode,String> evidence = new HashMap<BayesNode,String>();
 
 		try {
+
+			//log.warn("body: " + new BufferedReader(new InputStreamReader(body)).lines().parallel().collect(Collectors.joining("\n")) );
 			TurtleParser turtleParser = new TurtleParser();
 			turtleParser.parse(body, Charset.defaultCharset(), new java.net.URI( resource.stringValue() ) );
 
@@ -1139,8 +1173,11 @@ public class LdpWebService {
 					name = nodes[0].toString();					
 				}
 				if(nodes[1].equals(STEP.hasOutput)){
-					evidence.put(net.getNode(name), nodes[2].toString());
-				}
+					evidence.put(net.getNode(name), ((Literal) nodes[2]).getLabel());
+				}								
+			}
+			
+			for (org.semanticweb.yars.nx.Node[] nodes: input_nodes){
 				if(nodes[2].equals(STEP.Target)){
 					inferer.setEvidence(evidence);
 					beliefs = inferer.getBeliefs(net.getNode(nodes[0].toString()));
@@ -1148,13 +1185,11 @@ public class LdpWebService {
 					for(double ergebnis : beliefs){
 						String str = String.valueOf(ergebnis);
 						URI subject = factory.createURI( nodes[0].toString() ); 
-						Value object = factory.createURI( str );
+						Value object = factory.createLiteral(str);
 						results.add( factory.createStatement(subject, STEP.hasResult, object ) );
 					}
-				}									
+				}	
 			}
-
-
 
 		} catch (TurtleParseException | org.semanticweb.yars.turtle.ParseException e) {
 			throw new IllegalArgumentException();
