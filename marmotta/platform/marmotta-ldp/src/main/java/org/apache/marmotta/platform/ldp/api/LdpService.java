@@ -22,7 +22,7 @@ import org.apache.marmotta.platform.ldp.exceptions.IncompatibleResourceTypeExcep
 import org.apache.marmotta.platform.ldp.exceptions.InvalidInteractionModelException;
 import org.apache.marmotta.platform.ldp.exceptions.InvalidModificationException;
 import org.apache.marmotta.platform.ldp.patch.InvalidPatchDocumentException;
-import org.apache.marmotta.platform.ldp.patch.parser.ParseException;
+import org.apache.marmotta.ldpath.parser.ParseException;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.DCTERMS;

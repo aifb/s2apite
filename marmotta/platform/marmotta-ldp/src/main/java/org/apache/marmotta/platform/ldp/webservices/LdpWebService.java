@@ -17,14 +17,14 @@
  */
 package org.apache.marmotta.platform.ldp.webservices;
 
-//import java.util.logging.*;
+
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferrer;
 import org.eclipse.recommenders.jayes.inference.jtree.JunctionTreeAlgorithm;
 
 import org.apache.commons.lang3.StringUtils;
-
+import org.apache.log4j.Level;
 import org.apache.marmotta.commons.http.ContentType;
 import org.apache.marmotta.commons.http.MarmottaHttpUtils;
 import org.apache.marmotta.commons.vocabulary.LDP;
@@ -40,13 +40,15 @@ import org.apache.marmotta.platform.ldp.exceptions.IncompatibleResourceTypeExcep
 import org.apache.marmotta.platform.ldp.exceptions.InvalidInteractionModelException;
 import org.apache.marmotta.platform.ldp.exceptions.InvalidModificationException;
 import org.apache.marmotta.platform.ldp.patch.InvalidPatchDocumentException;
-import org.apache.marmotta.platform.ldp.patch.parser.ParseException;
+import org.apache.marmotta.ldpath.parser.ParseException;
 import org.apache.marmotta.platform.ldp.patch.parser.RdfPatchParser;
 import org.apache.marmotta.platform.ldp.util.AbstractResourceUriGenerator;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.RandomUriGenerator;
 import org.apache.marmotta.platform.ldp.util.SlugUriGenerator;
+
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
+
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -64,14 +66,17 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.UnsupportedRDFormatException;
+
 import org.semanticweb.yars.nx.Literal;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.Nodes;
 import org.semanticweb.yars.nx.namespace.XSD;
 import org.semanticweb.yars.turtle.TurtleParseException;
 import org.semanticweb.yars.turtle.TurtleParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
 import edu.kit.aifb.datafu.Origin;
@@ -86,7 +91,9 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
+
 import edu.kit.aifb.ldbwebservice.STEP;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -1060,32 +1067,42 @@ public class LdpWebService {
 			log.warn(model.stringValue());
 			InputStream model_data = binaryStore.read(model);
 
-			log.warn("model_data: " + new BufferedReader(new InputStreamReader(model_data)).lines()
-					.parallel().collect(Collectors.joining("\n")) );
+			log.warn("model_data_new: " + new BufferedReader(new InputStreamReader(model_data)).lines()
+					.parallel().collect(Collectors.joining("\n")).toString() );
+			String model_string = new BufferedReader(new InputStreamReader(model_data)).lines()
+					.parallel().collect(Collectors.joining("\n")).toString();
 
-	        InputStream bufferIn = new BufferedInputStream(model_data);
-			ObjectInputStream in = new ObjectInputStream(bufferIn);
+//			ObjectInputStream in = new ObjectInputStream(model_data);
+			ObjectInputStream in = new ObjectInputStream(
+					new ByteArrayInputStream(model_string.getBytes(StandardCharsets.UTF_8)) );
+
+//	        InputStream bufferIn = new BufferedInputStream(in);
+	        
 			original = (Network) in.readObject();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
 		} catch (EOFException e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
+			
+			log.error("EOFException ", e );
 			
 		} catch(IOException i) {
 			i.printStackTrace();
-			log.error(i.getMessage());
+			log.error("IOException ", i);
 		} catch(ClassNotFoundException c) {
 			c.printStackTrace();
-			throw c;
+			log.error("ClassNotFoundException ", c);
 
 		}
 
 
 
 		log.warn("Continuing BayesNet Service with " + original.toString());
+		int counter = 0;
+		for (org.apache.marmotta.platform.ldp.webservices.Node node : original.Nodes) {
+			log.warn("Node " + counter++ + ": " + node.getName());
+		}
 
 		BayesNet net = new BayesNet();
 		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes) {
@@ -1176,38 +1193,7 @@ public class LdpWebService {
 
 		ValueFactory factory = ValueFactoryImpl.getInstance();
 
-		/*
-		 * Write HTTP request body input to request output
-		 *
-		BufferedReader br = new BufferedReader(new InputStreamReader(input_data) );
-		RDFFormat serializer = ioService.getSerializer("text/turtle");
-		try {
-			Model model = Rio.parse(input_data, resource.stringValue(), RDFFormat.TURTLE, new Resource[0]);
-			Collection<Statement> result = new HashSet<Statement>();
-			Iterator<Statement> iter = model.iterator();
-			while (iter.hasNext()) {
-				result.add(iter.next());
-			}
-			return result;
-		} catch (RDFParseException | UnsupportedRDFormatException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 */
 
-
-		/*
-		 * Write "_:this a step:Output . _:this step:hasValue "48" ."
-		 * 
-		ValueFactory factory = ValueFactoryImpl.getInstance();
-		Collection<Statement> result = new HashSet<Statement>();
-
-		Resource this_resource = factory.createBNode("this");
-		result.add(factory.createStatement(this_resource, RDF.TYPE, STEP.Output));
-		result.add(factory.createStatement(this_resource, STEP.hasValue, factory.createLiteral(48)));
-
-		return result;
-		 */
 
 		/*
 		 * Linked Data-Fu execution

@@ -85,7 +85,7 @@ public class SelectorsTest {
     
     @Before
     public void before() throws ParseException {
-        LdPathParser<String> rdfPathParser = new LdPathParser<String>(backend,new StringReader(expr));
+        LdPathParser_cc<String> rdfPathParser = new LdPathParser_cc<String>(backend,new StringReader(expr));
         selector = rdfPathParser.parseSelector(Collections.<String,String>emptyMap());
     }
     

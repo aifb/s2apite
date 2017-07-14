@@ -31,7 +31,7 @@ import org.apache.marmotta.platform.ldp.exceptions.InvalidModificationException;
 import org.apache.marmotta.platform.ldp.patch.InvalidPatchDocumentException;
 import org.apache.marmotta.platform.ldp.patch.RdfPatchUtil;
 import org.apache.marmotta.platform.ldp.patch.model.PatchLine;
-import org.apache.marmotta.platform.ldp.patch.parser.ParseException;
+import org.apache.marmotta.ldpath.parser.ParseException;
 import org.apache.marmotta.platform.ldp.patch.parser.RdfPatchParserImpl;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.ServerManagedPropertiesInterceptor;
@@ -582,32 +582,32 @@ public class LdpServiceImpl implements LdpService {
     }
 
     @Override
-    public void patchResource(RepositoryConnection connection, String resource, InputStream patchData, boolean strict) throws RepositoryException, ParseException, InvalidModificationException, InvalidPatchDocumentException {
+    public void patchResource(RepositoryConnection connection, String resource, InputStream patchData, boolean strict) throws RepositoryException, InvalidModificationException, InvalidPatchDocumentException, ParseException {
         patchResource(connection, buildURI(resource), patchData, strict);
     }
 
     @Override
     public void patchResource(RepositoryConnection connection, URI uri, InputStream patchData, boolean strict) throws RepositoryException, ParseException, InvalidModificationException, InvalidPatchDocumentException {
         final Literal now = connection.getValueFactory().createLiteral(new Date());
-
-        log.trace("parsing patch");
-        List<PatchLine> patch = new RdfPatchParserImpl(patchData).parsePatch();
-
-        // we are allowed to restrict the patch contents (Sec. ???)
-        log.trace("checking for invalid patch statements");
-        for (PatchLine patchLine : patch) {
-            if (LDP.contains.equals(patchLine.getStatement().getPredicate())) {
-                throw new InvalidModificationException("must not change <" + LDP.contains.stringValue() + "> via PATCH");
-            }
-        }
-
-        log.debug("patching <{}> ({} changes)", uri.stringValue(), patch.size());
-
-        RdfPatchUtil.applyPatch(connection, patch, uri);
-
-        log.trace("update resource meta");
-        connection.remove(uri, DCTERMS.modified, null, ldpContext);
-        connection.add(uri, DCTERMS.modified, now, ldpContext);
+//
+//        log.trace("parsing patch");
+//        List<PatchLine> patch = new RdfPatchParserImpl(patchData).parsePatch();
+//
+//        // we are allowed to restrict the patch contents (Sec. ???)
+//        log.trace("checking for invalid patch statements");
+//        for (PatchLine patchLine : patch) {
+//            if (LDP.contains.equals(patchLine.getStatement().getPredicate())) {
+//                throw new InvalidModificationException("must not change <" + LDP.contains.stringValue() + "> via PATCH");
+//            }
+//        }
+//
+//        log.debug("patching <{}> ({} changes)", uri.stringValue(), patch.size());
+//
+//        RdfPatchUtil.applyPatch(connection, patch, uri);
+//
+//        log.trace("update resource meta");
+//        connection.remove(uri, DCTERMS.modified, null, ldpContext);
+//        connection.add(uri, DCTERMS.modified, now, ldpContext);
 
     }
 

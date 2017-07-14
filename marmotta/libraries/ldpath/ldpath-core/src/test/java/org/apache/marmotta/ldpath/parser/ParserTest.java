@@ -65,7 +65,7 @@ public class ParserTest {
 
     @Test
     public void testParseProgram() throws IOException {
-        LdPathParser<String> parser = createParser("program.ldpath");
+        LdPathParser_cc<String> parser = createParser("program.ldpath");
         try {
             Program<String> program = parser.parseProgram();
             assertNotNull(program.getField("path"));
@@ -85,7 +85,7 @@ public class ParserTest {
 
     @Test
     public void testParseTest() throws IOException {
-        LdPathParser<String> parser = createParser("test.ldpath");
+        LdPathParser_cc<String> parser = createParser("test.ldpath");
         try {
             NodeTest<String> test = parser.parseTest(NAMESPACES);
             assertNotNull(test);
@@ -97,7 +97,7 @@ public class ParserTest {
 
     @Test
     public void testParsePrefixes() throws IOException {
-        LdPathParser<String> parser = createParser("namespaces.ldpath");
+        LdPathParser_cc<String> parser = createParser("namespaces.ldpath");
         try {
             Map<String, String> prefixes = parser.parsePrefixes();
             assertTrue(prefixes.containsKey("test"));
@@ -112,11 +112,11 @@ public class ParserTest {
     }
 
 
-    private LdPathParser<String> createParser(String input) throws IOException {
+    private LdPathParser_cc<String> createParser(String input) throws IOException {
         final URL resource = ParserTest.class.getResource("/parse/"+input);
         assertThat("Could not load test input data '" + input + "'", resource, CoreMatchers.notNullValue());
 
-        LdPathParser<String> rdfPathParser = new LdPathParser<String>(backend,new StringReader(IOUtils.toString(resource)));
+        LdPathParser_cc<String> rdfPathParser = new LdPathParser_cc<String>(backend,new StringReader(IOUtils.toString(resource)));
         rdfPathParser.registerTransformer(NS_TEST + "type", new NodeTransformer<String, String>() {
             @Override
             public String transform(RDFBackend<String> backend, String node, Map<String,String> configuration)

@@ -35,8 +35,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -69,6 +71,7 @@ import java.util.regex.Pattern;
  *
  */
 @ApplicationScoped
+@Model
 public class ConfigurationServiceImpl implements ConfigurationService {
 
     private String home;
