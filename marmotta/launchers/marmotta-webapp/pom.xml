@@ -537,6 +537,14 @@
         	<artifactId>marmotta-backend-kiwi</artifactId>
         	<version>3.3.0</version>
         </dependency>
+        
+        
+        
+        <dependency>
+        	<groupId>org.semanticweb.yars</groupId>
+        	<artifactId>nxparser-jax-rs</artifactId>
+        	<version>3.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

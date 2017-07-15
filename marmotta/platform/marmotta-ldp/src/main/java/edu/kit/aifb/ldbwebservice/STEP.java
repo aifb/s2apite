@@ -1,8 +1,6 @@
 package edu.kit.aifb.ldbwebservice;
 
-import org.apache.marmotta.commons.vocabulary.LDP;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.semanticweb.yars.nx.Resource;
@@ -14,20 +12,22 @@ public class STEP {
     /** {@code step} **/
     public static final String PREFIX = "step";
 
-	public static final URI LinkedDataWebService;
-	public static final URI StartAPI;
-	public static final URI Output;
+	public static final Resource LinkedDataWebService;
+	public static final Resource StartAPI;
+	public static final Resource Output;
 	public static final Resource Target;
 	public static final Resource BayesNode;
 	
-	public static final URI hasWebService;
-	public static final URI hasProgram;
-	public static final URI hasValue;
-	public static final URI hasModel;
-	public static final URI hasResult;
+	public static final Resource hasWebService;
+	public static final Resource hasProgram;
+	public static final Resource hasValue;
+	public static final Resource hasModel;
+	public static final Resource hasResult;
 	public static final Resource hasOutput;
 
-	public static final URI hasStartAPI;
+	public static final Resource hasStartAPI;
+
+	public static final Resource BayesService;
 	
 
 	
@@ -36,11 +36,12 @@ public class STEP {
         
         // Classes:
 
-        LinkedDataWebService = factory.createURI(STEP.NAMESPACE, "LinkedDataWebService");
+        LinkedDataWebService = new Resource(STEP.NAMESPACE + "LinkedDataWebService");
+        BayesService = new Resource(STEP.NAMESPACE + "BayesService");
         
-        StartAPI =  factory.createURI(STEP.NAMESPACE, "StartAPI");
+        StartAPI =  new Resource(STEP.NAMESPACE + "StartAPI");
         
-        Output = factory.createURI(STEP.NAMESPACE, "Output");
+        Output = new Resource(STEP.NAMESPACE + "Output");
         
         Target = new Resource(STEP.NAMESPACE + "Target");
         
@@ -49,19 +50,19 @@ public class STEP {
         
         // Predicates:
         
-        hasWebService = factory.createURI(STEP.NAMESPACE, "hasWebService");
+        hasWebService = new Resource(STEP.NAMESPACE + "hasWebService");
 
-        hasProgram = factory.createURI(STEP.NAMESPACE, "hasProgram");
+        hasProgram = new Resource(STEP.NAMESPACE + "hasProgram");
         
-        hasValue = factory.createURI(STEP.NAMESPACE, "hasValue");
+        hasValue = new Resource(STEP.NAMESPACE + "hasValue");
         
-        hasModel = factory.createURI(STEP.NAMESPACE, "hasModel");
+        hasModel = new Resource(STEP.NAMESPACE + "hasModel");
         
         hasOutput = new Resource(STEP.NAMESPACE + "hasOutput");
         
-        hasResult = factory.createURI(STEP.NAMESPACE, "hasResult");
+        hasResult = new Resource(STEP.NAMESPACE + "hasResult");
         
-        hasStartAPI = factory.createURI(STEP.NAMESPACE, "hasStartAPI");
+        hasStartAPI = new Resource(STEP.NAMESPACE + "hasStartAPI");
     }
 
 }
