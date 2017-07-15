@@ -977,26 +977,10 @@ public class LdpWebService {
 
 				RepositoryResult<Statement> services = connection.getStatements( 
 						null, 
-<<<<<<< HEAD
-						ValueFactoryImpl.getInstance().createURI(STEP.hasStartAPI.getLabel()), 
-=======
 						ValueFactoryImpl.getInstance().createURI( STEP.hasStartAPI.getLabel()),  
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 						ValueFactoryImpl.getInstance().createURI(resource), 
 						true, 
-<<<<<<< HEAD
-						new Resource[0]);
-
-				RepositoryResult<Statement> models = connection.getStatements(
-						null, 
-						ValueFactoryImpl.getInstance().createURI(STEP.hasModel.getLabel()), 
-						null, 
-						true, 
-						new Resource[0]);
-				log.debug("models enthaelt folgenden Inhalt", models);
-=======
 						new org.openrdf.model.Resource[0]);
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 
 
 				if (!services.hasNext()) {
@@ -1018,10 +1002,6 @@ public class LdpWebService {
 				if (connection.hasStatement(service, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.BayesService.getLabel()), true) ) { 
 
 
-<<<<<<< HEAD
-				final Collection<Statement> output_data = executeBayesschesModel(service, body, models, connection);
-=======
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 
 					RepositoryResult<Statement> models = connection.getStatements(
 							service, 
@@ -1113,22 +1093,13 @@ public class LdpWebService {
 		}
 	}
 
-<<<<<<< HEAD
-	private Collection<Statement> executeBayesschesModel(Resource resource, InputStream body, RepositoryResult<Statement> models, RepositoryConnection connection) throws IllegalArgumentException, RepositoryException, IOException, ClassNotFoundException {
-		/* resource is BaysscherService 
-=======
 	private Response.ResponseBuilder executeBayesschesModel(URI resource, Response.ResponseBuilder rb, InputStream postBody, RepositoryResult<Statement> models, RDFFormat format) throws IllegalArgumentException, RepositoryException, IOException, ClassNotFoundException {
 		/* 
 		 * resource is BaysscherService 
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 		 * program_data ist InputSteam from the program
 		 * 
 		 */
 		log.warn("Start BayesNet Service");
-<<<<<<< HEAD
-
-=======
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 
 
 		List<Node[]> results = new LinkedList<Node[]>();
@@ -1159,18 +1130,6 @@ public class LdpWebService {
 		log.warn(model.stringValue());
 		InputStream model_data = binaryStore.read(model);
 
-<<<<<<< HEAD
-		log.warn("model_data: " + new BufferedReader(new InputStreamReader(model_data)).lines()
-				.parallel().collect(Collectors.joining("\n")) );
-
-        InputStream bufferIn = new BufferedInputStream(model_data);
-        log.warn("model_data: " + bufferIn.toString() );
-		ObjectInputStream in = new ObjectInputStream(bufferIn);
-		original = (Network) in.readObject();
-
-		in.close();
-		bufferIn.close();
-=======
 		try {
 			URI model = new URIImpl(models.next().getObject().stringValue()+".bin");
 			log.warn(model.stringValue());
@@ -1188,18 +1147,12 @@ public class LdpWebService {
 //	        InputStream bufferIn = new BufferedInputStream(in);
 
 			original = (Network) in.readObject();
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 			throw e;
 		} catch (EOFException e) {
-<<<<<<< HEAD
-			e.printStackTrace();
-			log.error(e.getMessage());
-=======
 
 			log.error("EOFException ", e );
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 
 		} catch(IOException i) {
 			i.printStackTrace();
@@ -1209,43 +1162,11 @@ public class LdpWebService {
 			log.error("ClassNotFoundException ", c);
 			throw c;	
 		}*/
-<<<<<<< HEAD
-=======
 
 		org.apache.marmotta.platform.ldp.webservices.Node a = original.addNode("<http://step.aifb.kit.edu/a>");
 		a.setOutcomes("true", "false");
 		a.setProbabilities(0.2, 0.8);
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 
-<<<<<<< HEAD
-		//		org.apache.marmotta.platform.ldp.webservices.Node a = original.addNode("<http://step.aifb.kit.edu/a>");
-		//        a.setOutcomes("true", "false");
-		//        a.setProbabilities(0.2, 0.8);
-		//
-		//        org.apache.marmotta.platform.ldp.webservices.Node b = original.addNode("<http://step.aifb.kit.edu/b>");
-		//        b.setOutcomes("one", "two", "three");
-		//        b.setParents(Arrays.asList(a));
-		//        
-		//        log.warn("Start BayesNet Servicetester");
-		//        b.setProbabilities(
-		//          0.1, 0.4, 0.5, // a == true
-		//          0.3, 0.4, 0.3 // a == false
-		//        );
-		////
-		//        org.apache.marmotta.platform.ldp.webservices.Node c = original.addNode("<http://step.aifb.kit.edu/c>");
-		//        c.setOutcomes("true", "false");
-		//        c.setParents(Arrays.asList(a, b));
-		//        c.setProbabilities(
-		//          // a == true
-		//          0.1, 0.9, // b == one
-		//          0.0, 1.0, // b == two
-		//          0.5, 0.5, // b == three
-		//          // a == false
-		//          0.2, 0.8, // b == one
-		//          0.0, 1.0, // b == two
-		////          0.7, 0.3 // b == three
-		//        );
-=======
 		org.apache.marmotta.platform.ldp.webservices.Node b = original.addNode("<http://step.aifb.kit.edu/b>");
 		b.setOutcomes("one", "two", "three");
 		b.setParents(Arrays.asList(a));
@@ -1269,7 +1190,6 @@ public class LdpWebService {
 				0.0, 1.0, // b == two
 				0.7, 0.3 // b == three
 				);
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 
 
 
@@ -1436,14 +1356,6 @@ public class LdpWebService {
 		});
 
 
-<<<<<<< HEAD
-			for(org.semanticweb.yars.nx.Node[] nodes: input_nodes){
-				if(nodes[1].equals(STEP.hasOutput)){
-					String str = nodes[0].toString();
-					String str2 = ((Literal) nodes[2]).getLabel();
-					evidence.put(net.getNode(str), ((Literal) nodes[2]).getLabel());
-				}								
-=======
 
 
 		// only entities of type STEP.BayesNode are regarded
@@ -1455,30 +1367,7 @@ public class LdpWebService {
 					subgraph.add(node);
 					relevant_nodes.put(node[0], subgraph );	
 				}
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 			}
-<<<<<<< HEAD
-
-			for (org.semanticweb.yars.nx.Node[] nodes: input_nodes){
-				if(nodes[2].equals(STEP.Target)){
-					inferer.setEvidence(evidence);
-					beliefs = inferer.getBeliefs(net.getNode(nodes[0].toString()));
-
-					for(double ergebnis : beliefs){
-						String str = String.valueOf(ergebnis);
-						URI subject = factory.createURI( nodes[0].toString() ); 
-						Value object = factory.createLiteral(str);
-						results.add( factory.createStatement(subject, ValueFactoryImpl.getInstance().createURI(STEP.hasResult.getLabel()), object ) );
-					}
-				}	
-			}
-
-		} catch (TurtleParseException | org.semanticweb.yars.turtle.ParseException e) {
-			throw new IllegalArgumentException();
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException();
-=======
->>>>>>> branch 'Marcel_BayesNet' of https://gitlab.com/usu-research-step/s2apite.git
 		}
 
 
