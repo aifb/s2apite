@@ -17,7 +17,7 @@
 package org.apache.marmotta.ldpath.model.functions.json;
 
 import org.apache.marmotta.ldpath.model.fields.FieldMapping;
-import org.apache.marmotta.ldpath.parser.LdPathParser;
+import org.apache.marmotta.ldpath.parser.LdPathParser_cc;
 import org.apache.marmotta.ldpath.parser.ParseException;
 import org.apache.marmotta.ldpath.test.AbstractTestBase;
 import org.junit.Assert;
@@ -66,7 +66,7 @@ public class JsonPathFunctionTest extends AbstractTestBase {
 
         final URI ctx = repository.getValueFactory().createURI(NSS.get("ex") + "Quiz");
 
-        final LdPathParser<Value> parser = createParserFromString("fn:jsonpath(\"" + path + "\", <http://www.w3.org/2011/content#chars>) :: xsd:string");
+        final LdPathParser_cc<Value> parser = createParserFromString("fn:jsonpath(\"" + path + "\", <http://www.w3.org/2011/content#chars>) :: xsd:string");
         final FieldMapping<Object, Value> rule = parser.parseRule(NSS);
         final Collection<Object> values = rule.getValues(backend, ctx);
 

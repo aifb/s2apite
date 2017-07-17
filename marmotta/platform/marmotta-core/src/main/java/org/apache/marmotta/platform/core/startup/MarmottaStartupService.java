@@ -36,6 +36,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -52,6 +53,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Author: Sebastian Schaffert
  */
 @ApplicationScoped
+@Model
 public class MarmottaStartupService {
 
     private static final String DEFAULT_KIWI_VERSION = "undefined";

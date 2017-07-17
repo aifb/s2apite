@@ -155,61 +155,61 @@
 		</plugins>
 
 	</build>
-	
+
 	<properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jayes.version>2.4.10-SNAPSHOT</jayes.version>  
-  </properties>
-  
-  <repositories>
-    <repository>
-        <id>recommenders</id>
-        <url>https://repo.eclipse.org/content/repositories/recommenders/</url>
-    </repository>
-  </repositories>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jayes.version>2.4.10-SNAPSHOT</jayes.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>recommenders</id>
+			<url>https://repo.eclipse.org/content/repositories/recommenders/</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
-	<dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.recommenders</groupId>
-        <artifactId>org.eclipse.recommenders.jayes</artifactId>
-        <version>${jayes.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.recommenders</groupId>
-        <artifactId>org.eclipse.recommenders.jayes.io</artifactId>
-        <version>${jayes.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.recommenders</groupId>
-        <artifactId>org.eclipse.recommenders.jayes.transformation</artifactId>
-        <version>${jayes.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>15.0</version>
-    </dependency>
-    <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>2.0.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-math</artifactId>
-        <version>2.1</version>
-    </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.recommenders</groupId>
+			<artifactId>org.eclipse.recommenders.jayes</artifactId>
+			<version>${jayes.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.recommenders</groupId>
+			<artifactId>org.eclipse.recommenders.jayes.io</artifactId>
+			<version>${jayes.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.recommenders</groupId>
+			<artifactId>org.eclipse.recommenders.jayes.transformation</artifactId>
+			<version>${jayes.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.marmotta</groupId>
 			<artifactId>marmotta-core</artifactId>
@@ -341,17 +341,17 @@
 		<dependency>
 			<groupId>org.semanticweb.yars</groupId>
 			<artifactId>nxparser-parsers</artifactId>
-			<version>2.3.3</version>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.semanticweb.yars</groupId>
 			<artifactId>nxparser-model</artifactId>
-			<version>2.3.3</version>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.semanticweb.yars</groupId>
 			<artifactId>nxparser-jax-rs</artifactId>
-			<version>2.3.3</version>
+			<version>3.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Linked Data-Fu from local Maven Repo -->
@@ -361,7 +361,7 @@
 			<version>0.9.10</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/linked-data-fu-common-0.9.10.jar</systemPath>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-datasets</artifactId>
@@ -403,6 +403,13 @@
 			<version>0.9.10</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/linked-data-fu-standalone-0.9.10.jar</systemPath>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>2.25</version>
 		</dependency>
 	</dependencies>
 

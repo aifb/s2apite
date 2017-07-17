@@ -24,7 +24,7 @@ import java.util.Random;
 
 import org.apache.marmotta.ldpath.model.fields.FieldMapping;
 import org.apache.marmotta.ldpath.parser.ParseException;
-import org.apache.marmotta.ldpath.parser.LdPathParser;
+import org.apache.marmotta.ldpath.parser.LdPathParser_cc;
 import org.apache.marmotta.ldpath.test.AbstractTestBase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,7 +76,7 @@ public class DateFunctionsTest extends AbstractTestBase {
 
     @Test
     public void testEarliest() throws ParseException {
-        final LdPathParser<Value> parser = createParserFromString("fn:earliest(<" + prop.stringValue() + ">) :: xsd:dateTime");
+        final LdPathParser_cc<Value> parser = createParserFromString("fn:earliest(<" + prop.stringValue() + ">) :: xsd:dateTime");
         final FieldMapping<Object, Value> rule = parser.parseRule(NSS);
         final Collection<Object> result = rule.getValues(backend, uri);
 
@@ -88,7 +88,7 @@ public class DateFunctionsTest extends AbstractTestBase {
 
     @Test
     public void testLatest() throws ParseException {
-        final LdPathParser<Value> parser = createParserFromString("fn:latest(<" + prop.stringValue() + ">) :: xsd:dateTime");
+        final LdPathParser_cc<Value> parser = createParserFromString("fn:latest(<" + prop.stringValue() + ">) :: xsd:dateTime");
         final FieldMapping<Object, Value> rule = parser.parseRule(NSS);
         final Collection<Object> result = rule.getValues(backend, uri);
 

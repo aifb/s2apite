@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.apache.marmotta.ldpath.model.fields.FieldMapping;
-import org.apache.marmotta.ldpath.parser.LdPathParser;
+import org.apache.marmotta.ldpath.parser.LdPathParser_cc;
 import org.apache.marmotta.ldpath.parser.ParseException;
 import org.apache.marmotta.ldpath.test.AbstractTestBase;
 import org.hamcrest.CoreMatchers;
@@ -62,7 +62,7 @@ public class HtmlFunctionsTest extends AbstractTestBase {
     @Test
     public void testCleanHtmlFunction() throws ParseException {
 
-        final LdPathParser<Value> parser = createParserFromString("fn:cleanHtml(foo:html) :: xsd:string");
+        final LdPathParser_cc<Value> parser = createParserFromString("fn:cleanHtml(foo:html) :: xsd:string");
         final FieldMapping<Object, Value> rule = parser.parseRule(NSS);
 
         final Collection<Object> result = rule.getValues(backend, resource);
@@ -78,7 +78,7 @@ public class HtmlFunctionsTest extends AbstractTestBase {
     @Test
     public void testCssSelectFunction() throws ParseException {
 
-        final LdPathParser<Value> parser = createParserFromString("fn:css(\"p\", foo:html) :: xsd:string");
+        final LdPathParser_cc<Value> parser = createParserFromString("fn:css(\"p\", foo:html) :: xsd:string");
         final FieldMapping<Object, Value> rule = parser.parseRule(NSS);
 
         final Collection<Object> result = rule.getValues(backend, resource);
@@ -90,7 +90,7 @@ public class HtmlFunctionsTest extends AbstractTestBase {
             assertThat("String end", s, CoreMatchers.endsWith("</p>"));
         }
 
-        final LdPathParser<Value> parser2 = createParserFromString("fn:css(\"p#p2\", foo:html) :: xsd:string");
+        final LdPathParser_cc<Value> parser2 = createParserFromString("fn:css(\"p#p2\", foo:html) :: xsd:string");
         final FieldMapping<Object, Value> rule2 = parser2.parseRule(NSS);
 
         final Collection<Object> result2 = rule2.getValues(backend, resource);

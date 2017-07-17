@@ -43,6 +43,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.inject.Inject;
@@ -74,6 +75,7 @@ import java.util.Iterator;
  * Author: Sebastian Schaffert
  */
 @ApplicationScoped
+@Model
 public class SesameServiceImpl implements SesameService {
 
     @Inject

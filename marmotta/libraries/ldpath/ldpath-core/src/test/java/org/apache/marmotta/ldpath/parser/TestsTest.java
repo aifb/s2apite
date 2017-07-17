@@ -70,7 +70,7 @@ public class TestsTest {
     
     @Before
     public void before() throws ParseException {
-        LdPathParser<String> rdfPathParser = new LdPathParser<String>(backend,new StringReader(expr));
+        LdPathParser_cc<String> rdfPathParser = new LdPathParser_cc<String>(backend,new StringReader(expr));
         test = rdfPathParser.parseTest(Collections.<String,String>emptyMap());
     }
     
