@@ -78,7 +78,8 @@ public class ExceptionHandlingTest {
             get(ConfigurationService.RESOURCE_PATH + "/foo").
             getBody();
         responseJson.print();
-        Assert.assertEquals(404, responseJson.jsonPath().get("status"));
+//        Assert.assertEquals(404, responseJson.jsonPath().get("status"));
+        Assert.assertEquals((int) 404, (int) responseJson.jsonPath().get("status"));
         Assert.assertEquals("Not Found", responseJson.jsonPath().get("reason"));
 
     }

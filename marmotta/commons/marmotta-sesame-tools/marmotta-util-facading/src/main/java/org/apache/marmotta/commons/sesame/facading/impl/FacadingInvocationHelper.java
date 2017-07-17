@@ -104,8 +104,10 @@ class FacadingInvocationHelper {
 
     static boolean isMultiValue(Method method) {
         final FacadingInvocationHandler.OPERATOR oper = FacadingInvocationHandler.OPERATOR.getOperator(method);
+//        final boolean isMultiValue = oper.writeOp && method.getParameterTypes().length == 0 ||
+//                FacadeUtils.isCollection(oper.writeOp && oper.numArgs > 0 ? method.getParameterTypes()[0] : method.getReturnType());
         final boolean isMultiValue = oper.writeOp && method.getParameterTypes().length == 0 ||
-                FacadeUtils.isCollection(oper.writeOp && oper.numArgs > 0 ? method.getParameterTypes()[0] : method.getReturnType());
+                FacadeUtils.isCollection(oper.writeOp && oper.numArgs > 0 ? (Class) method.getParameterTypes()[0] : method.getReturnType());
         return isMultiValue;
     }
 

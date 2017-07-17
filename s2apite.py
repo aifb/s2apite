@@ -77,12 +77,12 @@ def generate_input_pattern(operator, num_operands):
 
     equalnames = OP1NAME[operator] == OP2NAME[operator]
     operands += "ex:" + OP1NAME[operator] + \
-        ("1" if equalnames == True else "") + "	?a ;\n"
+        ("1" if equalnames == True else "") + "	ex:variable_a ;\n"
     for j in range(1, num_operands):
         operands += "ex:" + OP2NAME[operator] + (str(j + 1) if equalnames == True else str(
-            j)) + " ?" + ABC[j] + (" ;\n" if j != num_operands - 1 else " .\n")
+            j)) + " ex:variable_" + ABC[j] + (" ;\n" if j != num_operands - 1 else " .\n")
     for k in range(0, num_operands):
-        typedefs += "?" + ABC[k] + " a math:Value .\n"
+        typedefs += "ex:variable_" + ABC[k] + " a math:Value .\n"
 
     input_pattern = ("@prefix ex: <http://example.org/> .\n"
                      "@prefix ldp: <http://www.w3.org/ns/ldp#> .\n"
@@ -115,13 +115,19 @@ def init_services(num, dhost):
               OPERATION_VERB[operator] + "s " + str(num_operands) + " operands.")
 
         pushed_successfull = {"service_container": False,
+                              "service_description": False,
                               "input_pattern": False,
                               "program": False,
                               "startapi": False}
         num_retry = 0
         countwait = 0
+        url = base_uri + '/marmotta/ldp/'
+        serviceContainerUrl = ""
+        apiDescriptionUrl = ""
+        inputPatternUrl = ""
+        programUrl = ""
+        startUrl = ""
         while True:
-            url = base_uri + '/marmotta/ldp/'
             try:
                 resp = requests.head(url, timeout=5)
                 # raise HttpError on failure
@@ -129,9 +135,10 @@ def init_services(num, dhost):
                 if i == 0:
                     print("First container started after: " +
                           str(time.time() - START) + " seconds")
-                # init service
+                
+                # init service container
                 if not pushed_successfull["service_container"]:
-                    print("posting service container to " + name)
+                    print("posting service container to " + url)
                     headers = {'Accept': 'text/turtle',
                                'Slug': name,
                                'Content-Type': 'text/turtle',
@@ -148,49 +155,47 @@ def init_services(num, dhost):
                                "     rdfs:label \"This is Service " + name +
                                ". It can " +
                                OPERATION_VERB[operator] + " " +
-                               str(num_operands) + " numbers.\" ;"
-                               "	<http://step.aifb.kit.edu/hasStartAPI> child:start ;"
-                               "	<http://step.aifb.kit.edu/hasProgram> child:" + name + "app.bin ;"
-                               "    <http://step.aifb.kit.edu/hasInputPattern> child:" +
-                               name + "InputPattern ;"
-                               "	a <http://step.aifb.kit.edu/LinkedDataWebService> .")
+                               str(num_operands) + " numbers.\";" +
+                               "    a <http://step.aifb.kit.edu/LinkedDataWebService> .")
                     resp = requests.post(url, headers=headers, data=payload)
+                    resp.raise_for_status();
+                    serviceContainerUrl = resp.headers['Location'] + "/"  # the server determines the exact location
                     pushed_successfull["service_container"] = True
                     print("completed")
 
                 # post input_pattern
                 if not pushed_successfull["input_pattern"]:
-                    print("posting input_pattern to " + name)
-                    url = base_uri + "/marmotta/ldp/" + name
+                    print("posting input_pattern to " + serviceContainerUrl)
+                    #url = base_uri + "/marmotta/ldp/" + name
                     headers = {'Accept': 'text/turtle',
-                               'Slug': name + "InputPattern",
-                               'Content-Type': 'text/notation3',
+                               'Slug': name + 'InputPattern',
+                               'Content-Type': 'text/turtle',
                                'Authorization': 'Basic ' + AUTH}
                     payload = generate_input_pattern(operator, num_operands)
-                    resp = requests.post(url, headers=headers, data=payload)
+                    resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
                     resp.raise_for_status()
+                    inputPatternUrl = resp.headers['location'] + "/" # the server determines the exact location
                     pushed_successfull["input_pattern"] = True
                     print("completed")
 
                 # post program
                 if not pushed_successfull["program"]:
-                    print("posting program to " + name)
-                    url = base_uri + "/marmotta/ldp/" + name
+                    print("posting program to " + serviceContainerUrl)
+                    #url = base_uri + "/marmotta/ldp/" + name
                     headers = {'Accept': 'text/turtle',
-                               'Slug': name + "app",
+                               'Slug': name + 'app',
                                'Content-Type': 'text/notation3',
                                'Authorization': 'Basic ' + AUTH}
                     payload = generate_program(operator, num_operands)
-                    resp = requests.post(
-                        url, headers=headers, data=payload)
+                    resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
                     resp.raise_for_status()
+                    programUrl = resp.headers['location']  # the server determines the exact location
                     pushed_successfull["program"] = True
                     print("completed")
 
                 # post startAPI
                 if not pushed_successfull["startapi"]:
-                    print("posting startAPI to " + name)
-                    url = base_uri + "/marmotta/ldp/" + name
+                    print("posting startAPI to " + serviceContainerUrl)
                     headers = {'Accept': 'text/turtle',
                                'Slug': "start",
                                'Content-Type': 'text/turtle',
@@ -205,23 +210,56 @@ def init_services(num, dhost):
                                "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
                                "@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
                                "<> a ldp:Resource ; a step:StartAPI ;"
-                               "     step:hasWebService parent:" + name + " ;"
-                               "     rdfs:label \"This starts the " + name + "app\" .")
-                    resp = requests.post(url, headers=headers, data=payload)
+                               #"     step:hasWebService " + apiDescriptionUrl + " ;"
+                               "     rdfs:label \"This starts the service\" .")
+                    resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
                     resp.raise_for_status()
+                    startUrl = resp.headers['location']  # the server determines the exact location
                     pushed_successfull["startapi"] = True
                     print("completed")
                     if i == 0:
                         print("First container completely initialized after: " +
                               str(time.time() - START) + " seconds")
-                    print("initialization of " + name +
-                          " StartAPI successfull")
-                    break
+                    print("initialization of " + name + " StartAPI successfull")
+                    
+                    
+                    # service description resource
+                    if not pushed_successfull["service_description"]:
+                        print("posting description to " + serviceContainerUrl)
+                        headers = {'Accept': 'text/turtle',
+                                   'Slug': name,
+                                   'Content-Type': 'text/turtle',
+                                   'Authorization': 'Basic ' + AUTH}
+                        payload = ("@prefix ldp: <http://www.w3.org/ns/ldp#> ."
+                                   "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
+                                   "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
+                                   "@prefix dcterms: <http://purl.org/dc/terms/> ."
+                                   #"@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
+                                   #"@prefix child: <" + base_uri + "/marmotta/ldp/" + name + "/> ."
+                                   #"@prefix this: <" + base_uri + "/marmotta/ldp/" + name + "#> ."
+                                   ""
+                                   "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
+                                   "     rdfs:label \"This is Service " + name +
+                                   ". It can " +
+                                   OPERATION_VERB[operator] + " " +
+                                   str(num_operands) + " numbers.\" ;"
+                                   "    <http://step.aifb.kit.edu/hasStartAPI> <" + startUrl + ">  ;"
+                                   "    <http://step.aifb.kit.edu/hasProgram> <" + programUrl + "> ;"
+                                   "    <http://step.aifb.kit.edu/hasInputPattern> <" + inputPatternUrl + "> ;"
+                                   "    a <http://step.aifb.kit.edu/LinkedDataWebService> .")
+                        resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
+                        apiDescriptionUrl = resp.headers['location']  # the server determines the exact location
+                        pushed_successfull["service_container"] = True
+                        print("completed")  
+                          
+                    break # last resource, afterwards everything is online
+                
+                
             except requests.exceptions.HTTPError as ex:
                 print("HTTPError: " + str(ex))
                 if num_retry <= 3:
                     num_retry += 1
-                    print("request " + ex.request.method + " " + ex.request.url + "failed ... retry")
+                    print("request " + ex.request.method + " " + ex.request.url + " failed ... retry")
                     # exponential backoff
                     time.sleep(num_retry * num_retry)
                 else:
