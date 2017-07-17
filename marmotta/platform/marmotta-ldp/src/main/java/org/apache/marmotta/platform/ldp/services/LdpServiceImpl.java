@@ -202,7 +202,7 @@ public class LdpServiceImpl implements LdpService {
 	// extended part:
 	@Override
 	public boolean isStartAPI(RepositoryConnection connection, URI uri) throws RepositoryException {
-		return connection.hasStatement(uri, RDF.TYPE, STEP.StartAPI, true, new Resource[0]);
+		return connection.hasStatement(uri, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.StartAPI.getLabel()), true, new Resource[0]);
 	}
 
 

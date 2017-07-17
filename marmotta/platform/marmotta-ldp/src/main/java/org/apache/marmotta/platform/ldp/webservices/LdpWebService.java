@@ -54,6 +54,7 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -944,14 +945,14 @@ public class LdpWebService {
 
 				RepositoryResult<Statement> services = connection.getStatements( 
 						null, 
-						STEP.hasStartAPI, 
+						ValueFactoryImpl.getInstance().createURI(STEP.hasStartAPI.getLabel()), 
 						ValueFactoryImpl.getInstance().createURI(resource), 
 						true, 
 						new Resource[0]);
 
 				RepositoryResult<Statement> models = connection.getStatements(
 						null, 
-						STEP.hasModel, 
+						ValueFactoryImpl.getInstance().createURI(STEP.hasModel.getLabel()), 
 						null, 
 						true, 
 						new Resource[0]);
@@ -976,7 +977,7 @@ public class LdpWebService {
 
 
 
-				final Collection<Statement> output_data = executeBayesschesModel(service, body, models);
+				final Collection<Statement> output_data = executeBayesschesModel(service, body, models, connection);
 
 				StreamingOutput entity = new StreamingOutput() {
 					@Override
@@ -1038,13 +1039,13 @@ public class LdpWebService {
 		}
 	}
 
-	private Collection<Statement> executeBayesschesModel(Resource resource, InputStream body, RepositoryResult<Statement> models) throws IllegalArgumentException, RepositoryException, IOException, ClassNotFoundException {
+	private Collection<Statement> executeBayesschesModel(Resource resource, InputStream body, RepositoryResult<Statement> models, RepositoryConnection connection) throws IllegalArgumentException, RepositoryException, IOException, ClassNotFoundException {
 		/* resource is BaysscherService 
 		 * program_data ist InputSteam from the program
 		 * 
 		 */
 		log.warn("Start BayesNet Service");
-		
+
 
 		Collection<Statement> results = new ArrayList<Statement>();
 
@@ -1055,7 +1056,17 @@ public class LdpWebService {
 		Network original = new Network();
 
 		double[] beliefs = null;
-		
+
+		URIImpl model = new URIImpl(models.next().getObject().stringValue());
+
+		RepositoryResult<Statement> bayesNodes = connection.getStatements( 
+				model, 
+				ValueFactoryImpl.getInstance().createURI(STEP.hasBayesNode.getLabel()),
+				null, 
+				true, 
+				new Resource[0]);
+
+
 		/*try {
 		URI model = new URIImpl(models.next().getObject().stringValue()+".bin");
 		log.warn(model.stringValue());
@@ -1063,12 +1074,12 @@ public class LdpWebService {
 
 		log.warn("model_data: " + new BufferedReader(new InputStreamReader(model_data)).lines()
 				.parallel().collect(Collectors.joining("\n")) );
-		
+
         InputStream bufferIn = new BufferedInputStream(model_data);
         log.warn("model_data: " + bufferIn.toString() );
 		ObjectInputStream in = new ObjectInputStream(bufferIn);
 		original = (Network) in.readObject();
-		
+
 		in.close();
 		bufferIn.close();
 		} catch (RepositoryException e) {
@@ -1078,7 +1089,7 @@ public class LdpWebService {
 		} catch (EOFException e) {
 			e.printStackTrace();
 			log.error(e.getMessage());
-		
+
 		} catch(IOException i) {
 			i.printStackTrace();
 			log.error(i.getMessage());
@@ -1086,64 +1097,127 @@ public class LdpWebService {
 			c.printStackTrace();
 			throw c;	
 		}*/
-		
-		org.apache.marmotta.platform.ldp.webservices.Node a = original.addNode("<http://step.aifb.kit.edu/a>");
-        a.setOutcomes("true", "false");
-        a.setProbabilities(0.2, 0.8);
 
-        org.apache.marmotta.platform.ldp.webservices.Node b = original.addNode("<http://step.aifb.kit.edu/b>");
-        b.setOutcomes("one", "two", "three");
-        b.setParents(Arrays.asList(a));
-        
-        log.warn("Start BayesNet Servicetester");
-        b.setProbabilities(
-          0.1, 0.4, 0.5, // a == true
-          0.3, 0.4, 0.3 // a == false
-        );
-
-        org.apache.marmotta.platform.ldp.webservices.Node c = original.addNode("<http://step.aifb.kit.edu/c>");
-        c.setOutcomes("true", "false");
-        c.setParents(Arrays.asList(a, b));
-        c.setProbabilities(
-          // a == true
-          0.1, 0.9, // b == one
-          0.0, 1.0, // b == two
-          0.5, 0.5, // b == three
-          // a == false
-          0.2, 0.8, // b == one
-          0.0, 1.0, // b == two
-          0.7, 0.3 // b == three
-        );
+		//		org.apache.marmotta.platform.ldp.webservices.Node a = original.addNode("<http://step.aifb.kit.edu/a>");
+		//        a.setOutcomes("true", "false");
+		//        a.setProbabilities(0.2, 0.8);
+		//
+		//        org.apache.marmotta.platform.ldp.webservices.Node b = original.addNode("<http://step.aifb.kit.edu/b>");
+		//        b.setOutcomes("one", "two", "three");
+		//        b.setParents(Arrays.asList(a));
+		//        
+		//        log.warn("Start BayesNet Servicetester");
+		//        b.setProbabilities(
+		//          0.1, 0.4, 0.5, // a == true
+		//          0.3, 0.4, 0.3 // a == false
+		//        );
+		////
+		//        org.apache.marmotta.platform.ldp.webservices.Node c = original.addNode("<http://step.aifb.kit.edu/c>");
+		//        c.setOutcomes("true", "false");
+		//        c.setParents(Arrays.asList(a, b));
+		//        c.setProbabilities(
+		//          // a == true
+		//          0.1, 0.9, // b == one
+		//          0.0, 1.0, // b == two
+		//          0.5, 0.5, // b == three
+		//          // a == false
+		//          0.2, 0.8, // b == one
+		//          0.0, 1.0, // b == two
+		////          0.7, 0.3 // b == three
+		//        );
 
 
 
 		log.warn("Continuing BayesNet Service with " + original.toString());
 
 		BayesNet net = new BayesNet();
-		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes) {
-			log.warn("node: " + node.name);
-			BayesNode transfer = net.createNode(node.name);
-			log.warn("node outcome: " + node.getOutcomes());
-			transfer.addOutcomes(node.getOutcomes());
-		}
-		
-		
-		
-		for(org.apache.marmotta.platform.ldp.webservices.Node node: original.Nodes){
-			List<BayesNode> eltern = new ArrayList<BayesNode>();
-			BayesNode transfer = net.getNode(node.name);
+		while(bayesNodes.hasNext()) {
 
-			if(node.parents != null){
-				for(org.apache.marmotta.platform.ldp.webservices.Node parent: node.parents){
-					eltern.add(net.getNode(parent.name));
+			URIImpl uri = new URIImpl(bayesNodes.next().getObject().stringValue());
+
+			RepositoryResult<Statement> names = connection.getStatements( 
+					uri, 
+					ValueFactoryImpl.getInstance().createURI(STEP.hasName.getLabel()),
+					null, 
+					true, 
+					new Resource[0]);
+
+			String name = names.next().getObject().stringValue();
+
+			BayesNode transfer = net.createNode(name);
+
+			RepositoryResult<Statement> outcomes = connection.getStatements( 
+					uri, 
+					ValueFactoryImpl.getInstance().createURI(STEP.hasOutput.getLabel()),
+					null, 
+					true, 
+					new Resource[0]);
+
+
+
+			String[] output = (outcomes.next().getObject().stringValue()).split("_");
+			transfer.addOutcomes(output);
+
+
+
+
+
+
+
+		}
+		RepositoryResult<Statement> bayesNodes2 = connection.getStatements( 
+				model, 
+				ValueFactoryImpl.getInstance().createURI(STEP.hasBayesNode.getLabel()),
+				null, 
+				true, 
+				new Resource[0]);
+
+		while(bayesNodes2.hasNext()) {
+
+			URIImpl uri = new URIImpl(bayesNodes2.next().getObject().stringValue());
+
+			RepositoryResult<Statement> parents = connection.getStatements( 
+					uri, 
+					ValueFactoryImpl.getInstance().createURI(STEP.hasParents.getLabel()),
+					null, 
+					true, 
+					new Resource[0]);
+			RepositoryResult<Statement> name = connection.getStatements( 
+					uri, 
+					ValueFactoryImpl.getInstance().createURI(STEP.hasName.getLabel()),
+					null, 
+					true, 
+					new Resource[0]);
+
+
+			BayesNode transfer = net.getNode(name.next().getObject().stringValue());
+
+			if(parents.hasNext()) {
+				String[] parTransfer = (parents.next().getObject().stringValue()).split(" ");
+
+				List<BayesNode> eltern = new ArrayList<BayesNode>();
+				for(String parent: parTransfer){
+					eltern.add(net.getNode(parent));
 				}
+				transfer.setParents(eltern);
 			}
 
-			log.warn("Set Parents for node " + node.name);
-			for (BayesNode p : eltern) log.warn("Parents: " + p.getName());
-			transfer.setParents(eltern);
-			log.warn("Set Propabilities " + node.getProbabilities());
-			transfer.setProbabilities(node.getProbabilities());
+			RepositoryResult<Statement> probabilities = connection.getStatements( 
+					uri, 
+					ValueFactoryImpl.getInstance().createURI(STEP.hasProbabilities.getLabel()),
+					null, 
+					true, 
+					new Resource[0]);
+
+
+			String[] probTransfer = (probabilities.next().getObject().stringValue()).split(", ");
+
+			double[] prob = new double[probTransfer.length];
+			for (int i = 0; i < prob.length; i++) {
+				prob[i] = Double.parseDouble(probTransfer[i]);
+			}
+
+			transfer.setProbabilities(prob);
 		}	
 
 		log.warn("Network " + net );
@@ -1167,16 +1241,14 @@ public class LdpWebService {
 			}
 
 
-			String name = null;
 			for(org.semanticweb.yars.nx.Node[] nodes: input_nodes){
-				if(nodes[2].equals(STEP.BayesNode)){
-					name = nodes[0].toString();					
-				}
 				if(nodes[1].equals(STEP.hasOutput)){
-					evidence.put(net.getNode(name), ((Literal) nodes[2]).getLabel());
+					String str = nodes[0].toString();
+					String str2 = ((Literal) nodes[2]).getLabel();
+					evidence.put(net.getNode(str), ((Literal) nodes[2]).getLabel());
 				}								
 			}
-			
+
 			for (org.semanticweb.yars.nx.Node[] nodes: input_nodes){
 				if(nodes[2].equals(STEP.Target)){
 					inferer.setEvidence(evidence);
@@ -1186,7 +1258,7 @@ public class LdpWebService {
 						String str = String.valueOf(ergebnis);
 						URI subject = factory.createURI( nodes[0].toString() ); 
 						Value object = factory.createLiteral(str);
-						results.add( factory.createStatement(subject, STEP.hasResult, object ) );
+						results.add( factory.createStatement(subject, ValueFactoryImpl.getInstance().createURI(STEP.hasResult.getLabel()), object ) );
 					}
 				}	
 			}
