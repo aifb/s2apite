@@ -73,15 +73,15 @@ import org.semanticweb.yars.nx.Literal;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.Nodes;
 import org.semanticweb.yars.nx.Resource;
-import org.semanticweb.yars.nx.namespace.OWL;
-import org.semanticweb.yars.nx.namespace.XSD;
-import org.semanticweb.yars.turtle.TurtleParseException;
-import org.semanticweb.yars.turtle.TurtleParser;
+//import org.semanticweb.yars.nx.namespace.OWL;
+//import org.semanticweb.yars.nx.namespace.XSD;
+//import org.semanticweb.yars.turtle.TurtleParseException;
+//import org.semanticweb.yars.turtle.TurtleParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jayway.restassured.builder.ResponseBuilder;
+//import com.jayway.restassured.builder.ResponseBuilder;
 
 import edu.kit.aifb.datafu.Binding;
 import edu.kit.aifb.datafu.ConstructQuery;
