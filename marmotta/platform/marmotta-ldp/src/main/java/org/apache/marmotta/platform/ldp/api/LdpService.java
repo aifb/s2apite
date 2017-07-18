@@ -333,6 +333,7 @@ public interface LdpService {
 
     // extended part:
     /**
+     * A StartApi is a resource with a hydra:entrypoint relation pointing to
      * 
      * @param connection
      * @param resource

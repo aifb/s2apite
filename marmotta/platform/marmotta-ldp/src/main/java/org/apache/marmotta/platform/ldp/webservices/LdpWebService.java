@@ -77,7 +77,7 @@ import org.semanticweb.yars.nx.Resource;
 //import org.semanticweb.yars.nx.namespace.XSD;
 //import org.semanticweb.yars.turtle.TurtleParseException;
 //import org.semanticweb.yars.turtle.TurtleParser;
-
+import org.semanticweb.yars.nx.namespace.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +97,7 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
-
+import edu.kit.aifb.ldbwebservice.HYDRA;
 import edu.kit.aifb.ldbwebservice.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -106,6 +106,7 @@ import javax.inject.Inject;
 import javax.swing.plaf.synth.SynthTextPaneUI;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import java.io.BufferedInputStream;
@@ -461,15 +462,15 @@ public class LdpWebService {
 
 		final String container = ldpService.getResourceUri(uriInfo);
 		log.debug("POST to LDPC <{}>", container);
-		
-		
+
+
 		RDFFormat format = RDFFormat.TURTLE;
 		try {
 			format = RDFFormat.forMIMEType(MarmottaHttpUtils.parseAcceptHeader(accept_type).get(0).getMime() );
 		} catch (Exception e ) {
-			
+
 		}
-		
+
 
 		final RepositoryConnection conn = sesameService.getConnection();
 		try {
@@ -968,39 +969,50 @@ public class LdpWebService {
 	 */
 	protected Response.ResponseBuilder createWebServiceResponse(RepositoryConnection connection, Response.ResponseBuilder rb, String resource, InputStream postBody, RDFFormat format) throws RepositoryException, IllegalArgumentException {
 
-		createWebServiceResponse(rb);
+		rb = createWebServiceResponse(rb);
 
 		if (ldpService.exists(connection, resource)) {
 
 			try {
 
 
-				RepositoryResult<Statement> services = connection.getStatements( 
+				RepositoryResult<Statement> service_descriptions = connection.getStatements( 
 						null, 
-						ValueFactoryImpl.getInstance().createURI( STEP.hasStartAPI.getLabel()),  
+						ValueFactoryImpl.getInstance().createURI( HYDRA.entrypoint.getLabel()),  
 						ValueFactoryImpl.getInstance().createURI(resource), 
 						true, 
 						new org.openrdf.model.Resource[0]);
 
 
-				if (!services.hasNext()) {
-					log.debug("Could not find any connected service to <{}>", resource);
-					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
+				if (!service_descriptions.hasNext()) {
+					log.debug("Could not find any connected service description to <{}>", resource);
+					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service descriptions!");
 				}
 
 
-				URI service = cleanURI((URI) services.next().getSubject() );
-				if (services.hasNext()) {
+				URI service_description = cleanURI((URI) service_descriptions.next().getSubject() );
+				if (service_descriptions.hasNext()) {
 					// do nothing yet
 					// to do: handle multiple services with same startAPI
 				}
 
 
+				RepositoryResult<Statement> services = connection.getStatements( 
+						null, 
+						LDP.contains,  
+						service_description, 
+						true, 
+						new org.openrdf.model.Resource[0]);
+				if (!services.hasNext()) {
+					log.debug("Could not find any connected service to <{}>", service_description);
+					return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected service!");
+				}
+				URI service = cleanURI((URI) services.next().getSubject() );
 
 
 
 				if (connection.hasStatement(service, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.BayesService.getLabel()), true) ) { 
-
+					// is BayesService
 
 
 					RepositoryResult<Statement> models = connection.getStatements(
@@ -1014,15 +1026,15 @@ public class LdpWebService {
 
 
 
-//					return Response.ok(
-//							new GenericEntity<Iterable<Node[]>>( 
-//									executeBayesschesModel(service, rb, postBody, models, format) ) { }
-//							);
-					
+					//					return Response.ok(
+					//							new GenericEntity<Iterable<Node[]>>( 
+					//									executeBayesschesModel(service, rb, postBody, models, format) ) { }
+					//							);
+
 					return executeBayesschesModel(service, rb, postBody, models, format);
 
 				} else {
-
+					// is a LinkedDataWebService
 
 
 					RepositoryResult<Statement> programs = connection.getStatements(
@@ -1036,7 +1048,7 @@ public class LdpWebService {
 						log.warn("Could not find any connected service to <{}>", resource);
 						return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
 					}
-					
+
 					// get Program as file
 					//OutputStream program_data = new ByteArrayOutputStream();
 					URI program = new URIImpl(programs.next().getObject().stringValue());
@@ -1050,10 +1062,11 @@ public class LdpWebService {
 
 
 
-					return Response.ok(
-							new GenericEntity<Iterable<Node[]>>( 
-									executeWebService(service, postBody, "", programs.next().getObject().stringValue()) ) { }
-							);
+					//					return Response.ok(
+					//							new GenericEntity<Iterable<Node[]>>( 
+					//									executeWebService(service, postBody, "", programs.next().getObject().stringValue()) ) { }
+					//							);
+					return executeLinkedDataWebService(service, rb, postBody, "", programs.next().getObject().stringValue(), format );
 				}
 
 
@@ -1226,7 +1239,7 @@ public class LdpWebService {
 			List<Node[]> error = new LinkedList<Node[]>();
 			error.add( new org.semanticweb.yars.nx.Node[] { 
 					new org.semanticweb.yars.nx.BNode("You"), 
-					STEP.hasOutput, 
+					RDFS.LABEL, 
 					new org.semanticweb.yars.nx.Literal("failed!") });
 		}
 
@@ -1309,11 +1322,11 @@ public class LdpWebService {
 				}
 			}	
 		}
-		
-		
-		
+
+
+
 		final StreamingOutput entity = new StreamingOutput() {
-			
+
 			@Override
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
@@ -1333,9 +1346,10 @@ public class LdpWebService {
 
 
 
-	private Iterable<Node[]> executeWebService(URI uri, InputStream postBody, String query, String program_resource) throws IllegalArgumentException {
+	private ResponseBuilder executeLinkedDataWebService(URI resource, ResponseBuilder rb, InputStream postBody, String query, String program_resource, RDFFormat format) throws IllegalArgumentException {
 
 		ValueFactory factory = ValueFactoryImpl.getInstance();
+		List<Node[]> results = new ArrayList<Node[]>();
 
 
 		/*
@@ -1370,13 +1384,13 @@ public class LdpWebService {
 			rdfParser.setRDFHandler(collector);
 
 			try {
-				rdfParser.parse(postBody, uri.stringValue());
+				rdfParser.parse(postBody, resource.stringValue());
 			} catch (RDFParseException | RDFHandlerException e) {
 
 				List<Node[]> error = new LinkedList<Node[]>();
 				error.add( new org.semanticweb.yars.nx.Node[] { 
 						new org.semanticweb.yars.nx.BNode("You"), 
-						STEP.hasOutput, 
+						RDFS.LABEL, 
 						new org.semanticweb.yars.nx.Literal("failed!") });
 			} catch (IOException e) {
 				log.error("Parsing incoming data failed: ", e);
@@ -1442,14 +1456,13 @@ public class LdpWebService {
 			epg.shutdown();
 
 
-			List<Node[]> results = new ArrayList<Node[]>();
 			for (Binding binding : bc.getCollection() ) {
 
 				Nodes nodes = binding.getNodes();
 				Node[] node = nodes.getNodeArray();
 
 				String subj_string = node[0].toString().replace("<", "").replace(">", "").replace("\"", "");
-				org.openrdf.model.Resource subject;
+				org.openrdf.model.Resource subject = null;
 
 
 				if (subj_string.startsWith("_")) {
@@ -1490,65 +1503,75 @@ public class LdpWebService {
 			}
 
 
-
-
-
-
-			return results;
-
-
 		} catch (edu.kit.aifb.datafu.parser.sparql.ParseException e) {
 			e.printStackTrace();
 			log.error("sparql.ParseException: ", e);
-			List<Node[]> error = new LinkedList<Node[]> ();
-			error.add(new Node[] {new BNode(""), STEP.hasOutput, new Literal("failed!")} );
-			return error;
+			results.add(new Node[] {new BNode("error"), RDFS.LABEL, new Literal("failed!")} );
+			results.add(new Node[] {new BNode("error"), RDFS.COMMENT, new Literal("sparql.ParseException: " + e.getMessage())} );
 		} catch (edu.kit.aifb.datafu.parser.notation3.ParseException e) {
 			e.printStackTrace();
 			log.error("notation3.ParseException: ", e);
-			List<Node[]> error = new LinkedList<Node[]> ();
-			error.add(new Node[] {new BNode(""), STEP.hasOutput, new Literal("failed!")} );
-			return error;
+			results.add(new Node[] {new BNode("error"), RDFS.LABEL, new Literal("failed!")} );
+			results.add(new Node[] {new BNode("error"), RDFS.COMMENT, new Literal("notation3.ParseException: " + e.getMessage())} );
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			log.error("InterruptedException: ", e);
-			List<Node[]> error = new LinkedList<Node[]> ();
-			error.add(new Node[] {new BNode(""), STEP.hasOutput, new Literal("failed!")} );
-			return error;
+			results.add(new Node[] {new BNode("error"), RDFS.LABEL, new Literal("failed!")} );
+			results.add(new Node[] {new BNode("error"), RDFS.COMMENT, new Literal("InterruptedException: " + e.getMessage())} );
 		} catch (IOException e) {
 			e.printStackTrace();
 			log.error("IOException: ", e);
-			List<Node[]> error = new LinkedList<Node[]> ();
-			error.add(new Node[] {new BNode(""), STEP.hasOutput, new Literal("failed!")} );
-			return error;
-		}
+			results.add(new Node[] {new BNode("error"), RDFS.LABEL, new Literal("failed!")} );
+			results.add(new Node[] {new BNode("error"), RDFS.COMMENT, new Literal("IOException: " + e.getMessage())} );
+		} 
+
+
+			final StreamingOutput entity = new StreamingOutput() {
+
+				@Override
+				public void write(OutputStream output) throws IOException, WebApplicationException {
+					try {
+						ldpService.writeResource(resource, results, output, format);
+					} catch (RDFHandlerException e) {
+						throw new NoLogWebApplicationException(e, createResponse(Response.status(Response.Status.INTERNAL_SERVER_ERROR)).entity(e.getMessage()).build());
+					} catch (final Throwable t) {
+						throw t;
+					}
+				}
+			};
+
+			return Response.status(Status.OK).entity(entity);
+
+
 
 	}
 
-	protected Response.ResponseBuilder createWebServiceResponse(Response.ResponseBuilder rb) {
-		// Link rel='http://www.w3.org/ns/ldp#constrainedBy' (Sec. 4.2.1.6)
-		rb.link(LDP_SERVER_CONSTRAINTS, LINK_REL_CONSTRAINEDBY);
 
-		return rb;
+
+protected Response.ResponseBuilder createWebServiceResponse(Response.ResponseBuilder rb) {
+	// Link rel='http://www.w3.org/ns/ldp#constrainedBy' (Sec. 4.2.1.6)
+	rb.link(LDP_SERVER_CONSTRAINTS, LINK_REL_CONSTRAINEDBY);
+
+	return rb;
+}
+
+public String getStringFromInputStream(InputStream stream) {
+	String pro = "";
+	Scanner scanner = new Scanner(stream,"UTF-8");
+	while (scanner.hasNextLine()) {
+		pro += scanner.nextLine() + "\n";
 	}
-
-	public String getStringFromInputStream(InputStream stream) {
-		String pro = "";
-		Scanner scanner = new Scanner(stream,"UTF-8");
-		while (scanner.hasNextLine()) {
-			pro += scanner.nextLine() + "\n";
-		}
-		scanner.close();
-		return pro;
-	} 
+	scanner.close();
+	return pro;
+} 
 
 
 
-	public static Program getProgramTriple() throws ParseException, edu.kit.aifb.datafu.parser.notation3.ParseException {
-		Origin origin = new InternalOrigin("programOriginTriple");
-		ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(origin);
-		Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(PROGRAM_TRIPLE.getBytes()));
-		notation3Parser.parse(programConsumer, origin);
-		return programConsumer.getProgram(origin);
-	}
+public static Program getProgramTriple() throws ParseException, edu.kit.aifb.datafu.parser.notation3.ParseException {
+	Origin origin = new InternalOrigin("programOriginTriple");
+	ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(origin);
+	Notation3Parser notation3Parser = new Notation3Parser(new ByteArrayInputStream(PROGRAM_TRIPLE.getBytes()));
+	notation3Parser.parse(programConsumer, origin);
+	return programConsumer.getProgram(origin);
+}
 }

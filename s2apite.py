@@ -92,7 +92,9 @@ def generate_input_pattern(operator, num_operands):
                      "@prefix foaf:    <http://xmlns.com/foaf/0.1/> .\n"
                      "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
                      "@prefix math: <http://www.w3.org/2000/10/swap/math#> .\n"
-                     "\n"
+                     "\n" + 
+                     "<> a <http://www.w3.org/ns/hydra/core#Operation> ."
+                     "\n" + 
                      "" + operands + ""
                      "\n"
                      "" + typedefs + "")
@@ -116,6 +118,7 @@ def init_services(num, dhost):
 
         pushed_successfull = {"service_container": False,
                               "service_description": False,
+                              "operation": False,
                               "input_pattern": False,
                               "program": False,
                               "startapi": False}
@@ -125,6 +128,7 @@ def init_services(num, dhost):
         serviceContainerUrl = ""
         apiDescriptionUrl = ""
         inputPatternUrl = ""
+        operationUrl = ""
         programUrl = ""
         startUrl = ""
         while True:
@@ -147,16 +151,17 @@ def init_services(num, dhost):
                                "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
                                "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
                                "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                               "@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
-                               "@prefix child: <" + base_uri + "/marmotta/ldp/" + name + "/> ."
-                               "@prefix this: <" + base_uri + "/marmotta/ldp/" + name + "#> ."
+                               #"@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
+                               #"@prefix child: <" + base_uri + "/marmotta/ldp/" + name + "/> ."
+                               #"@prefix this: <" + base_uri + "/marmotta/ldp/" + name + "#> ."
                                ""
                                "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
                                "     rdfs:label \"This is Service " + name +
                                ". It can " +
                                OPERATION_VERB[operator] + " " +
                                str(num_operands) + " numbers.\";" +
-                               "    a <http://step.aifb.kit.edu/LinkedDataWebService> .")
+                               "    a <http://step.aifb.kit.edu/LinkedDataWebService> ;" + 
+                               "    a <http://www.hydra-cg.com/spec/latest/core/#hydra:Resource> .")
                     resp = requests.post(url, headers=headers, data=payload)
                     resp.raise_for_status();
                     serviceContainerUrl = resp.headers['Location'] + "/"  # the server determines the exact location
@@ -168,7 +173,7 @@ def init_services(num, dhost):
                     print("posting input_pattern to " + serviceContainerUrl)
                     #url = base_uri + "/marmotta/ldp/" + name
                     headers = {'Accept': 'text/turtle',
-                               'Slug': name + 'InputPattern',
+                               'Slug': name + '_InputPattern',
                                'Content-Type': 'text/turtle',
                                'Authorization': 'Basic ' + AUTH}
                     payload = generate_input_pattern(operator, num_operands)
@@ -183,7 +188,7 @@ def init_services(num, dhost):
                     print("posting program to " + serviceContainerUrl)
                     #url = base_uri + "/marmotta/ldp/" + name
                     headers = {'Accept': 'text/turtle',
-                               'Slug': name + 'app',
+                               'Slug': name + '_App',
                                'Content-Type': 'text/notation3',
                                'Authorization': 'Basic ' + AUTH}
                     payload = generate_program(operator, num_operands)
@@ -197,21 +202,23 @@ def init_services(num, dhost):
                 if not pushed_successfull["startapi"]:
                     print("posting startAPI to " + serviceContainerUrl)
                     headers = {'Accept': 'text/turtle',
-                               'Slug': "start",
+                               'Slug': name + '_Start',
                                'Content-Type': 'text/turtle',
+                               'Link': '<http://www.w3.org/ns/ldp#Resource>',
                                'Authorization': 'Basic ' + AUTH}
-                    payload = ("@prefix ex: <http://example.org/> ."
+                    payload = (#"@prefix ex: <http://example.org/> ."
                                "@prefix ldp: <http://www.w3.org/ns/ldp#> ."
                                "@prefix step: <http://step.aifb.kit.edu/> ."
-                               "@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> ."
-                               "@prefix dcterms: <http://purl.org/dc/terms/> ."
-                               "@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
-                               "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
-                               "@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
-                               "@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
-                               "<> a ldp:Resource ; a step:StartAPI ;"
+                               #"@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> ."
+                               #"@prefix dcterms: <http://purl.org/dc/terms/> ."
+                               #"@prefix foaf:    <http://xmlns.com/foaf/0.1/> ."
+                               "@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . "
+                               #"@prefix math: <http://www.w3.org/2000/10/swap/math#> ."
+                               #"@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
+                               "<> a ldp:Resource , <http://www.w3.org/ns/hydra/core#Resource> ; "
+                               "   a    step:StartApi ; "
                                #"     step:hasWebService " + apiDescriptionUrl + " ;"
-                               "     rdfs:label \"This starts the service\" .")
+                               "     rdfs:label \"This starts the service\" . ")
                     resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
                     resp.raise_for_status()
                     startUrl = resp.headers['location']  # the server determines the exact location
@@ -223,11 +230,41 @@ def init_services(num, dhost):
                     print("initialization of " + name + " StartAPI successfull")
                     
                     
+                    # hydra:Operation resource
+                    if not pushed_successfull["operation"]:
+                        print("posting description to " + serviceContainerUrl)
+                        headers = {'Accept': 'text/turtle',
+                                   'Slug': name + '_Operation',
+                                   'Content-Type': 'text/turtle',
+                                   'Authorization': 'Basic ' + AUTH}
+                        payload = ("@prefix ldp: <http://www.w3.org/ns/ldp#> ."
+                                   "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
+                                   "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
+                                   "@prefix dcterms: <http://purl.org/dc/terms/> ."
+                                   "@prefix httpm: <http://www.w3.org/2011/http-methods#> ."
+                                   #"@prefix parent: <" + base_uri + "/marmotta/ldp/> ."
+                                   #"@prefix child: <" + base_uri + "/marmotta/ldp/" + name + "/> ."
+                                   #"@prefix this: <" + base_uri + "/marmotta/ldp/" + name + "#> ."
+                                   ""
+                                   "<> a ldp:Resource , ldp:RDFSource , <http://www.w3.org/ns/hydra/core#Operation> ;"
+                                   "     rdfs:label \"This is a Operation resource, specifying the behavior of " +
+                                   startUrl +
+                                   " . A POST request against the resource with data as specified in " +
+                                   inputPatternUrl + 
+                                   " will produce a result in the response body, formatted as RDF.\" ;"
+                                   "    <http://www.w3.org/ns/hydra/core#method> httpm:POST  ;"
+                                   "    <http://www.w3.org/ns/hydra/core#expects> <" + inputPatternUrl + "> .")
+                        resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
+                        operationUrl = resp.headers['location']  # the server determines the exact location
+                        pushed_successfull["operation"] = True
+                        print("completed") 
+                        
+                    
                     # service description resource
                     if not pushed_successfull["service_description"]:
                         print("posting description to " + serviceContainerUrl)
                         headers = {'Accept': 'text/turtle',
-                                   'Slug': name,
+                                   'Slug': name + '_ServiceDescription',
                                    'Content-Type': 'text/turtle',
                                    'Authorization': 'Basic ' + AUTH}
                         payload = ("@prefix ldp: <http://www.w3.org/ns/ldp#> ."
@@ -238,18 +275,17 @@ def init_services(num, dhost):
                                    #"@prefix child: <" + base_uri + "/marmotta/ldp/" + name + "/> ."
                                    #"@prefix this: <" + base_uri + "/marmotta/ldp/" + name + "#> ."
                                    ""
-                                   "<> a ldp:Resource , ldp:RDFSource , ldp:Container , ldp:BasicContainer ;"
+                                   "<> a ldp:Resource , ldp:RDFSource , <http://www.w3.org/ns/hydra/core#ApiDescription> ;"
                                    "     rdfs:label \"This is Service " + name +
                                    ". It can " +
                                    OPERATION_VERB[operator] + " " +
                                    str(num_operands) + " numbers.\" ;"
-                                   "    <http://step.aifb.kit.edu/hasStartAPI> <" + startUrl + ">  ;"
+                                   "    <http://www.w3.org/ns/hydra/core#entrypoint> <" + startUrl + ">  ;"
                                    "    <http://step.aifb.kit.edu/hasProgram> <" + programUrl + "> ;"
-                                   "    <http://step.aifb.kit.edu/hasInputPattern> <" + inputPatternUrl + "> ;"
-                                   "    a <http://step.aifb.kit.edu/LinkedDataWebService> .")
+                                   "    <http://www.w3.org/ns/hydra/core#operation> <" + operationUrl + "> .")
                         resp = requests.post(serviceContainerUrl, headers=headers, data=payload)
                         apiDescriptionUrl = resp.headers['location']  # the server determines the exact location
-                        pushed_successfull["service_container"] = True
+                        pushed_successfull["service_description"] = True
                         print("completed")  
                           
                     break # last resource, afterwards everything is online

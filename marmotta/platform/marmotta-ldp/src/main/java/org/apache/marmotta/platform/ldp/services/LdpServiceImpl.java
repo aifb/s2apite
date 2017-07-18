@@ -48,6 +48,7 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.aifb.ldbwebservice.HYDRA;
 import edu.kit.aifb.ldbwebservice.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -204,7 +205,9 @@ public class LdpServiceImpl implements LdpService {
 	// extended part:
 	@Override
 	public boolean isStartAPI(RepositoryConnection connection, URI uri) throws RepositoryException {
-		return connection.hasStatement(uri, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.StartAPI.getLabel()), true, new Resource[0]);
+		boolean a =  connection.hasStatement(null, ValueFactoryImpl.getInstance().createURI(HYDRA.entrypoint.getLabel()), uri, true, new Resource[0]);
+		return a ;
+//		return connection.hasStatement(uri, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.StartAPI.getLabel()), true, new Resource[0]);
 	}
 
 
