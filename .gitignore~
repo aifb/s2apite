@@ -1,0 +1,6 @@
+docker-compose.yml
+paper/*
+/target/
+.classpath
+.project
+.settings/**

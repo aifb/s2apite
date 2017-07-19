@@ -25,6 +25,10 @@ public class STEP {
 	public static final Resource hasModel;
 	public static final Resource hasResult;
 	public static final Resource hasOutput;
+	public static final Resource hasBayesNode;
+	public static final Resource hasProbabilities;
+	public static final Resource hasParents;
+	public static final Resource hasName;
 	public static final Resource hasStartAPI;
 
 	
@@ -50,8 +54,13 @@ public class STEP {
         hasValue = new Resource(STEP.NAMESPACE + "hasValue");
         hasModel = new Resource(STEP.NAMESPACE + "hasModel");
         hasOutput = new Resource(STEP.NAMESPACE + "hasOutput");
+        hasBayesNode = new Resource(STEP.NAMESPACE + "hasBayesNode");
         hasResult = new Resource(STEP.NAMESPACE + "hasResult");
         hasStartAPI = new Resource(STEP.NAMESPACE + "hasStartAPI");
+        hasProbabilities = new Resource(STEP.NAMESPACE + "hasProbabilities");
+        hasParents = new Resource(STEP.NAMESPACE + "hasParents");
+        hasName = new Resource(STEP.NAMESPACE + "hasName");
+
     }
 
 }
