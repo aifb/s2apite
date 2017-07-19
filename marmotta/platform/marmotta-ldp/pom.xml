@@ -359,50 +359,50 @@
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-common</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-common-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/libs/linked-data-fu-common-0.9.10.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-datasets</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-datasets-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/libs/linked-data-fu-datasets-0.9.10.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-engine</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-engine-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/libs/linked-data-fu-engine-0.9.10.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-evaluators</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-evaluators-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/libs/linked-data-fu-evaluators-0.9.10.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-io</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-io-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/libs/linked-data-fu-io-0.9.10.jar</systemPath> -->
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-operators</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-operators-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope> 
+			<systemPath>${project.basedir}/libs/linked-data-fu-operators-0.9.10.jar</systemPath>-->
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.aifb.linkeddatafu</groupId>
 			<artifactId>linked-data-fu-standalone</artifactId>
 			<version>0.9.10</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/linked-data-fu-standalone-0.9.10.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/libs/linked-data-fu-standalone-0.9.10.jar</systemPath> -->
 		</dependency>
 
 
