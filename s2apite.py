@@ -12,12 +12,9 @@ import requests
 # CONSTANTS
 ##########################################################################
 
-# docker image for containers
-IMAGE = "aifb/s2apite:latest"
-# marmotta credentials / all services use the same
-AUTH = base64.b64encode(b'admin:pass123').decode('ascii')
-# start time for logging timers
-START = time.time()
+# functions
+def init_services(num, dhost):
+    "Initializes the services"
 
 # constants for program generator
 ABC = list("abcdefghijklmnopqrstuvwxyz")
@@ -72,12 +69,12 @@ def generate_program(operator, num_operands):
 
 def generate_input_pattern(operator, num_operands):
     "generates input pattern"
-    operands = "[]	"
+    operands = "[]    "
     typedefs = ""
 
     equalnames = OP1NAME[operator] == OP2NAME[operator]
     operands += "ex:" + OP1NAME[operator] + \
-        ("1" if equalnames == True else "") + "	ex:variable_a ;\n"
+        ("1" if equalnames == True else "") + "    ex:variable_a ;\n"
     for j in range(1, num_operands):
         operands += "ex:" + OP2NAME[operator] + (str(j + 1) if equalnames == True else str(
             j)) + " ex:variable_" + ABC[j] + (" ;\n" if j != num_operands - 1 else " .\n")
@@ -322,6 +319,9 @@ def getlatestimage():
     "get latest version of docker image"
     subprocess.call("docker pull " + IMAGE, shell=True)
 
+def getlatestimage()
+     "get latest version of docker image"
+    subprocess.call("docker pull aifb/s2apite", shell=True)   
 
 def create_dockercompose(num):
     "create and populate docker-compose.yml file"
@@ -335,6 +335,9 @@ def create_dockercompose(num):
         print("    image: " + IMAGE, file=dcfile)
         # container name not supported in swarm deployment / v3
         #print("    container_name: marmotta" + str(i), file=dcfile)
+        print("    image: aifb/s2apite:latest", file=dcfile)
+        print("    container_name: marmotta" + str(i), file=dcfile)
+>>>>>>> refs/remotes/gitlab/master
         print("    ports:", file=dcfile)
         print("    - \"" + str(PORT + i) + ":8080\"", file=dcfile)
         if i > 0:
