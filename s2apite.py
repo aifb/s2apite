@@ -12,9 +12,12 @@ import requests
 # CONSTANTS
 ##########################################################################
 
-# functions
-def init_services(num, dhost):
-    "Initializes the services"
+# docker image for containers
+IMAGE = "aifb/s2apite:latest"
+# marmotta credentials / all services use the same
+AUTH = base64.b64encode(b'admin:pass123').decode('ascii')
+# start time for logging timers
+START = time.time()
 
 # constants for program generator
 ABC = list("abcdefghijklmnopqrstuvwxyz")
@@ -319,9 +322,6 @@ def getlatestimage():
     "get latest version of docker image"
     subprocess.call("docker pull " + IMAGE, shell=True)
 
-def getlatestimage()
-     "get latest version of docker image"
-    subprocess.call("docker pull aifb/s2apite", shell=True)   
 
 def create_dockercompose(num):
     "create and populate docker-compose.yml file"
@@ -335,9 +335,6 @@ def create_dockercompose(num):
         print("    image: " + IMAGE, file=dcfile)
         # container name not supported in swarm deployment / v3
         #print("    container_name: marmotta" + str(i), file=dcfile)
-        print("    image: aifb/s2apite:latest", file=dcfile)
-        print("    container_name: marmotta" + str(i), file=dcfile)
->>>>>>> refs/remotes/gitlab/master
         print("    ports:", file=dcfile)
         print("    - \"" + str(PORT + i) + ":8080\"", file=dcfile)
         if i > 0:

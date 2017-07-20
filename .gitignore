@@ -5,3 +5,4 @@ paper/*
 .project
 .settings/**
 .pydevproject
+.dockerenv
