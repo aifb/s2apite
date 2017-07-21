@@ -541,8 +541,8 @@ public class LdpWebService {
 
 			log.debug("POST to <{}> will create new LDP-R <{}>", container, newResource);
 			// connection is closed by buildPostResponse
-			//			return buildPostResponse(conn, container, newResource, ldpInteractionModel, postBody, type);
-			return buildPostResponse(conn, container, newResource, ldpInteractionModel, null, type);
+			return buildPostResponse(conn, container, newResource, ldpInteractionModel, postBody, type);
+			//return buildPostResponse(conn, container, newResource, ldpInteractionModel, null, type);
 		} catch (InvalidInteractionModelException e) {
 			log.debug("POST with invalid interaction model <{}> to <{}>", e.getHref(), container);
 			final Response.ResponseBuilder response = createResponse(conn, Response.Status.BAD_REQUEST, container);
