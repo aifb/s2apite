@@ -75,6 +75,7 @@ import org.semanticweb.yars.nx.Nodes;
 //import org.semanticweb.yars.nx.Resource;
 //import org.semanticweb.yars.nx.namespace.OWL;
 //import org.semanticweb.yars.nx.namespace.XSD;
+//import org.semanticweb.yars.nx.namespace.LDP;
 //import org.semanticweb.yars.turtle.TurtleParseException;
 //import org.semanticweb.yars.turtle.TurtleParser;
 import org.semanticweb.yars.nx.namespace.RDFS;
@@ -1047,27 +1048,52 @@ public class LdpWebService {
 					//
 					//=============================================================================================
 
-					RepositoryResult<Statement> programs = connection.getStatements(
+					RepositoryResult<Statement> contains_triples = connection.getStatements(
 							service, 
-							ValueFactoryImpl.getInstance().createURI( STEP.hasProgram.getLabel()),
+							LDP.contains,
 							null,
-							true, 
-							new org.openrdf.model.Resource[0]);
+							false);
 
-					if (!programs.hasNext()) {
+					if (!contains_triples.hasNext()) {
 						log.warn("Could not find any connected service to <{}>", resource);
 						return rb.status(Response.Status.EXPECTATION_FAILED).entity("Could not find any connected program!");
 					}
 
+
+					URI program = null;
+					while (contains_triples.hasNext()) {
+						RepositoryResult<Statement> programs = connection.getStatements(
+								new URIImpl(contains_triples.next().getObject().stringValue()) , 
+								new URIImpl(STEP.hasProgram.getLabel()),
+								null,
+								true, 
+								new org.openrdf.model.Resource[0]);
+						
+						if (programs.hasNext()) {
+							String program_uri = programs.next().getObject().stringValue();
+							if (program_uri.endsWith(".bin") || program_uri.endsWith(".bin/")) {
+								program = new URIImpl(program_uri);
+							} else if (program_uri.endsWith("/")) {
+								program = new URIImpl(program_uri.substring(0, program_uri.length()-2) + ".bin");
+							} else {
+								program = new URIImpl(program_uri + ".bin");
+							}
+							break;
+						}
+						
+					}
+					
+
+					if (program == null) throw new RepositoryException();
+					
 					// get Program as file
 					//OutputStream program_data = new ByteArrayOutputStream();
-					URI program = new URIImpl(programs.next().getObject().stringValue());
 					InputStream program_data = binaryStore.read(program);
 					//ldpService.exportBinaryResource(connection, program, program_data);
-					if (programs.hasNext()) {
+					//if (programs.hasNext()) {
 						// do nothing yet
 						// handle multiple programs with same WebService
-					}
+					//}
 
 
 
@@ -1076,7 +1102,7 @@ public class LdpWebService {
 					//							new GenericEntity<Iterable<Node[]>>( 
 					//									executeWebService(service, postBody, "", programs.next().getObject().stringValue()) ) { }
 					//							);
-					return executeLinkedDataWebService(service, rb, postBody, "", programs.next().getObject().stringValue(), format );
+					return executeLinkedDataWebService(service, rb, postBody, "", program.stringValue(), format );
 				}
 
 
@@ -1343,7 +1369,7 @@ public class LdpWebService {
 
 		// only entities of type STEP.BayesNode are regarded
 		HashMap<Node, List<Node[]>> relevant_nodes = new HashMap<Node, List<Node[]>>();
-		for(org.semanticweb.yars.nx.Node[] node: input_nodes){				
+		for(Node[] node: input_nodes){				
 			if(node[2].equals(STEP.BayesNode)){
 				if (!relevant_nodes.containsKey(node[0]) ) {
 					List<Node[]> subgraph = new ArrayList<Node[]>();

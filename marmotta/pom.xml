@@ -485,7 +485,7 @@ file://${basedir}/target/vote.txt
         <module>libraries</module>
         <module>loader</module>
         <module>platform</module>
-    <module>marmotta-core-web</module>
+        <!--<module>marmotta-core-web</module>-->
   </modules>
 
 </project>
