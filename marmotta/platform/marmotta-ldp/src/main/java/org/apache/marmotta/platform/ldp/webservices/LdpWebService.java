@@ -1010,6 +1010,11 @@ public class LdpWebService {
 				URI service = cleanURI((URI) services.next().getSubject() );
 
 
+				//=============================================================================================
+				//
+				//
+				//
+				//=============================================================================================
 
 				if (connection.hasStatement(service, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.BayesService.getLabel()), true) ) { 
 					// is BayesService
@@ -1034,8 +1039,13 @@ public class LdpWebService {
 					return executeBayesschesModel(service, rb, connection, postBody, models, format);
 
 				} else {
-					// is a LinkedDataWebService
+	
 
+					//=============================================================================================
+					//
+					//				is a LinkedDataWebService
+					//
+					//=============================================================================================
 
 					RepositoryResult<Statement> programs = connection.getStatements(
 							service, 

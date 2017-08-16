@@ -166,10 +166,10 @@
 			<id>recommenders</id>
 			<url>https://repo.eclipse.org/content/repositories/recommenders/</url>
 		</repository>
-		<repository>
+		<!-- <repository>
 			<id>linkeddatafu</id>
 			<url>http://linked-data-fu.github.io/releases/</url>
-		</repository>
+		</repository> -->
 	</repositories>
 
 

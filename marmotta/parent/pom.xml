@@ -371,7 +371,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				<plugin> <!-- generate JRebel Configuration -->
+				<plugin>  <!-- generate JRebel Configuration -->
 					<groupId>org.zeroturnaround</groupId>
 					<artifactId>jrebel-maven-plugin</artifactId>
 					<version>1.1.5</version>
@@ -1706,12 +1706,8 @@
 
 
 
-			<!-- My additional dependencies 
-			<dependency>
-				<groupId>net.java.dev.rome</groupId>
-				<artifactId>rome</artifactId>
-				<version>1.0.0</version>
-			</dependency>-->
+			<!-- My additional dependencies <dependency> <groupId>net.java.dev.rome</groupId> 
+				<artifactId>rome</artifactId> <version>1.0.0</version> </dependency> -->
 
 		</dependencies>
 
