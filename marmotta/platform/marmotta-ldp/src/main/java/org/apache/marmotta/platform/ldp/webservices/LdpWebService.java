@@ -175,6 +175,9 @@ public class LdpWebService {
 
 
 	private static final Logger log = LoggerFactory.getLogger(LdpWebService.class);
+	
+	// counter for some statistics
+	public static int numberOfIntegrationRequests;
 
 
 	@Inject
@@ -253,6 +256,7 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.ACCEPT) @DefaultValue(MediaType.WILDCARD) String type,
 			@HeaderParam(HTTP_HEADER_PREFER) PreferHeader preferHeader)
 					throws RepositoryException {
+		numberOfIntegrationRequests++;
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("GET to LDPR <{}>", resource);
 		return buildGetResponse(resource, MarmottaHttpUtils.parseAcceptHeader(type), preferHeader).build();
@@ -1629,6 +1633,7 @@ public class LdpWebService {
 			}
 		};
 
+		numberOfIntegrationRequests++;
 		return Response.status(Status.OK).entity(entity);
 
 
