@@ -12,23 +12,28 @@ import info.aduna.iteration.CloseableIteration;
 @SuppressWarnings("serial")
 public class ClosableList<S extends Statement, E extends RepositoryException> extends ArrayList<S> implements CloseableIteration<Statement, RepositoryException> {
 
-	Iterator<S> iter = super.iterator();
+	//Iterator<S> iter = super.iterator();
+	int current_index;
 
 	public ClosableList () {
-		this.modCount = 0;
+		//this.modCount = 0;
+		current_index = -1;
 	}
 
 	@Override
 	public boolean hasNext() {
-
-		return iter.hasNext();
+		try {
+			super.get(current_index + 1);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
 	public S next() {
 		if ( hasNext() ) {
-			this.modCount = 0;
-			return iter.next();
+			return super.get(++current_index);
 		} else {
 			return null;
 		}
@@ -36,19 +41,15 @@ public class ClosableList<S extends Statement, E extends RepositoryException> ex
 
 	@Override
 	public void close() {
-		//super.clear();
+		super.clear();
+		current_index = -1;
 	}
 
-
-
-	public boolean add(S e) {
-		return super.add(e);
-	}
 
 	@Override
 	public void remove() throws RepositoryException {
-		// TODO Auto-generated method stub
-		iter.remove();
+		if (current_index < 0) throw new IndexOutOfBoundsException();
+		super.remove(super.get(current_index));
 	}
 
 }

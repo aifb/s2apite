@@ -267,6 +267,7 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.ACCEPT) @DefaultValue(MediaType.WILDCARD) String type,
 			@HeaderParam(HTTP_HEADER_PREFER) PreferHeader preferHeader)
 					throws RepositoryException {
+		numberOfIntegrationRequests++;
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("HEAD to LDPR <{}>", resource);
 		return buildGetResponse(resource, MarmottaHttpUtils.parseAcceptHeader(type), preferHeader).entity(null).build();
@@ -464,6 +465,8 @@ public class LdpWebService {
 		//			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
 		//			Iterable<Node[]> postBody, @HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type)
 		//					throws RepositoryException {
+		
+		numberOfIntegrationRequests++;
 
 		final String container = ldpService.getResourceUri(uriInfo);
 		log.debug("POST to LDPC <{}>", container);
@@ -605,6 +608,9 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.IF_MATCH) EntityTag eTag,
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody)
 					throws RepositoryException, IOException, InvalidModificationException, RDFParseException, IncompatibleResourceTypeException, URISyntaxException {
+		
+		numberOfIntegrationRequests++;
+		
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PUT to <{}>", resource);
 
@@ -702,6 +708,9 @@ public class LdpWebService {
 	 */
 	@DELETE
 	public Response DELETE(@Context UriInfo uriInfo) throws RepositoryException {
+		
+		numberOfIntegrationRequests++;
+		
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("DELETE to <{}>", resource);
 
@@ -738,6 +747,10 @@ public class LdpWebService {
 	public Response PATCH(@Context UriInfo uriInfo,
 			@HeaderParam(HttpHeaders.IF_MATCH) EntityTag eTag,
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody) throws RepositoryException {
+
+		
+		numberOfIntegrationRequests++;
+		
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PATCH to <{}>", resource);
 
@@ -804,6 +817,10 @@ public class LdpWebService {
 	 */
 	@OPTIONS
 	public Response OPTIONS(@Context final UriInfo uriInfo) throws RepositoryException {
+
+		
+		numberOfIntegrationRequests++;
+		
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("OPTIONS to <{}>", resource);
 

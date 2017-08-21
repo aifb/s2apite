@@ -323,11 +323,11 @@ public class LdpServiceImpl implements LdpService {
 			URI predicate = factory.createURI(STEP.NAMESPACE + "statistics");
 			Literal object = factory.createLiteral(LdpWebService.numberOfIntegrationRequests);
 			statistics.add( factory.createStatement(subject, predicate, object));
-			predicate = factory.createURI(STEP.NAMESPACE + "statistics");
+			URI predicate2 = factory.createURI(STEP.NAMESPACE + "statistics");
 			OperatingSystemMXBean operatingSystemMXBean = 
 			          (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-			object = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
-			statistics.add( factory.createStatement(subject, predicate, object));
+			Literal object2 = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
+			statistics.add( factory.createStatement(subject, predicate2, object2));
 			
 			@SuppressWarnings("unchecked")
 			final CloseableIteration<Statement, RepositoryException> statements = new UnionIteration<>(
