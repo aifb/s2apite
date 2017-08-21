@@ -48,8 +48,12 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.aifb.ldbwebservice.ClosableList;
 import edu.kit.aifb.ldbwebservice.HYDRA;
 import edu.kit.aifb.ldbwebservice.STEP;
+
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -311,9 +315,23 @@ public class LdpServiceImpl implements LdpService {
 					}
 				};
 			}
+			
+			//TODO delete?
+			ClosableList<Statement, RepositoryException> statistics = new ClosableList<Statement, RepositoryException>() ;
+			ValueFactory factory = ValueFactoryImpl.getInstance();
+			Resource subject = resource;
+			URI predicate = factory.createURI(STEP.NAMESPACE + "statistics");
+			Literal object = factory.createLiteral(LdpWebService.numberOfIntegrationRequests);
+			statistics.add( factory.createStatement(subject, predicate, object));
+			URI predicate2 = factory.createURI(STEP.NAMESPACE + "statistics");
+			OperatingSystemMXBean operatingSystemMXBean = 
+			          (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+			Literal object2 = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
+			statistics.add( factory.createStatement(subject, predicate2, object2));
+			
 			@SuppressWarnings("unchecked")
 			final CloseableIteration<Statement, RepositoryException> statements = new UnionIteration<>(
-					ldpStatements, contentStatements
+					ldpStatements, contentStatements, statistics
 					);
 			LdpUtils.exportIteration(writer, resource, statements);
 		} finally {
