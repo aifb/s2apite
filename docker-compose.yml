@@ -4,8 +4,5 @@ services:
     image: aifb/s2apite:latest
     ports:
     - "9001:8080"
-    env_file:
-    - ./marmotta.env
     environment:
       MARMOTTAHOST: marmotta0
-    
