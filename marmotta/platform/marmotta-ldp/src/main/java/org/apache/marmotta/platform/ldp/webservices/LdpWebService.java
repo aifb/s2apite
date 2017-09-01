@@ -56,6 +56,7 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -82,6 +83,8 @@ import org.semanticweb.yars.nx.namespace.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.util.concurrent.Service.State;
+
 //import com.jayway.restassured.builder.ResponseBuilder;
 
 import edu.kit.aifb.datafu.Binding;
@@ -100,6 +103,8 @@ import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
 import edu.kit.aifb.ldbwebservice.HYDRA;
 import edu.kit.aifb.ldbwebservice.STEP;
+
+import info.aduna.iteration.CloseableIteration;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -124,9 +129,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -139,6 +146,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+
+import com.sun.management.OperatingSystemMXBean;
 
 /**
  * Linked Data Platform web services.
@@ -175,7 +184,7 @@ public class LdpWebService {
 
 
 	private static final Logger log = LoggerFactory.getLogger(LdpWebService.class);
-	
+
 	// counter for some statistics
 	public static int numberOfIntegrationRequests;
 
@@ -256,8 +265,11 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.ACCEPT) @DefaultValue(MediaType.WILDCARD) String type,
 			@HeaderParam(HTTP_HEADER_PREFER) PreferHeader preferHeader)
 					throws RepositoryException {
-		numberOfIntegrationRequests++;
+
 		final String resource = ldpService.getResourceUri(uriInfo);
+
+		updateStatistics(resource);
+
 		log.debug("GET to LDPR <{}>", resource);
 		return buildGetResponse(resource, MarmottaHttpUtils.parseAcceptHeader(type), preferHeader).build();
 	}
@@ -465,7 +477,7 @@ public class LdpWebService {
 		//			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
 		//			Iterable<Node[]> postBody, @HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type)
 		//					throws RepositoryException {
-		
+
 		numberOfIntegrationRequests++;
 
 		final String container = ldpService.getResourceUri(uriInfo);
@@ -608,9 +620,9 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.IF_MATCH) EntityTag eTag,
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody)
 					throws RepositoryException, IOException, InvalidModificationException, RDFParseException, IncompatibleResourceTypeException, URISyntaxException {
-		
+
 		numberOfIntegrationRequests++;
-		
+
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PUT to <{}>", resource);
 
@@ -708,9 +720,9 @@ public class LdpWebService {
 	 */
 	@DELETE
 	public Response DELETE(@Context UriInfo uriInfo) throws RepositoryException {
-		
+
 		numberOfIntegrationRequests++;
-		
+
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("DELETE to <{}>", resource);
 
@@ -748,9 +760,9 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.IF_MATCH) EntityTag eTag,
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody) throws RepositoryException {
 
-		
+
 		numberOfIntegrationRequests++;
-		
+
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PATCH to <{}>", resource);
 
@@ -818,9 +830,9 @@ public class LdpWebService {
 	@OPTIONS
 	public Response OPTIONS(@Context final UriInfo uriInfo) throws RepositoryException {
 
-		
+
 		numberOfIntegrationRequests++;
-		
+
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("OPTIONS to <{}>", resource);
 
@@ -1061,7 +1073,7 @@ public class LdpWebService {
 					return executeBayesschesModel(service, rb, connection, postBody, models, format);
 
 				} else {
-	
+
 
 					//=============================================================================================
 					//
@@ -1089,7 +1101,7 @@ public class LdpWebService {
 								null,
 								true, 
 								new org.openrdf.model.Resource[0]);
-						
+
 						if (programs.hasNext()) {
 							String program_uri = programs.next().getObject().stringValue();
 							if (program_uri.endsWith(".bin") || program_uri.endsWith(".bin/")) {
@@ -1101,19 +1113,19 @@ public class LdpWebService {
 							}
 							break;
 						}
-						
+
 					}
-					
+
 
 					if (program == null) throw new RepositoryException();
-					
+
 					// get Program as file
 					//OutputStream program_data = new ByteArrayOutputStream();
 					InputStream program_data = binaryStore.read(program);
 					//ldpService.exportBinaryResource(connection, program, program_data);
 					//if (programs.hasNext()) {
-						// do nothing yet
-						// handle multiple programs with same WebService
+					// do nothing yet
+					// handle multiple programs with same WebService
 					//}
 
 
@@ -1677,7 +1689,13 @@ public class LdpWebService {
 	} 
 
 
-
+	/**
+	 * @author sba
+	 * 
+	 * @return
+	 * @throws ParseException
+	 * @throws edu.kit.aifb.datafu.parser.notation3.ParseException
+	 */
 	public static Program getProgramTriple() throws ParseException, edu.kit.aifb.datafu.parser.notation3.ParseException {
 		Origin origin = new InternalOrigin("programOriginTriple");
 		ProgramConsumerImpl programConsumer = new ProgramConsumerImpl(origin);
@@ -1685,4 +1703,74 @@ public class LdpWebService {
 		notation3Parser.parse(programConsumer, origin);
 		return programConsumer.getProgram(origin);
 	}
+
+
+	/**
+	 * @author sba
+	 * 
+	 * @param resource
+	 */
+	private void updateStatistics(String resource) {
+
+		try {
+			RepositoryConnection connection = sesameService.getConnection();
+			ValueFactory factory = ValueFactoryImpl.getInstance();
+
+			URI subject = factory.createURI(resource);
+			URI predicate = factory.createURI(STEP.hasStatistics.getLabel());
+
+			connection.begin();
+			CloseableIteration<Statement, RepositoryException> ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
+
+
+
+
+			OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+			org.openrdf.model.Literal cpuLoad = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
+
+			org.openrdf.model.Literal memory = factory.createLiteral(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
+
+
+			Statement updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(1));
+			Statement updatedMemoryStatistics = factory.createStatement(subject, predicate, memory);
+			Statement updatedCpuStatistics = factory.createStatement(subject, predicate, cpuLoad);
+
+			while (ldpStatements.hasNext()) {
+				Statement statement = ldpStatements.next();
+
+				if (statement.getObject() instanceof org.openrdf.model.Literal) {
+					org.openrdf.model.Literal literal = (org.openrdf.model.Literal) statement.getObject();
+
+					if (literal.getDatatype().stringValue().equalsIgnoreCase(XMLSchema.INT.stringValue() )) {
+						try {
+							int number = literal.intValue();
+							updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(++number));
+							break;
+						} catch (NumberFormatException e) { }
+					}
+				}
+			}
+
+			ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
+			connection.remove(ldpStatements, ldpContext);
+			connection.commit();
+
+
+
+			connection.begin();
+			List<Statement> statements = new LinkedList<Statement>();
+			statements.add(updatedCounterStatistics);
+			statements.add(updatedMemoryStatistics);
+			statements.add(updatedCpuStatistics);
+			connection.add(statements, ldpContext);
+			connection.commit();
+
+
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 }

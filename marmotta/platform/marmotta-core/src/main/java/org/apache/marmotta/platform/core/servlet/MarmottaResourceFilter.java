@@ -177,31 +177,19 @@ public class MarmottaResourceFilter implements Filter {
 
 		@Override
 		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
+			//HttpServletRequest httpRequest = (HttpServletRequest) request;
 
 			if(filters.hasNext()) {
 				MarmottaHttpFilter filter = filters.next();
 
 
-				/**
-				 * Bug fixes 
-				 * @author sba
-				 */
-
-
-				//Enumeration<String> headers = httpRequest.getHeaders("content-type");
-
-				//String content_types = headers.nextElement().split(",\\s")[0];
-				//httpRequest.
-
 				if(path.matches(filter.getPattern())) {
-					filter.doFilter(new AddParamsToHeader(httpRequest), response, this);
-					//filter.doFilter(httpRequest,response,this);
+					filter.doFilter(request,response,this);
 				} else {
-					doFilter(new AddParamsToHeader(httpRequest), response);
+					doFilter(request, response);
 				}
 			} else {
-				originalChain.doFilter(new AddParamsToHeader(httpRequest), response);
+				originalChain.doFilter(request, response);
 			}
 		}
 	}
@@ -242,39 +230,39 @@ public class MarmottaResourceFilter implements Filter {
 	 * @author sba
 	 *
 	 */
-	private class AddParamsToHeader extends HttpServletRequestWrapper {
-		public AddParamsToHeader(HttpServletRequest request) {
-			super(request);
-		}
-
-		public String getHeader(String name) {
-			String header = super.getHeader(name);
-
-			if (header != null && !header.contains("content-type")) {
-				return header;
-			} else if (header != null && header.contains("content-type")) {
-				return "text/turtle";
-			} else {
-				return null;
-			}
-			//return (header != null) ? header : super.getParameter(name); // Note: you can't use getParameterValues() here.
-		}
-
-		public Enumeration<String> getHeaders(String name) {
-			Enumeration<String> headers = super.getHeaders(name);
-			Vector<String> v = new Vector<String>();
-			
-			while (headers.hasMoreElements()) {
-				String nextElement = headers.nextElement();
-				if (name.contains("content-type") ) {
-					nextElement = nextElement.split(",\\s")[0];
-				}
-				v.add(nextElement);
-			}
-			
-			
-			
-			return v.elements();
-		}  
-	}
+//	private class AddParamsToHeader extends HttpServletRequestWrapper {
+//		public AddParamsToHeader(HttpServletRequest request) {
+//			super(request);
+//		}
+//
+//		public String getHeader(String name) {
+//			String header = super.getHeader(name);
+//
+//			if (header != null && !header.contains("content-type")) {
+//				return header;
+//			} else if (header != null && header.contains("content-type")) {
+//				return "text/turtle";
+//			} else {
+//				return null;
+//			}
+//			//return (header != null) ? header : super.getParameter(name); // Note: you can't use getParameterValues() here.
+//		}
+//
+//		public Enumeration<String> getHeaders(String name) {
+//			Enumeration<String> headers = super.getHeaders(name);
+//			Vector<String> v = new Vector<String>();
+//			
+//			while (headers.hasMoreElements()) {
+//				String nextElement = headers.nextElement();
+//				if (name.contains("content-type") ) {
+//					nextElement = nextElement.split(",\\s")[0];
+//				}
+//				v.add(nextElement);
+//			}
+//			
+//			
+//			
+//			return v.elements();
+//		}  
+//	}
 }

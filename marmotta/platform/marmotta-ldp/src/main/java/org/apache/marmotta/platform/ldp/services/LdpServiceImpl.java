@@ -48,12 +48,9 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.aifb.ldbwebservice.ClosableList;
+//import edu.kit.aifb.ldbwebservice.ClosableList;
 import edu.kit.aifb.ldbwebservice.HYDRA;
 import edu.kit.aifb.ldbwebservice.STEP;
-
-import java.lang.management.ManagementFactory;
-import com.sun.management.OperatingSystemMXBean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -88,6 +85,8 @@ public class LdpServiceImpl implements LdpService {
 	private LdpBinaryStoreService binaryStore;
 
 	private final URI ldpContext, ldpInteractionModelProperty, ldpUsed;
+	
+	
 
 	public LdpServiceImpl() {
 		ldpContext = ValueFactoryImpl.getInstance().createURI(LDP.NAMESPACE);
@@ -288,6 +287,12 @@ public class LdpServiceImpl implements LdpService {
 	public void exportResource(RepositoryConnection connection, final URI resource, OutputStream output, RDFFormat format, final Preference preference) throws RepositoryException, RDFHandlerException {
 		// TODO: this should be a little more sophisticated...
 		// TODO: non-membership triples flag / Prefer-header
+		
+//		ValueFactory factory = ValueFactoryImpl.getInstance();
+//		connection.add( factory.createStatement(resource, factory.createURI(STEP.NAMESPACE + "statistics"), factory.createLiteral(LdpWebService.numberOfIntegrationRequests)) );
+		
+		
+		
 		final RDFWriter writer = Rio.createWriter(format, output);
 		final CloseableIteration<Statement, RepositoryException> contentStatements;
 		if (preference == null || preference.includeContent()) {
@@ -316,22 +321,22 @@ public class LdpServiceImpl implements LdpService {
 				};
 			}
 			
-			//TODO delete?
-			ClosableList<Statement, RepositoryException> statistics = new ClosableList<Statement, RepositoryException>() ;
-			ValueFactory factory = ValueFactoryImpl.getInstance();
-			Resource subject = resource;
-			URI predicate = factory.createURI(STEP.NAMESPACE + "statistics");
-			Literal object = factory.createLiteral(LdpWebService.numberOfIntegrationRequests);
-			statistics.add( factory.createStatement(subject, predicate, object));
-			URI predicate2 = factory.createURI(STEP.NAMESPACE + "statistics");
-			OperatingSystemMXBean operatingSystemMXBean = 
-			          (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-			Literal object2 = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
-			statistics.add( factory.createStatement(subject, predicate2, object2));
+//			//TODO delete?
+//			ClosableList<Statement, RepositoryException> statistics = new ClosableList<Statement, RepositoryException>() ;
+//			//ValueFactory factory = ValueFactoryImpl.getInstance();
+//			Resource subject = resource;
+//			URI predicate = factory.createURI(STEP.NAMESPACE + "statistics");
+//			Literal object = factory.createLiteral(LdpWebService.numberOfIntegrationRequests);
+//			statistics.add( factory.createStatement(subject, predicate, object));
+//			URI predicate2 = factory.createURI(STEP.NAMESPACE + "statistics");
+//			OperatingSystemMXBean operatingSystemMXBean = 
+//			          (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+//			Literal object2 = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
+//			statistics.add( factory.createStatement(subject, predicate2, object2));
 			
 			@SuppressWarnings("unchecked")
 			final CloseableIteration<Statement, RepositoryException> statements = new UnionIteration<>(
-					ldpStatements, contentStatements, statistics
+					ldpStatements, contentStatements//, statistics
 					);
 			LdpUtils.exportIteration(writer, resource, statements);
 		} finally {
@@ -464,6 +469,9 @@ public class LdpServiceImpl implements LdpService {
 
 		connection.remove(container, DCTERMS.modified, null, ldpContext);
 		connection.add(container, DCTERMS.modified, now, ldpContext);
+		
+		//sba:
+		connection.add(resource, ValueFactoryImpl.getInstance().createURI(STEP.NAMESPACE + "statistics"), ValueFactoryImpl.getInstance().createLiteral(1), ldpContext);
 
 		connection.add(resource, RDF.TYPE, LDP.Resource, ldpContext);
 		connection.add(resource, RDF.TYPE, LDP.RDFSource, ldpContext);

@@ -1229,32 +1229,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
             
             
-            
-            // TODO clean up!
-            Iterator<String> keys = saveConfiguration.getKeys();
-            log.info("here!");
-            while (keys.hasNext() ){
-            	String key = keys.next();
-            	log.info(key  + " = " + saveConfiguration.getProperty(key));
-            }
+            // sba: insert password
 
-//            String host = System.getenv("MARMOTTAHOST");
-//            String port = System.getenv("MARMOTTAPORT");
-//            String host_name = "http://" + host + ":" + port + "/marmotta/";
-//            saveConfiguration.setProperty("kiwi.context", host_name);
-//            saveConfiguration.setProperty("kiwi.host", host_name);
-//            saveConfiguration.setProperty("kiwi.setup.host", "true");
-            
-            saveConfiguration.setProperty("security.configured", "false");
+            //saveConfiguration.setProperty("security.configured", "false");
             saveConfiguration.setProperty("user.admin.pwhash", ":plain::pass123");
-//            saveConfiguration.setProperty("user.anonymous.webid", "http://" + host + ":8080/marmotta/user/anonymous");
+            // saveConfiguration.setProperty("user.anonymous.webid", "http://" + host + ":8080/marmotta/user/anonymous");
             saveConfiguration.setProperty("user.anonymous.pwhash", ":plain::anonymous");
             saveConfiguration.setProperty("security.profile", "standard");
-            while (keys.hasNext() ){
-            	String key = keys.next();
-            	log.info(key  + " = " + saveConfiguration.getProperty(key));
-            }
             
+            // sba: end of insert
             
             
             log.info("configuration successfully saved to {}", configPath);

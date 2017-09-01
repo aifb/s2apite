@@ -30,6 +30,7 @@ public class STEP {
 	public static final Resource hasParents;
 	public static final Resource hasName;
 	public static final Resource hasStartAPI;
+	public static final Resource hasStatistics;
 
 	
 
@@ -60,6 +61,7 @@ public class STEP {
         hasProbabilities = new Resource(STEP.NAMESPACE + "hasProbabilities");
         hasParents = new Resource(STEP.NAMESPACE + "hasParents");
         hasName = new Resource(STEP.NAMESPACE + "hasName");
+        hasStatistics = new Resource(STEP.NAMESPACE + "hasStatistics");
 
     }
 
