@@ -101,7 +101,9 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
+import edu.kit.aifb.ldbwebservice.DBO;
 import edu.kit.aifb.ldbwebservice.HYDRA;
+import edu.kit.aifb.ldbwebservice.MEXCORE;
 import edu.kit.aifb.ldbwebservice.STEP;
 
 import info.aduna.iteration.CloseableIteration;
@@ -1735,6 +1737,27 @@ public class LdpWebService {
 			Statement updatedMemoryStatistics = factory.createStatement(subject, predicate, memory);
 			Statement updatedCpuStatistics = factory.createStatement(subject, predicate, cpuLoad);
 
+			
+
+			// sba: new and better statistics with unique properties
+			URI cpu = factory.createURI(DBO.CPU.getLabel());
+			URI hasMemory = factory.createURI(MEXCORE.MEMORY.getLabel());
+			URI numberOfRequests = factory.createURI(STEP.numberOfRequests.getLabel());
+			
+			Statement updatedCounterStatistics2 = factory.createStatement(subject, numberOfRequests, factory.createLiteral(1));
+			Statement updatedMemoryStatistics2 = factory.createStatement(subject, hasMemory, memory);
+			Statement updatedCpuStatistics2 = factory.createStatement(subject, cpu, cpuLoad);	
+			
+			CloseableIteration<Statement, RepositoryException> ldpStatements2 = connection.getStatements(subject, cpu, null, false, ldpContext);
+			connection.remove(ldpStatements2, ldpContext);
+			ldpStatements2 = connection.getStatements(subject, hasMemory, null, false, ldpContext);
+			connection.remove(ldpStatements2, ldpContext);
+			ldpStatements2 = connection.getStatements(subject, numberOfRequests, null, false, ldpContext);
+			connection.remove(ldpStatements2, ldpContext);
+			
+			
+			
+
 			while (ldpStatements.hasNext()) {
 				Statement statement = ldpStatements.next();
 
@@ -1744,7 +1767,9 @@ public class LdpWebService {
 					if (literal.getDatatype().stringValue().equalsIgnoreCase(XMLSchema.INT.stringValue() )) {
 						try {
 							int number = literal.intValue();
-							updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(++number));
+							number++;
+							updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(number));
+							updatedCounterStatistics2 = factory.createStatement(subject, numberOfRequests, factory.createLiteral(number));
 							break;
 						} catch (NumberFormatException e) { }
 					}
@@ -1753,6 +1778,8 @@ public class LdpWebService {
 
 			ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
 			connection.remove(ldpStatements, ldpContext);
+
+			
 			connection.commit();
 
 
@@ -1762,6 +1789,12 @@ public class LdpWebService {
 			statements.add(updatedCounterStatistics);
 			statements.add(updatedMemoryStatistics);
 			statements.add(updatedCpuStatistics);
+			
+			// sba: new and better statistics with unique properties
+			statements.add(updatedCounterStatistics2);
+			statements.add(updatedMemoryStatistics2);
+			statements.add(updatedCpuStatistics2);
+			
 			connection.add(statements, ldpContext);
 			connection.commit();
 
