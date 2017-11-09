@@ -1469,7 +1469,20 @@ public class LdpWebService {
 
 
 
-
+	/**
+	 * @author sba
+	 * 
+	 * Integrate Linked Data-Fu into Marmotta
+	 * 
+	 * @param resource
+	 * @param rb
+	 * @param postBody
+	 * @param query
+	 * @param program_resource
+	 * @param format
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	private ResponseBuilder executeLinkedDataWebService(URI resource, ResponseBuilder rb, InputStream postBody, String query, String program_resource, RDFFormat format) throws IllegalArgumentException {
 
 		ValueFactory factory = ValueFactoryImpl.getInstance();

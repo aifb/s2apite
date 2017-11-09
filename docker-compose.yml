@@ -3,6 +3,6 @@ services:
   marmotta0:
     image: aifb/s2apite:latest
     ports:
-    - "9001:8080"
+    - "9090:8080"
     environment:
       MARMOTTAHOST: marmotta0
