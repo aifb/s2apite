@@ -23,6 +23,8 @@ import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferrer;
 import org.eclipse.recommenders.jayes.inference.jtree.JunctionTreeAlgorithm;
 
+
+
 import org.apache.commons.lang3.StringUtils;
 
 import org.apache.marmotta.commons.http.ContentType;
@@ -105,8 +107,9 @@ import edu.kit.aifb.ldbwebservice.DBO;
 import edu.kit.aifb.ldbwebservice.HYDRA;
 import edu.kit.aifb.ldbwebservice.MEXCORE;
 import edu.kit.aifb.ldbwebservice.STEP;
-
 import info.aduna.iteration.CloseableIteration;
+
+import edu.kit.aifb.step.wrapper.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -190,6 +193,11 @@ public class LdpWebService {
 	// counter for some statistics
 	public static int numberOfIntegrationRequests;
 
+	
+	public static Map<Node, String> interactionPatterns = new HashMap<Node, String>();
+	
+	
+
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -242,6 +250,12 @@ public class LdpWebService {
 		Collections.sort(producedRdfTypes);
 
 		log.debug("Available RDF Serializer: {}", producedRdfTypes);
+		
+		//Including the FLSWrapper into a Hash Map 
+		// Marcel
+		interactionPatterns.put(STEP.BayesNode, "BayesNode");
+		interactionPatterns.put(STEP.FLSVisitourAPI, "edu.kit.aifb.step.wrapper.FLSVisitourAPI");
+		
 	}
 
 	protected void initialize(@Observes SesameStartupEvent event) {
@@ -492,11 +506,13 @@ public class LdpWebService {
 		} catch (Exception e ) {
 
 		}
+		
 
 
 		final RepositoryConnection conn = sesameService.getConnection();
 		try {
 			conn.begin();
+	
 
 			if (!ldpService.exists(conn, container)) {
 				final Response.ResponseBuilder resp;
@@ -519,13 +535,49 @@ public class LdpWebService {
 
 				//				RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
 
-				// 
 				final Response.ResponseBuilder resp = createWebServiceResponse(conn, 200, container, postBody, format);
 
 				log.debug("Invoking Web Service for <{}> successful", container);
 				conn.commit();
 				return resp.build();
 
+			}
+			
+			if (ldpService.isVirtualResource(conn, container)){
+
+			//=============================================================================================
+			//
+			//				is a FLSService
+			//
+			//=============================================================================================
+				RepositoryResult<Statement> neededPatterns = conn.getStatements( 
+						null, 
+						ValueFactoryImpl.getInstance().createURI( STEP.interactionPattern.getLabel()),  
+						null, 
+						true);
+
+
+				while(neededPatterns.hasNext()) {
+					Statement neededClass = neededPatterns.next();
+					try {
+					
+						FLSVisitourAPI test = new FLSVisitourAPI();
+						Class cls_Test = Class.forName("edu.kit.aifb.step.wrapper.FLSVisitourAPI");
+								//interactionPatterns.get(new org.semanticweb.yars.nx.Resource(neededClass.getObject().toString())));
+						VirtualResource res = (VirtualResource) cls_Test.newInstance();   
+						res.doGetHtml();
+			    	
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 
 
@@ -1073,8 +1125,9 @@ public class LdpWebService {
 					//							);
 
 					return executeBayesschesModel(service, rb, connection, postBody, models, format);
-
-				} else {
+				}
+				
+				else {
 
 
 					//=============================================================================================

@@ -18,6 +18,8 @@ public class STEP {
 	public static final Resource Output;
 	public static final Resource Target;
 	public static final Resource BayesNode;
+	public static final Resource VirtualResource;
+	public static final Resource FLSVisitourAPI;
 	
 	public static final Resource hasWebService;
 	public static final Resource hasProgram;
@@ -32,6 +34,7 @@ public class STEP {
 	public static final Resource hasStartAPI;
 	public static final Resource hasStatistics;
 	public static final Resource numberOfRequests;
+	public static final Resource interactionPattern;
 
 	
 
@@ -47,6 +50,8 @@ public class STEP {
         Output = new Resource(STEP.NAMESPACE + "Output");
         Target = new Resource(STEP.NAMESPACE + "Target");
         BayesNode = new Resource(STEP.NAMESPACE + "BayesNode");
+        VirtualResource = new Resource(STEP.NAMESPACE + "VirtualResource");
+        FLSVisitourAPI = new Resource(STEP.NAMESPACE + "FLSVisitourAPI");
         
         
         // Predicates:
@@ -64,6 +69,7 @@ public class STEP {
         hasName = new Resource(STEP.NAMESPACE + "hasName");
         hasStatistics = new Resource(STEP.NAMESPACE + "hasStatistics");
         numberOfRequests = new Resource(STEP.NAMESPACE + "numberOfRequests");
+        interactionPattern = new Resource(STEP.NAMESPACE + "interactionPattern");
 
     }
 

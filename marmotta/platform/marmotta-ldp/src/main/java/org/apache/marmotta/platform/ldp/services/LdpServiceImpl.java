@@ -799,4 +799,15 @@ public class LdpServiceImpl implements LdpService {
 		// Default Interaction Model is LDPC
 		return InteractionModel.LDPC;
 	}
+
+	@Override
+	public boolean isVirtualResource(RepositoryConnection connection, String resource) throws RepositoryException {
+		return isVirtualResource(connection, buildURI(resource));
+	}
+
+	@Override
+	public boolean isVirtualResource(RepositoryConnection connection, URI uri) throws RepositoryException {
+		boolean a =  connection.hasStatement(uri, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.VirtualResource.getLabel()), true);
+		return a ;
+	}
 }

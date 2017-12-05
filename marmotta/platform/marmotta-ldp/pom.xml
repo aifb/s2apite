@@ -228,6 +228,11 @@
 			<artifactId>marmotta-util-rdfpatch</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.marmotta</groupId>
+			<artifactId>marmotta-ldpath</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-cdi</artifactId>
 		</dependency>
@@ -411,6 +416,12 @@
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.25</version>
+		</dependency>
+		<!-- KSRI FLSWrapper -->
+		<dependency>
+			<groupId>edu.kit.aifb</groupId>
+			<artifactId>ksri-km-flswrapper</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
