@@ -216,6 +216,9 @@ public class LdpWebService {
 
 	@Inject
 	private LdpBinaryStoreService binaryStore;
+	
+//	@Inject 
+//	private VirtualResource virtualResource;
 
 	private final List<ContentType> producedRdfTypes;
 	private final org.openrdf.model.Resource ldpContext = ValueFactoryImpl.getInstance().createURI(LDP.NAMESPACE);
@@ -487,7 +490,7 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
 			@HeaderParam(HttpHeaders.ACCEPT) @DefaultValue(MediaType.WILDCARD) String accept_type,
 			InputStream postBody, @HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type)
-					throws RepositoryException {
+					throws RepositoryException, URISyntaxException {
 		//	@POST
 		//	public Response POST(@Context UriInfo uriInfo, @HeaderParam(HTTP_HEADER_SLUG) String slug,
 		//			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
@@ -547,7 +550,7 @@ public class LdpWebService {
 
 			//=============================================================================================
 			//
-			//				is a FLSService
+			//				is a FLSResource
 			//
 			//=============================================================================================
 				RepositoryResult<Statement> neededPatterns = conn.getStatements( 
@@ -565,7 +568,7 @@ public class LdpWebService {
 						Class cls_Test = Class.forName("edu.kit.aifb.step.wrapper.FLSVisitourAPI");
 								//interactionPatterns.get(new org.semanticweb.yars.nx.Resource(neededClass.getObject().toString())));
 						VirtualResource res = (VirtualResource) cls_Test.newInstance();   
-						res.doGetHtml();
+						res.doPost();
 			    	
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
