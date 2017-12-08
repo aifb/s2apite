@@ -1,8 +1,14 @@
 paper/*
 /target/
+<<<<<<< HEAD
 .classpath
 .project
 .settings/**
 .pydevproject
 .dockerenv
 *.*~
+=======
+.settings
+#.project
+.pydevproject
+>>>>>>> refs/remotes/origin/Marcel_BayesNet
