@@ -1,3 +1,6 @@
 docker-compose.yml
 paper/*
 /target/
+.settings
+#.project
+.pydevproject
