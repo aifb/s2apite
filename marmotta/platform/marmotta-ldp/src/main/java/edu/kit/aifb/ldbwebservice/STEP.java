@@ -5,6 +5,8 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.semanticweb.yars.nx.Resource;
 
+import edu.kit.aifb.step.vocabs.STEP;
+
 public class STEP {
 	
 	public static final String NAMESPACE = "http://step.aifb.kit.edu/";

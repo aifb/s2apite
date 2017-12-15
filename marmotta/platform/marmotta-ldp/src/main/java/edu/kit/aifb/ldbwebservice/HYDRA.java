@@ -6,6 +6,7 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.semanticweb.yars.nx.Resource;
 
 
+
 /**
  * @see http://www.hydra-cg.com/spec/latest/core/ 
  * 

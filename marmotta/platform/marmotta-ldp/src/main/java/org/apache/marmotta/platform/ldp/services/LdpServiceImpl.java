@@ -48,9 +48,8 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import edu.kit.aifb.ldbwebservice.ClosableList;
-import edu.kit.aifb.ldbwebservice.HYDRA;
-import edu.kit.aifb.ldbwebservice.STEP;
+import edu.kit.aifb.step.vocabs.HYDRA;
+import edu.kit.aifb.step.vocabs.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

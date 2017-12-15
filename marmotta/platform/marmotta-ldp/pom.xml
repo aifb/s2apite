@@ -422,7 +422,7 @@
 			<groupId>edu.kit.aifb</groupId>
 			<artifactId>ksri-km-flswrapper</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<!-- <scope>provided</scope>  -->
 		</dependency>
 	</dependencies>
 
