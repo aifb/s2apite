@@ -18,6 +18,7 @@
 package org.apache.marmotta.platform.ldp.services;
 
 import info.aduna.iteration.*;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.marmotta.commons.vocabulary.DCTERMS;
 import org.apache.marmotta.commons.vocabulary.LDP;
@@ -29,13 +30,11 @@ import org.apache.marmotta.platform.ldp.exceptions.IncompatibleResourceTypeExcep
 import org.apache.marmotta.platform.ldp.exceptions.InvalidInteractionModelException;
 import org.apache.marmotta.platform.ldp.exceptions.InvalidModificationException;
 import org.apache.marmotta.platform.ldp.patch.InvalidPatchDocumentException;
-import org.apache.marmotta.platform.ldp.patch.RdfPatchUtil;
-import org.apache.marmotta.platform.ldp.patch.model.PatchLine;
 import org.apache.marmotta.ldpath.parser.ParseException;
-import org.apache.marmotta.platform.ldp.patch.parser.RdfPatchParserImpl;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.ServerManagedPropertiesInterceptor;
 import org.apache.marmotta.platform.ldp.webservices.LdpWebService;
+
 import org.openrdf.model.*;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
@@ -45,6 +44,7 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.event.base.InterceptingRepositoryConnectionWrapper;
 import org.openrdf.rio.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

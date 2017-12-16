@@ -103,14 +103,16 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
-import edu.kit.aifb.ldbwebservice.DBO;
+
+
 import edu.kit.aifb.ldbwebservice.MEXCORE;
-import info.aduna.iteration.CloseableIteration;
-import edu.kit.aifb.step.api.WebResource;
 import edu.kit.aifb.step.resources.FlsVisitourContainer;
+import edu.kit.aifb.step.vocabs.DBO;
 import edu.kit.aifb.step.vocabs.HYDRA;
 import edu.kit.aifb.step.vocabs.STEP;
-import edu.kit.aifb.step.wrapper.*;
+
+
+import info.aduna.iteration.CloseableIteration;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -219,8 +221,6 @@ public class LdpWebService {
 	private LdpBinaryStoreService binaryStore;
 	
 	
-	@Inject
-	private WebResource fls;
 	
 //	@Inject 
 //	private VirtualResource virtualResource;
@@ -569,12 +569,12 @@ public class LdpWebService {
 					Statement neededClass = neededPatterns.next();
 					try {
 					
-						FlsVisitourContainer test = new FlsVisitourContainer();
-						test.doGet();
-						Class cls_Test = Class.forName("edu.kit.aifb.step.wrapper.FlsVisitourApi");
+						FlsVisitourContainer test = new FlsVisitourContainer(container);
+						test.read();
+						Class cls_Test = Class.forName("edu.kit.aifb.step.wrapper.FlsVisitourContainer");
 								//interactionPatterns.get(new org.semanticweb.yars.nx.Resource(neededClass.getObject().toString())));
-						WebResource res = (WebResource) cls_Test.newInstance();   
-						res.doGet(); // TODO make POST!
+						FlsVisitourContainer res = (FlsVisitourContainer) cls_Test.newInstance();   
+						res.read(); // TODO make POST!
 			    	
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
