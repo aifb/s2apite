@@ -159,6 +159,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jayes.version>2.4.10-SNAPSHOT</jayes.version>
+		
+		<nxparser.group>com.github.sebbader.nxparser</nxparser.group>
+		<nxparser.version>e7da345297</nxparser.version>
+		
+		<!-- <step.group>edu.kit.aifb.step</step.group> -->
+		<!-- <step.version>0.0.1-SNAPSHOT</step.version> -->
+		<step.group>com.github.aifb.SelfGovernedComponents</step.group>
+		<step.version>038f4dbd74</step.version>
 	</properties>
 
 	<repositories>
@@ -166,8 +174,6 @@
 			<id>recommenders</id>
 			<url>https://repo.eclipse.org/content/repositories/recommenders/</url>
 		</repository>
-		<!-- <repository> <id>linkeddatafu</id> <url>http://linked-data-fu.github.io/releases/</url> 
-			</repository> -->
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
@@ -180,7 +186,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -201,17 +206,14 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>15.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -226,6 +228,11 @@
 		<dependency>
 			<groupId>org.apache.marmotta</groupId>
 			<artifactId>marmotta-util-rdfpatch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.marmotta</groupId>
+			<artifactId>marmotta-ldpath</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
@@ -263,13 +270,11 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>${jetty.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-			<version>${jetty.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -347,19 +352,19 @@
 
 		<!-- nxparser (not all required?) -->
 		<dependency>
-			<groupId>org.semanticweb.yars</groupId>
+			<groupId>${nxparser.group}</groupId>
 			<artifactId>nxparser-parsers</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>${nxparser.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.semanticweb.yars</groupId>
+			<groupId>${nxparser.group}</groupId>
 			<artifactId>nxparser-model</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>${nxparser.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.semanticweb.yars</groupId>
+			<groupId>${nxparser.group}</groupId>
 			<artifactId>nxparser-jax-rs</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>${nxparser.version}</version>
 		</dependency>
 
 		<!-- Linked Data-Fu from local Maven Repo -->
@@ -411,6 +416,18 @@
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.25</version>
+		</dependency>
+		<!-- KSRI FLSWrapper -->
+		<dependency>
+			<groupId>edu.kit.aifb</groupId>
+			<artifactId>ksri-km-flswrapper</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${step.group}</groupId>
+			<artifactId>StepVocabularies</artifactId>
+			<version>${step.version}</version>
 		</dependency>
 	</dependencies>
 

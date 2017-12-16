@@ -23,6 +23,8 @@ import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferrer;
 import org.eclipse.recommenders.jayes.inference.jtree.JunctionTreeAlgorithm;
 
+
+
 import org.apache.commons.lang3.StringUtils;
 
 import org.apache.marmotta.commons.http.ContentType;
@@ -101,10 +103,14 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
-import edu.kit.aifb.ldbwebservice.DBO;
-import edu.kit.aifb.ldbwebservice.HYDRA;
+
+
 import edu.kit.aifb.ldbwebservice.MEXCORE;
-import edu.kit.aifb.ldbwebservice.STEP;
+import edu.kit.aifb.step.resources.FlsVisitourContainer;
+import edu.kit.aifb.step.vocabs.DBO;
+import edu.kit.aifb.step.vocabs.HYDRA;
+import edu.kit.aifb.step.vocabs.STEP;
+
 
 import info.aduna.iteration.CloseableIteration;
 
@@ -190,6 +196,11 @@ public class LdpWebService {
 	// counter for some statistics
 	public static int numberOfIntegrationRequests;
 
+	
+	public static Map<Node, String> interactionPatterns = new HashMap<Node, String>();
+	
+	
+
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -208,6 +219,11 @@ public class LdpWebService {
 
 	@Inject
 	private LdpBinaryStoreService binaryStore;
+	
+	
+	
+//	@Inject 
+//	private VirtualResource virtualResource;
 
 	private final List<ContentType> producedRdfTypes;
 	private final org.openrdf.model.Resource ldpContext = ValueFactoryImpl.getInstance().createURI(LDP.NAMESPACE);
@@ -242,6 +258,12 @@ public class LdpWebService {
 		Collections.sort(producedRdfTypes);
 
 		log.debug("Available RDF Serializer: {}", producedRdfTypes);
+		
+		//Including the FLSWrapper into a Hash Map 
+		// Marcel
+		interactionPatterns.put(STEP.BayesNode, "BayesNode");
+		interactionPatterns.put(STEP.FLSVisitourAPI, "edu.kit.aifb.step.wrapper.FLSVisitourAPI");
+		
 	}
 
 	protected void initialize(@Observes SesameStartupEvent event) {
@@ -473,7 +495,7 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
 			@HeaderParam(HttpHeaders.ACCEPT) @DefaultValue(MediaType.WILDCARD) String accept_type,
 			InputStream postBody, @HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type)
-					throws RepositoryException {
+					throws RepositoryException, URISyntaxException {
 		//	@POST
 		//	public Response POST(@Context UriInfo uriInfo, @HeaderParam(HTTP_HEADER_SLUG) String slug,
 		//			@HeaderParam(HttpHeaders.LINK) List<Link> linkHeaders,
@@ -492,11 +514,13 @@ public class LdpWebService {
 		} catch (Exception e ) {
 
 		}
+		
 
 
 		final RepositoryConnection conn = sesameService.getConnection();
 		try {
 			conn.begin();
+	
 
 			if (!ldpService.exists(conn, container)) {
 				final Response.ResponseBuilder resp;
@@ -519,13 +543,50 @@ public class LdpWebService {
 
 				//				RepositoryResult<Statement> statements = conn.getStatements( ValueFactoryImpl.getInstance().createURI(resource), ValueFactoryImpl.getInstance().createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), null, true, new Resource[0]);
 
-				// 
 				final Response.ResponseBuilder resp = createWebServiceResponse(conn, 200, container, postBody, format);
 
 				log.debug("Invoking Web Service for <{}> successful", container);
 				conn.commit();
 				return resp.build();
 
+			}
+			
+			if (ldpService.isVirtualResource(conn, container)){
+
+			//=============================================================================================
+			//
+			//				is a FLSResource
+			//
+			//=============================================================================================
+				RepositoryResult<Statement> neededPatterns = conn.getStatements( 
+						null, 
+						ValueFactoryImpl.getInstance().createURI( STEP.interactionPattern.getLabel()),  
+						null, 
+						true);
+
+
+				while(neededPatterns.hasNext()) {
+					Statement neededClass = neededPatterns.next();
+					try {
+					
+						FlsVisitourContainer test = new FlsVisitourContainer(container);
+						test.read();
+						Class cls_Test = Class.forName("edu.kit.aifb.step.wrapper.FlsVisitourContainer");
+								//interactionPatterns.get(new org.semanticweb.yars.nx.Resource(neededClass.getObject().toString())));
+						FlsVisitourContainer res = (FlsVisitourContainer) cls_Test.newInstance();   
+						res.read(); // TODO make POST!
+			    	
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 
 
@@ -1073,8 +1134,9 @@ public class LdpWebService {
 					//							);
 
 					return executeBayesschesModel(service, rb, connection, postBody, models, format);
-
-				} else {
+				}
+				
+				else {
 
 
 					//=============================================================================================

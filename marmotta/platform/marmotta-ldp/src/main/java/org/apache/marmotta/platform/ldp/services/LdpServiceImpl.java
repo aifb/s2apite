@@ -18,6 +18,7 @@
 package org.apache.marmotta.platform.ldp.services;
 
 import info.aduna.iteration.*;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.marmotta.commons.vocabulary.DCTERMS;
 import org.apache.marmotta.commons.vocabulary.LDP;
@@ -29,13 +30,11 @@ import org.apache.marmotta.platform.ldp.exceptions.IncompatibleResourceTypeExcep
 import org.apache.marmotta.platform.ldp.exceptions.InvalidInteractionModelException;
 import org.apache.marmotta.platform.ldp.exceptions.InvalidModificationException;
 import org.apache.marmotta.platform.ldp.patch.InvalidPatchDocumentException;
-import org.apache.marmotta.platform.ldp.patch.RdfPatchUtil;
-import org.apache.marmotta.platform.ldp.patch.model.PatchLine;
 import org.apache.marmotta.ldpath.parser.ParseException;
-import org.apache.marmotta.platform.ldp.patch.parser.RdfPatchParserImpl;
 import org.apache.marmotta.platform.ldp.util.LdpUtils;
 import org.apache.marmotta.platform.ldp.util.ServerManagedPropertiesInterceptor;
 import org.apache.marmotta.platform.ldp.webservices.LdpWebService;
+
 import org.openrdf.model.*;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
@@ -45,12 +44,12 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.event.base.InterceptingRepositoryConnectionWrapper;
 import org.openrdf.rio.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import edu.kit.aifb.ldbwebservice.ClosableList;
-import edu.kit.aifb.ldbwebservice.HYDRA;
-import edu.kit.aifb.ldbwebservice.STEP;
+import edu.kit.aifb.step.vocabs.HYDRA;
+import edu.kit.aifb.step.vocabs.STEP;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -798,5 +797,16 @@ public class LdpServiceImpl implements LdpService {
 		log.info("No LDP Interaction Model specified for <{}>, defaulting to {}", uri.stringValue(), InteractionModel.LDPC);
 		// Default Interaction Model is LDPC
 		return InteractionModel.LDPC;
+	}
+
+	@Override
+	public boolean isVirtualResource(RepositoryConnection connection, String resource) throws RepositoryException {
+		return isVirtualResource(connection, buildURI(resource));
+	}
+
+	@Override
+	public boolean isVirtualResource(RepositoryConnection connection, URI uri) throws RepositoryException {
+		boolean a =  connection.hasStatement(uri, RDF.TYPE, ValueFactoryImpl.getInstance().createURI(STEP.VirtualResource.getLabel()), true);
+		return a ;
 	}
 }

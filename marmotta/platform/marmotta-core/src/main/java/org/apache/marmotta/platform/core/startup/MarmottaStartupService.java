@@ -174,9 +174,42 @@ public class MarmottaStartupService {
             if(context != null) {
                 configurationService.setServletContext(context);
             }
-
+            
             configurationService.initialize(home, configurationOverride);
 
+            
+            //---------------------- author: sba ------------------------------
+            // read DB config from OD environment variable
+                                   
+            log.info(configurationService.getConfiguration("database.type").toString());
+            log.info(configurationService.getConfiguration("database.url").toString());
+            log.info(configurationService.getConfiguration("database.user").toString());
+            log.info(configurationService.getConfiguration("database.password").toString());
+            System.out.println(configurationService.getConfiguration("database.type").toString());
+            System.out.println(configurationService.getConfiguration("database.url").toString());
+            System.out.println(configurationService.getConfiguration("database.user").toString());
+            System.out.println(configurationService.getConfiguration("database.password").toString());
+
+            String dburl = System.getenv("DB_URL"); 
+            if (StringUtils.isNotBlank(dburl)) {
+            	log.info("Get DB configuration from local environment variable: " + dburl);
+            	configurationService.setConfiguration("database.url", dburl);
+            } else {
+            	log.warn("Could not load OS environment variable DB_URL. Continue with default.");
+            }
+
+            log.info(configurationService.getConfiguration("database.type").toString());
+            log.info(configurationService.getConfiguration("database.url").toString());
+            log.info(configurationService.getConfiguration("database.user").toString());
+            log.info(configurationService.getConfiguration("database.password").toString());
+            System.out.println(configurationService.getConfiguration("database.type").toString());
+            System.out.println(configurationService.getConfiguration("database.url").toString());
+            System.out.println(configurationService.getConfiguration("database.user").toString());
+            System.out.println(configurationService.getConfiguration("database.password").toString());
+            
+            
+            //-----------------------------------------------------------------
+            
 
             configurationService.setConfiguration("kiwi.version", versionNumber);
 

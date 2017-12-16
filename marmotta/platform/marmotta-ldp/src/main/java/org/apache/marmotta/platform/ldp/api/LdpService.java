@@ -354,6 +354,10 @@ public interface LdpService {
      * @author sba
      */
     boolean isStartAPI(RepositoryConnection connection, URI uri) throws RepositoryException;
+    
+    boolean isVirtualResource(RepositoryConnection connection, String resource) throws RepositoryException;
+    
+    boolean isVirtualResource(RepositoryConnection connection, URI uri) throws RepositoryException;
 
     
     /**
