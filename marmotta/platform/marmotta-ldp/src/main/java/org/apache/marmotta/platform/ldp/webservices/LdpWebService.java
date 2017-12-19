@@ -1795,12 +1795,14 @@ public class LdpWebService {
 			URI predicate = factory.createURI(STEP.numberOfRequests.getLabel());
 
 			connection.begin();
-			CloseableIteration<Statement, RepositoryException> ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
+			//CloseableIteration<Statement, RepositoryException> ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
 
 
 
 
+			@SuppressWarnings("restriction")
 			OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+			@SuppressWarnings("restriction")
 			org.openrdf.model.Literal cpuLoad = factory.createLiteral(operatingSystemMXBean.getProcessCpuLoad());
 
 			org.openrdf.model.Literal memory = factory.createLiteral(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
@@ -1831,8 +1833,8 @@ public class LdpWebService {
 			
 			
 
-			while (ldpStatements.hasNext()) {
-				Statement statement = ldpStatements.next();
+			while (ldpStatements2.hasNext()) {
+				Statement statement = ldpStatements2.next();
 
 				if (statement.getObject() instanceof org.openrdf.model.Literal) {
 					org.openrdf.model.Literal literal = (org.openrdf.model.Literal) statement.getObject();
@@ -1849,8 +1851,8 @@ public class LdpWebService {
 				}
 			}
 
-			ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
-			connection.remove(ldpStatements, ldpContext);
+			ldpStatements2 = connection.getStatements(subject, predicate, null, false, ldpContext);
+			connection.remove(ldpStatements2, ldpContext);
 
 			
 			connection.commit();
