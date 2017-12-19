@@ -166,7 +166,8 @@
 		<!-- <step.group>edu.kit.aifb.step</step.group> -->
 		<!-- <step.version>0.0.1-SNAPSHOT</step.version> -->
 		<step.group>com.github.aifb.SelfGovernedComponents</step.group>
-		<step.version>038f4dbd74</step.version>
+		<step.version>a341d6223f</step.version>
+		<!-- <step.version>-SNAPSHOT</step.version> -->
 	</properties>
 
 	<repositories>

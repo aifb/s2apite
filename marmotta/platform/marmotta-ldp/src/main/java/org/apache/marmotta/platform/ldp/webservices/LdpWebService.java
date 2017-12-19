@@ -103,12 +103,10 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
-
-
-import edu.kit.aifb.ldbwebservice.MEXCORE;
 import edu.kit.aifb.step.resources.FlsVisitourContainer;
 import edu.kit.aifb.step.vocabs.DBO;
 import edu.kit.aifb.step.vocabs.HYDRA;
+import edu.kit.aifb.step.vocabs.MEXCORE;
 import edu.kit.aifb.step.vocabs.STEP;
 
 
@@ -1794,7 +1792,7 @@ public class LdpWebService {
 			ValueFactory factory = ValueFactoryImpl.getInstance();
 
 			URI subject = factory.createURI(resource);
-			URI predicate = factory.createURI(STEP.hasStatistics.getLabel());
+			URI predicate = factory.createURI(STEP.numberOfRequests.getLabel());
 
 			connection.begin();
 			CloseableIteration<Statement, RepositoryException> ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
@@ -1808,15 +1806,15 @@ public class LdpWebService {
 			org.openrdf.model.Literal memory = factory.createLiteral(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 
 
-			Statement updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(1));
-			Statement updatedMemoryStatistics = factory.createStatement(subject, predicate, memory);
-			Statement updatedCpuStatistics = factory.createStatement(subject, predicate, cpuLoad);
+//			Statement updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(1));
+//			Statement updatedMemoryStatistics = factory.createStatement(subject, predicate, memory);
+//			Statement updatedCpuStatistics = factory.createStatement(subject, predicate, cpuLoad);
 
 			
 
 			// sba: new and better statistics with unique properties
-			URI cpu = factory.createURI(DBO.CPU.getLabel());
-			URI hasMemory = factory.createURI(MEXCORE.MEMORY.getLabel());
+			URI cpu = factory.createURI(MEXCORE.cpu.getLabel());
+			URI hasMemory = factory.createURI(MEXCORE.memory.getLabel());
 			URI numberOfRequests = factory.createURI(STEP.numberOfRequests.getLabel());
 			
 			Statement updatedCounterStatistics2 = factory.createStatement(subject, numberOfRequests, factory.createLiteral(1));
@@ -1843,7 +1841,7 @@ public class LdpWebService {
 						try {
 							int number = literal.intValue();
 							number++;
-							updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(number));
+							//updatedCounterStatistics = factory.createStatement(subject, predicate, factory.createLiteral(number));
 							updatedCounterStatistics2 = factory.createStatement(subject, numberOfRequests, factory.createLiteral(number));
 							break;
 						} catch (NumberFormatException e) { }
@@ -1861,9 +1859,9 @@ public class LdpWebService {
 
 			connection.begin();
 			List<Statement> statements = new LinkedList<Statement>();
-			statements.add(updatedCounterStatistics);
-			statements.add(updatedMemoryStatistics);
-			statements.add(updatedCpuStatistics);
+			//statements.add(updatedCounterStatistics);
+			//statements.add(updatedMemoryStatistics);
+			//statements.add(updatedCpuStatistics);
 			
 			// sba: new and better statistics with unique properties
 			statements.add(updatedCounterStatistics2);
