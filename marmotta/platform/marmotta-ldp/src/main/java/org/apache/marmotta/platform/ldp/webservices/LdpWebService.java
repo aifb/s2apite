@@ -1792,7 +1792,7 @@ public class LdpWebService {
 			ValueFactory factory = ValueFactoryImpl.getInstance();
 
 			URI subject = factory.createURI(resource);
-			URI predicate = factory.createURI(STEP.numberOfRequests.getLabel());
+			//URI predicate = factory.createURI(STEP.numberOfRequests.getLabel());
 
 			connection.begin();
 			//CloseableIteration<Statement, RepositoryException> ldpStatements = connection.getStatements(subject, predicate, null, false, ldpContext);
@@ -1828,7 +1828,7 @@ public class LdpWebService {
 			ldpStatements2 = connection.getStatements(subject, hasMemory, null, false, ldpContext);
 			connection.remove(ldpStatements2, ldpContext);
 			ldpStatements2 = connection.getStatements(subject, numberOfRequests, null, false, ldpContext);
-			connection.remove(ldpStatements2, ldpContext);
+			//connection.remove(ldpStatements2, ldpContext);
 			
 			
 			
@@ -1851,7 +1851,7 @@ public class LdpWebService {
 				}
 			}
 
-			ldpStatements2 = connection.getStatements(subject, predicate, null, false, ldpContext);
+			ldpStatements2 = connection.getStatements(subject, numberOfRequests, null, false, ldpContext);
 			connection.remove(ldpStatements2, ldpContext);
 
 			
