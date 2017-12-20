@@ -193,7 +193,18 @@ public class MarmottaStartupService {
             String dburl = System.getenv("DB_URL"); 
             if (StringUtils.isNotBlank(dburl)) {
             	log.info("Get DB configuration from local environment variable: " + dburl);
-            	configurationService.setConfiguration("database.url", dburl);
+            	
+            	String type = "postgresql";
+            	configurationService.setConfiguration("database.type", type);
+
+            	String user = dburl.split("user=")[1].split("&pass")[0];
+            	configurationService.setConfiguration("database.url", user);
+            	
+            	String password = dburl.split("user=")[1].split("&pass")[1];
+            	configurationService.setConfiguration("database.url", password);
+            	
+            	String url = dburl.split("?")[0] + "?prepareThreshold=3";
+            	configurationService.setConfiguration("database.url", url);
             } else {
             	log.warn("Could not load OS environment variable DB_URL. Continue with default.");
             }
