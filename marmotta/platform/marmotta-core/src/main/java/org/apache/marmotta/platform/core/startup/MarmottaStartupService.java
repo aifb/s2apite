@@ -204,7 +204,7 @@ public class MarmottaStartupService {
             	String password = dburl.split("user=")[1].split("&password=")[1];
             	configurationService.setConfiguration("database.password", password);
             	
-            	String url = dburl.split("\\?")[0] + "?prepareThreshold=3";
+            	String url = dburl.split("\\?")[0];// + "?prepareThreshold=3";
             	configurationService.setConfiguration("database.url", url);
             } else {
             	log.warn("Could not load OS environment variable DB_URL. Continue with default.");
