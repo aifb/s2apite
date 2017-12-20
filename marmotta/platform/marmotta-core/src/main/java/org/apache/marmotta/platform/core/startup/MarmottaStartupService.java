@@ -194,7 +194,7 @@ public class MarmottaStartupService {
             if (StringUtils.isNotBlank(dburl)) {
             	log.info("Get DB configuration from local environment variable: " + dburl);
             	
-            	String type = "postgresql";
+            	String type = "postgres";
             	configurationService.setConfiguration("database.type", type);
 
             	String user = dburl.split("user=")[1].split("&pass")[0];
