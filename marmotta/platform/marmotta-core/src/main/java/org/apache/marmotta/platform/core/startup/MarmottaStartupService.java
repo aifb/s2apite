@@ -198,12 +198,12 @@ public class MarmottaStartupService {
             	configurationService.setConfiguration("database.type", type);
 
             	String user = dburl.split("user=")[1].split("&pass")[0];
-            	configurationService.setConfiguration("database.url", user);
+            	configurationService.setConfiguration("database.user", user);
             	
-            	String password = dburl.split("user=")[1].split("&pass")[1];
-            	configurationService.setConfiguration("database.url", password);
+            	String password = dburl.split("user=")[1].split("&password=")[1];
+            	configurationService.setConfiguration("database.password", password);
             	
-            	String url = dburl.split("?")[0] + "?prepareThreshold=3";
+            	String url = dburl.split("\\?")[0] + "?prepareThreshold=3";
             	configurationService.setConfiguration("database.url", url);
             } else {
             	log.warn("Could not load OS environment variable DB_URL. Continue with default.");
@@ -243,6 +243,9 @@ public class MarmottaStartupService {
             }
 
             configurationStarted = true;
+        } catch (Exception e) {    
+        	log.error("", e);
+        	System.out.println(e.getMessage());
         } finally {
             lock.unlock();
         }
