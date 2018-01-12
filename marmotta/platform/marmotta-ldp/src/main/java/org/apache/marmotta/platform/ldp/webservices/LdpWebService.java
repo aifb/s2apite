@@ -322,7 +322,6 @@ public class LdpWebService {
 			conn.close();
 		}
 
-		updateStatistics(resource);
 
 		log.debug("GET to LDPR <{}>", resource);
 		return buildGetResponse(resource, MarmottaHttpUtils.parseAcceptHeader(type), preferHeader).build();
@@ -358,6 +357,11 @@ public class LdpWebService {
 				return resp;
 			} else {
 				log.trace("{} exists, continuing", resource);
+
+				/*
+				 * sba
+				 */
+				updateStatistics(resource);
 			}
 
 			// Content-Neg
@@ -571,7 +575,7 @@ public class LdpWebService {
 		// type)
 		// throws RepositoryException {
 
-		numberOfIntegrationRequests++;
+		//numberOfIntegrationRequests++;
 
 		final String container = ldpService.getResourceUri(uriInfo);
 		log.debug("POST to LDPC <{}>", container);
@@ -599,8 +603,16 @@ public class LdpWebService {
 				conn.rollback();
 				return resp.build();
 			}
+			/*
+			 * sba:
+			 */
+			else {
 
-			if (ldpService.isStartAPI(conn, container)) {
+				updateStatistics(container);
+			}
+
+
+			if ( ldpService.isStartAPI(conn, container) ) {
 				log.debug("<{}> exists and is a LinkedDataWebService, so this triggers the service", container);
 
 				// RepositoryResult<Statement> statements = conn.getStatements(
@@ -781,7 +793,7 @@ public class LdpWebService {
 			throws RepositoryException, IOException, InvalidModificationException, RDFParseException,
 			IncompatibleResourceTypeException, URISyntaxException {
 
-		numberOfIntegrationRequests++;
+		//numberOfIntegrationRequests++;
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PUT to <{}>", resource);
@@ -796,6 +808,11 @@ public class LdpWebService {
 			if (ldpService.exists(conn, resource)) {
 
 				log.debug("<{}> exists and is a DataResource, so this is an UPDATE", resource);
+				
+				/*
+				 * sba:
+				 */
+				updateStatistics(resource);
 
 				if (eTag == null) {
 					// check for If-Match header (ETag) -> 428 Precondition Required (Sec. 4.2.4.5)
@@ -880,7 +897,7 @@ public class LdpWebService {
 	@DELETE
 	public Response DELETE(@Context UriInfo uriInfo) throws RepositoryException {
 
-		numberOfIntegrationRequests++;
+		//numberOfIntegrationRequests++;
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("DELETE to <{}>", resource);
@@ -918,7 +935,8 @@ public class LdpWebService {
 	public Response PATCH(@Context UriInfo uriInfo, @HeaderParam(HttpHeaders.IF_MATCH) EntityTag eTag,
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody) throws RepositoryException {
 
-		numberOfIntegrationRequests++;
+
+		
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PATCH to <{}>", resource);
@@ -936,6 +954,12 @@ public class LdpWebService {
 				}
 				con.rollback();
 				return resp.build();
+			}
+			/*
+			 * sba:
+			 */
+			else {
+				updateStatistics(resource);
 			}
 
 			if (eTag != null) {
@@ -1008,6 +1032,12 @@ public class LdpWebService {
 				}
 				con.rollback();
 				return resp.build();
+			}
+			/*
+			 * sba:
+			 */
+			else {
+				updateStatistics(resource);
 			}
 
 			Response.ResponseBuilder builder = createResponse(con, Response.Status.OK, resource);

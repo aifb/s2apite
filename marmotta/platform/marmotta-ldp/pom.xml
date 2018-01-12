@@ -423,7 +423,7 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.25</version>
 		</dependency>
-		<!-- KSRI FLSWrapper -->
+		<!-- KSRI FLSWrapper: needs to be installed in local maven repo -->
 		<dependency>
 			<groupId>edu.kit.aifb.step</groupId>
 			<artifactId>flswrapper-soap</artifactId>
