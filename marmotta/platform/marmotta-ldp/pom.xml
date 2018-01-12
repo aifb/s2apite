@@ -159,10 +159,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jayes.version>2.4.10-SNAPSHOT</jayes.version>
-		
+
 		<nxparser.group>com.github.sebbader.nxparser</nxparser.group>
 		<nxparser.version>e7da345297</nxparser.version>
-		
+
 		<!-- <step.group>edu.kit.aifb.step</step.group> -->
 		<!-- <step.version>0.0.1-SNAPSHOT</step.version> -->
 		<step.group>com.github.aifb.SelfGovernedComponents</step.group>
@@ -220,6 +220,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math</artifactId>
 			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.marmotta</groupId>
@@ -420,8 +425,8 @@
 		</dependency>
 		<!-- KSRI FLSWrapper -->
 		<dependency>
-			<groupId>edu.kit.aifb</groupId>
-			<artifactId>ksri-km-flswrapper</artifactId>
+			<groupId>edu.kit.aifb.step</groupId>
+			<artifactId>flswrapper-soap</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
