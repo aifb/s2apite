@@ -19,12 +19,11 @@ package org.apache.marmotta.platform.ldp.webservices;
 
 
 import org.eclipse.recommenders.jayes.BayesNet;
+
 import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferrer;
 import org.eclipse.recommenders.jayes.inference.jtree.JunctionTreeAlgorithm;
-
-
-
+import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.lang3.StringUtils;
 
 import org.apache.marmotta.commons.http.ContentType;
@@ -103,11 +102,13 @@ import edu.kit.aifb.datafu.parser.notation3.Notation3Parser;
 import edu.kit.aifb.datafu.parser.sparql.SparqlParser;
 import edu.kit.aifb.datafu.planning.EvaluateProgramConfig;
 import edu.kit.aifb.datafu.planning.EvaluateProgramGenerator;
+import edu.kit.aifb.step.api.SemanticStateBasedResource;
 import edu.kit.aifb.step.resources.FlsVisitourContainer;
 import edu.kit.aifb.step.vocabs.DBO;
 import edu.kit.aifb.step.vocabs.HYDRA;
 import edu.kit.aifb.step.vocabs.MEXCORE;
 import edu.kit.aifb.step.vocabs.STEP;
+import edu.kit.aifb.step.resources.*;
 
 
 import info.aduna.iteration.CloseableIteration;
@@ -139,6 +140,7 @@ import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -290,7 +292,6 @@ public class LdpWebService {
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 
-		updateStatistics(resource);
 
 		log.debug("GET to LDPR <{}>", resource);
 		return buildGetResponse(resource, MarmottaHttpUtils.parseAcceptHeader(type), preferHeader).build();
@@ -326,6 +327,11 @@ public class LdpWebService {
 				return resp;
 			} else {
 				log.trace("{} exists, continuing", resource);
+
+				/*
+				 * sba
+				 */
+				updateStatistics(resource);
 			}
 
 			// Content-Neg
@@ -500,7 +506,7 @@ public class LdpWebService {
 		//			Iterable<Node[]> postBody, @HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type)
 		//					throws RepositoryException {
 
-		numberOfIntegrationRequests++;
+		//numberOfIntegrationRequests++;
 
 		final String container = ldpService.getResourceUri(uriInfo);
 		log.debug("POST to LDPC <{}>", container);
@@ -532,7 +538,13 @@ public class LdpWebService {
 				conn.rollback();
 				return resp.build();
 			}
+			/*
+			 * sba:
+			 */
+			else {
 
+				updateStatistics(container);
+			}
 
 
 			if ( ldpService.isStartAPI(conn, container) ) {
@@ -566,13 +578,12 @@ public class LdpWebService {
 				while(neededPatterns.hasNext()) {
 					Statement neededClass = neededPatterns.next();
 					try {
-					
-						FlsVisitourContainer test = new FlsVisitourContainer(container);
-						test.read();
-						Class cls_Test = Class.forName("edu.kit.aifb.step.wrapper.FlsVisitourContainer");
+						String classname = "edu.kit.aifb.step.resources.FlsVisitourCallInstance";
+						
+						Class cls_Test = Class.forName(classname);
 								//interactionPatterns.get(new org.semanticweb.yars.nx.Resource(neededClass.getObject().toString())));
-						FlsVisitourContainer res = (FlsVisitourContainer) cls_Test.newInstance();   
-						res.read(); // TODO make POST!
+						SemanticStateBasedResource res = (SemanticStateBasedResource) cls_Test.newInstance();   
+						res.create(null); // TODO make POST!
 			    	
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -634,6 +645,10 @@ public class LdpWebService {
 			final Response.ResponseBuilder response = createResponse(conn, Response.Status.BAD_REQUEST, container);
 			conn.commit();
 			return response.entity(e.getMessage()).build();
+		} catch (RemoteException e) {
+			return Response.notAcceptable(null).build();
+		} catch (MissingArgumentException e) {
+			return Response.notAcceptable(null).build();
 		} catch (final Throwable t) {
 			conn.rollback();
 			throw t;
@@ -682,7 +697,7 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody)
 					throws RepositoryException, IOException, InvalidModificationException, RDFParseException, IncompatibleResourceTypeException, URISyntaxException {
 
-		numberOfIntegrationRequests++;
+		//numberOfIntegrationRequests++;
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PUT to <{}>", resource);
@@ -698,6 +713,11 @@ public class LdpWebService {
 
 
 				log.debug("<{}> exists and is a DataResource, so this is an UPDATE", resource);
+				
+				/*
+				 * sba:
+				 */
+				updateStatistics(resource);
 
 				if (eTag == null) {
 					// check for If-Match header (ETag) -> 428 Precondition Required (Sec. 4.2.4.5)
@@ -782,7 +802,7 @@ public class LdpWebService {
 	@DELETE
 	public Response DELETE(@Context UriInfo uriInfo) throws RepositoryException {
 
-		numberOfIntegrationRequests++;
+		//numberOfIntegrationRequests++;
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("DELETE to <{}>", resource);
@@ -822,7 +842,7 @@ public class LdpWebService {
 			@HeaderParam(HttpHeaders.CONTENT_TYPE) MediaType type, InputStream postBody) throws RepositoryException {
 
 
-		numberOfIntegrationRequests++;
+		
 
 		final String resource = ldpService.getResourceUri(uriInfo);
 		log.debug("PATCH to <{}>", resource);
@@ -840,6 +860,12 @@ public class LdpWebService {
 				}
 				con.rollback();
 				return resp.build();
+			}
+			/*
+			 * sba:
+			 */
+			else {
+				updateStatistics(resource);
 			}
 
 			if (eTag != null) {
@@ -910,6 +936,12 @@ public class LdpWebService {
 				}
 				con.rollback();
 				return resp.build();
+			}
+			/*
+			 * sba:
+			 */
+			else {
+				updateStatistics(resource);
 			}
 
 
@@ -1575,7 +1607,7 @@ public class LdpWebService {
 			 * Generate a Graph Object
 			 */
 			//		TurtleParser turtleParser = new TurtleParser(input_nodes, Charset.defaultCharset(), new java.net.URI( resource.stringValue() ) );
-			RDFParser rdfParser = Rio.createParser(RDFFormat.TURTLE);
+			RDFParser rdfParser = Rio.createParser(RDFFormat.TURTLE); //format
 			org.openrdf.model.Graph myGraph = new org.openrdf.model.impl.GraphImpl();
 			StatementCollector collector = new StatementCollector(myGraph);
 			rdfParser.setRDFHandler(collector);
