@@ -1253,7 +1253,7 @@ public class LdpWebService {
 
 				// =============================================================================================
 				//
-				//
+				// is a BayesService
 				//
 				// =============================================================================================
 
@@ -1292,6 +1292,7 @@ public class LdpWebService {
 					}
 
 					URI program = null;
+					URI query = null;
 					while (contains_triples.hasNext()) {
 						RepositoryResult<Statement> programs = connection.getStatements(
 								new URIImpl(contains_triples.next().getObject().stringValue()),
@@ -1308,15 +1309,32 @@ public class LdpWebService {
 							}
 							break;
 						}
+						
+						
+						RepositoryResult<Statement> queries = connection.getStatements(
+								new URIImpl(contains_triples.next().getObject().stringValue()),
+								new URIImpl(STEP.hasQuery.getLabel()), null, true, new org.openrdf.model.Resource[0]);
 
+						if (queries.hasNext()) {
+							String query_uri = queries.next().getObject().stringValue();
+							if (query_uri.endsWith(".bin") || query_uri.endsWith(".bin/")) {
+								query = new URIImpl(query_uri);
+							} else if (query_uri.endsWith("/")) {
+								query = new URIImpl(query_uri.substring(0, query_uri.length() - 2) + ".bin");
+							} else {
+								query = new URIImpl(query_uri + ".bin");
+							}
+							break;
+						}
 					}
 
-					if (program == null)
-						throw new RepositoryException();
+					if (program == null || query == null)
+						throw new RepositoryException("program and/or query resoruce not found");
 
 					// get Program as file
 					// OutputStream program_data = new ByteArrayOutputStream();
 					InputStream program_data = binaryStore.read(program);
+					InputStream query_data = binaryStore.read(query);
 					// ldpService.exportBinaryResource(connection, program, program_data);
 					// if (programs.hasNext()) {
 					// do nothing yet
@@ -1328,7 +1346,7 @@ public class LdpWebService {
 					// executeWebService(service, postBody, "",
 					// programs.next().getObject().stringValue()) ) { }
 					// );
-					return executeLinkedDataWebService(service, rb, postBody, "", program.stringValue(), format);
+					return executeLinkedDataWebService(service, rb, postBody, "", program.stringValue(), query.stringValue(), format);
 				}
 
 			} catch (RepositoryException e) {
@@ -1600,12 +1618,13 @@ public class LdpWebService {
 	 * @param postBody
 	 * @param query
 	 * @param program_resource
+	 * @param query_resource 
 	 * @param format
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
 	private ResponseBuilder executeLinkedDataWebService(URI resource, ResponseBuilder rb, InputStream postBody,
-			String query, String program_resource, RDFFormat format) throws IllegalArgumentException {
+			String query, String program_resource, String query_resource, RDFFormat format) throws IllegalArgumentException {
 
 		ValueFactory factory = ValueFactoryImpl.getInstance();
 		List<Node[]> results = new ArrayList<Node[]>();
@@ -1618,6 +1637,7 @@ public class LdpWebService {
 
 			// OutputStream program_data = new ByteArrayOutputStream();
 			InputStream program_data = binaryStore.read(new URIImpl(program_resource));
+			InputStream query_data = binaryStore.read(new URIImpl(query_resource));
 			// ldpService.exportBinaryResource(connection, program, program_data);
 
 			/*
@@ -1666,10 +1686,11 @@ public class LdpWebService {
 			 * Register a Query
 			 */
 			QueryConsumerImpl qc = new QueryConsumerImpl(new InternalOrigin("query_consumer_1"));
-			String s = new String("CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }");
-			SparqlParser sp = new SparqlParser(new StringReader(s));
+			//String s = new String("CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }");
+			//SparqlParser sp = new SparqlParser(new StringReader(s));
+			SparqlParser sp = new SparqlParser(new InputStreamReader(query_data));
 
-			sp.parse(qc, new InternalOrigin("SparqlConstructDummy"));
+			sp.parse(qc, new InternalOrigin("SparqlQuery"));
 			ConstructQuery sq = qc.getConstructQueries().iterator().next();
 
 			BindingConsumerCollection bc = new BindingConsumerCollection();
