@@ -46,7 +46,7 @@
 		<mysql.version>5.1.21</mysql.version>
 		<jetty.version>9.2.1.v20140609</jetty.version>
 		<resteasy.version>3.0.11.Final</resteasy.version>
-		<jackson.version>2.3.3</jackson.version>
+		<jackson.version>2.9.9</jackson.version>
 		<titan.version>0.4.2</titan.version>
 		<jax.doclets.version>0.10.1</jax.doclets.version>
 	</properties>
